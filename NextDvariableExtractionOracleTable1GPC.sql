@@ -32,11 +32,9 @@ select e.PATID, e.ADMIT_DATE, row_number() over (partition by e.PATID order by e
 )
 /* Collect visits reported on different days: */
 , Denomtemp0v as (
-select uf.PATID, uf.ADMIT_DATE, row_number() over (partition by un.PATID order by uf.ADMIT_DATE asc) rn 
-  from Denominator_init un
-  join Denominator_init uf
-  on un.PATID = uf.PATID
-  where abs(un.ADMIT_DATE-uf.ADMIT_DATE)>1
+select distinct uf.PATID, uf.ADMIT_DATE
+, row_number() over (partition by uf.PATID order by uf.ADMIT_DATE asc) rn 
+  from Denominator_init uf
 )
 /* Collect number of visits (from ones recorded on different days) for each person: */
 , Denomtemp1v as (
