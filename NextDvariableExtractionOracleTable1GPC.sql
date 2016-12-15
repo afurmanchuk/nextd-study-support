@@ -12,47 +12,51 @@
 -----                                                                                                     -----
 -----          The date of the first encounter and total number of encounters is collected.               -----
 ---------------------------------------------------------------------------------------------------------------
-          Get all encounters for each patient sorted by date: */     
-insert into Denominator_init
+*/
+/* 
+Collect data to put summary for the study sample. 
+Further data collection will be performed for this population: 
+*/
+drop table DenominatorSummary;
+create table DenominatorSummary as
+
+/*          Get all encounters for each patient sorted by date: */     
+with Denominator_init as(
 select e.PATID, e.ADMIT_DATE, row_number() over (partition by e.PATID order by e.ADMIT_DATE asc) rn 
   from "&&PCORNET_CDM".ENCOUNTER e
   join "&&PCORNET_CDM".DEMOGRAPHIC d
   on e.PATID=d.PATID
   where e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED') 
   and cast(((cast(e.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <= 89 
-  and cast(((cast(e.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18; 
-COMMIT;
+  and cast(((cast(e.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18
+)
 /* Collect visits reported on different days: */
-insert into Denomtemp0v
+, Denomtemp0v as (
 select uf.PATID, uf.ADMIT_DATE, row_number() over (partition by un.PATID order by uf.ADMIT_DATE asc) rn 
   from Denominator_init un
   join Denominator_init uf
   on un.PATID = uf.PATID
-  where abs(un.ADMIT_DATE-uf.ADMIT_DATE)>1;
-COMMIT;
+  where abs(un.ADMIT_DATE-uf.ADMIT_DATE)>1
+)
 /* Collect number of visits (from ones recorded on different days) for each person: */
-insert into Denomtemp1v
+, Denomtemp1v as (
 select x.PATID, count(distinct x.ADMIT_DATE) as NumberOfVisits 
   from Denomtemp0v x
   group by x.PATID
-  order by x.PATID;
-COMMIT;
+  order by x.PATID
+)
 /* Collect date of the first visit: */
-insert into Denomtemp2v
+, Denomtemp2v as (
 select x.PATID, x.ADMIT_DATE as FirstVisit 
   from Denomtemp0v x
-  where x.rn=1;
-COMMIT;
-/* 
-Collect data to put summary for the study sample. 
-Further data collection will be performed for this population: 
-*/
-insert into DenominatorSummary
+  where x.rn=1
+)
+
 select x.PATID, b.FirstVisit, x.NumerOfVisits
   from Denomtemp1v x
   left join Denomtemp2v b
   on a.PATID=b.PATID;
-COMMIT;
+
 /*-------------------------------------------------------------------------------------------------------------
                          Part 2: Defining Deabetes Mellitus sample                                   
 ---------------------------------------------------------------------------------------------------------------
