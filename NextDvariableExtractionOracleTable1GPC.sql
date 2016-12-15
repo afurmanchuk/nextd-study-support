@@ -4,249 +4,310 @@
 CREATE GLOBAL TEMPORARY TABLE Denominator_initial
   (PATID VARCHAR(128),
   ADMIT_DATE DATE,
-  rn INT);
-CREATE GLOBAL TEMPORARY TABLE Denomtemp0
+  rn INT)
+  on commit preserve rows;
+CREATE GLOBAL TEMPORARY TABLE Denomtemp0v
   (PATID VARCHAR(128),
   ADMIT_DATE DATE,
-  rn INT);
-CREATE GLOBAL TEMPORARY TABLE Denomtemp1
+  rn INT)
+  on commit preserve rows;
+CREATE GLOBAL TEMPORARY TABLE Denomtemp1v
   (PATID VARCHAR(128),
-  NumerOfVisits int);
-CREATE GLOBAL TEMPORARY TABLE Denomtemp2
+  NumerOfVisits int)
+  on commit preserve rows;
+CREATE GLOBAL TEMPORARY TABLE Denomtemp2v
   (PATID VARCHAR(128),
-  FirstVisit DATE);
+  FirstVisit DATE)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE DenominatorSummary
   (PATID VARCHAR(128),
   FirstVisit DATE,
-  NumerOfVisits INT);
+  NumerOfVisits INT)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE DemographicVars
   (PATID VARCHAR(128) NOT NULL,
   SEX VARCHAR(2) NULL,
   RACE VARCHAR(2) NULL,
-  HISPANIC VARCHAR(2) NULL);
+  HISPANIC VARCHAR(2) NULL)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE A1c_initial
   (PATID VARCHAR(128) NOT NULL,
   LAB_ORDER_DATE date NULL,
-  rn INT);
+  rn INT)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE temp1
   (PATID VARCHAR(128) NOT NULL,
-  LAB_ORDER_DATE date NULL);
+  LAB_ORDER_DATE date NULL)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE A1c_final_FirstPair
   (PATID VARCHAR(128) NOT NULL,
-  EventDate date NULL);
+  EventDate date NULL)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE FG_initial
   (PATID VARCHAR(128) NOT NULL,
   LAB_ORDER_DATE date NULL,
-  rn INT);
+  rn INT)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE temp2
   (PATID VARCHAR(128) NOT NULL,
   LAB_ORDER_DATE date NULL,
-  rn INT);
+  rn INT)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE FG_final_FirstPair  
   (PATID VARCHAR(128) NOT NULL,
   LAB_ORDER_DATE date NULL,
-  rn INT);
+  rn INT)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE RG_initial
   (PATID VARCHAR(128) NOT NULL,
   LAB_ORDER_DATE date NULL,
-  rn INT);
+  rn INT)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE temp3
   (PATID VARCHAR(128) NOT NULL,
   LAB_ORDER_DATE date NULL,
-  rn INT);
+  rn INT)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE RG_final_FirstPair
   (PATID VARCHAR(128) NOT NULL,
-  EventDate date NULL);
+  EventDate date NULL)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE temp4
   (PATID VARCHAR(128) NOT NULL,
   RG_date date NULL,
   A1c_date date NULL,
-  rn INT);
+  rn INT)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE A1cRG_final_FirstPair
   (PATID VARCHAR(128) NOT NULL,
-  EventDate date NULL);
+  EventDate date NULL)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE temp5
   (PATID VARCHAR(128) NOT NULL,
   FG_date date NULL,
   A1c_date date NULL,
-  rn INT);
+  rn INT)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE A1cFG_final_FirstPair
   (PATID VARCHAR(128) NOT NULL,
-  EventDate date NULL);
+  EventDate date NULL)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE Visits_initial 
   (PATID VARCHAR(128) NOT NULL,
   ADMIT_DATE date NULL,
-  rn INT);
+  rn INT)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE temp6
   (PATID VARCHAR(128) NOT NULL,
   ADMIT_DATE date NULL,
-  rn INT);
+  rn INT)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE Visits_final_FirstPair
   (PATID VARCHAR(128) NOT NULL,
-  EventDate date NULL);
+  EventDate date NULL)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE SulfonylureaByNames_initial
   (PATID VARCHAR(128) NOT NULL,
-  MedDate date NULL);
+  MedDate date NULL)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE SulfonylureaByRXNORM_initial
   (PATID VARCHAR(128) NOT NULL,
-  MedDate date NULL);
-  CREATE GLOBAL TEMPORARY TABLE AlphaGlucosidaseInhByNames_initial
+  MedDate date NULL)
+  on commit preserve rows;
+CREATE GLOBAL TEMPORARY TABLE AlGluInhByNames_init
   (PATID VARCHAR(128) NOT NULL,
-  MedDate date NULL);
-CREATE GLOBAL TEMPORARY TABLE AlphaGlucosidaseInhByByRXNORM_initial
+  MedDate date NULL)
+  on commit preserve rows;
+CREATE GLOBAL TEMPORARY TABLE AlGluInhByByRXNORM_init
   (PATID VARCHAR(128) NOT NULL,
-  MedDate date NULL);
+  MedDate date NULL)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE GLP1AByNames_initial
   (PATID VARCHAR(128) NOT NULL,
-  MedDate date NULL);
+  MedDate date NULL)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE GLP1AByRXNORM_initial
   (PATID VARCHAR(128) NOT NULL,
-  MedDate date NULL);
-  CREATE GLOBAL TEMPORARY TABLE DPIVInhByNames_initial
+  MedDate date NULL)
+  on commit preserve rows;
+CREATE GLOBAL TEMPORARY TABLE DPIVInhByNames_initial
   (PATID VARCHAR(128) NOT NULL,
-  MedDate date NULL);
+  MedDate date NULL)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE DPIVInhByRXNORM_initial
   (PATID VARCHAR(128) NOT NULL,
-  MedDate date NULL);
+  MedDate date NULL)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE MeglitinideByNames_initial
   (PATID VARCHAR(128) NOT NULL,
-  MedDate date NULL);
+  MedDate date NULL)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE MeglitinideByRXNORM_initial
   (PATID VARCHAR(128) NOT NULL,
-  MedDate date NULL);
-  CREATE GLOBAL TEMPORARY TABLE AmylinomimeticsByNames_initial
+  MedDate date NULL)
+  on commit preserve rows;
+CREATE GLOBAL TEMPORARY TABLE AmylByNames_init
   (PATID VARCHAR(128) NOT NULL,
-  MedDate date NULL);
-CREATE GLOBAL TEMPORARY TABLE AmylinomimeticsByRXNORM_initial
+  MedDate date NULL)
+  on commit preserve rows;
+CREATE GLOBAL TEMPORARY TABLE AmylByRXNORM_init
   (PATID VARCHAR(128) NOT NULL,
-  MedDate date NULL);
+  MedDate date NULL)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE InsulinByNames_initial
   (PATID VARCHAR(128) NOT NULL,
-  MedDate date NULL);
+  MedDate date NULL)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE InsulinByRXNORM_initial
   (PATID VARCHAR(128) NOT NULL,
-  MedDate date NULL);
-  CREATE GLOBAL TEMPORARY TABLE SGLT2InhByNames_initial
+  MedDate date NULL)
+  on commit preserve rows;
+CREATE GLOBAL TEMPORARY TABLE SGLT2InhByNames_initial
   (PATID VARCHAR(128) NOT NULL,
-  MedDate date NULL);
+  MedDate date NULL)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE SGLT2InhByRXNORM_initial
   (PATID VARCHAR(128) NOT NULL,
-  MedDate date NULL);
+  MedDate date NULL)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE InclusionMeds_final
   (PATID VARCHAR(128) NOT NULL,
-  EventDate date NULL);
+  EventDate date NULL)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE BiguanideByNames_initial
   (PATID VARCHAR(128) NOT NULL,
-  MedDate date NULL);
-  CREATE GLOBAL TEMPORARY TABLE BiguanideByRXNORM_initial
+  MedDate date NULL)
+  on commit preserve rows;
+CREATE GLOBAL TEMPORARY TABLE BiguanideByRXNORM_initial
   (PATID VARCHAR(128) NOT NULL,
-  MedDate date NULL);
-CREATE GLOBAL TEMPORARY TABLE ThiazolidinedioneByNames_initial
+  MedDate date NULL)
+  on commit preserve rows;
+CREATE GLOBAL TEMPORARY TABLE ThiazolByNames_init
   (PATID VARCHAR(128) NOT NULL,
-  MedDate date NULL);
-CREATE GLOBAL TEMPORARY TABLE ThiazolidinedioneByRXNORM_initial
+  MedDate date NULL)
+  on commit preserve rows;
+CREATE GLOBAL TEMPORARY TABLE ThiazolByRXNORM_init
   (PATID VARCHAR(128) NOT NULL,
-  MedDate date NULL);
+  MedDate date NULL)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE GLP1AexByNames_initial
   (PATID VARCHAR(128) NOT NULL,
-  MedDate date NULL);
-  CREATE GLOBAL TEMPORARY TABLE GLP1AexByRXNORM_initial
+  MedDate date NULL)
+  on commit preserve rows;
+CREATE GLOBAL TEMPORARY TABLE GLP1AexByRXNORM_initial
   (PATID VARCHAR(128) NOT NULL,
-  MedDate date NULL);
-CREATE GLOBAL TEMPORARY TABLE InclusionUnderRestrictionMeds_initial
+  MedDate date NULL)
+  on commit preserve rows;
+CREATE GLOBAL TEMPORARY TABLE InclUnderRestrMeds_init
   (PATID VARCHAR(128) NOT NULL,
-  MedDate date NULL);
+  MedDate date NULL)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE p1
   (PATID VARCHAR(128) NOT NULL,
-  MedDate date NULL);
+  MedDate date NULL)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE p2
   (PATID VARCHAR(128) NOT NULL,
-  MedDate date NULL);
-  CREATE GLOBAL TEMPORARY TABLE p3
+  MedDate date NULL)
+  on commit preserve rows;
+CREATE GLOBAL TEMPORARY TABLE p3
   (PATID VARCHAR(128) NOT NULL,
-  MedDate date NULL);
+  MedDate date NULL)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE p4
   (PATID VARCHAR(128) NOT NULL,
-  MedDate date NULL);
-CREATE GLOBAL TEMPORARY TABLE InclusionUnderRestrictionMeds_final
+  MedDate date NULL)
+  on commit preserve rows;
+CREATE GLOBAL TEMPORARY TABLE InclUnderRestrMeds_final
   (PATID VARCHAR(128) NOT NULL,
-  EventDate date NULL);
-CREATE GLOBAL TEMPORARY TABLE All
+  EventDate date NULL)
+  on commit preserve rows;
+CREATE GLOBAL TEMPORARY TABLE AllDM
   (PATID VARCHAR(128) NOT NULL,
-  ADMIT_DATE date NULL);
-  CREATE GLOBAL TEMPORARY TABLE Miscarr_Abort
+  ADMIT_DATE date NULL)
+  on commit preserve rows;
+ CREATE GLOBAL TEMPORARY TABLE Miscarr_Abort
   (PATID VARCHAR(128) NOT NULL,
-  ADMIT_DATE date NULL);
+  ADMIT_DATE date NULL)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE Pregn_Birth
   (PATID VARCHAR(128) NOT NULL,
-  ADMIT_DATE date NULL);
+  ADMIT_DATE date NULL)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE DelivProc
   (PATID VARCHAR(128) NOT NULL,
-  ADMIT_DATE date NULL);
+  ADMIT_DATE date NULL)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE PregProc
   (PATID VARCHAR(128) NOT NULL,
-  ADMIT_DATE date NULL);
-  CREATE GLOBAL TEMPORARY TABLE AllPregnancyWithAllDates
+  ADMIT_DATE date NULL)
+  on commit preserve rows;
+CREATE GLOBAL TEMPORARY TABLE AllPregnancyWithAllDates
   (PATID VARCHAR(128) NOT NULL,
-  ADMIT_DATE date NULL);
-  CREATE GLOBAL TEMPORARY TABLE DeltasPregnancy
+  ADMIT_DATE date NULL)
+  on commit preserve rows;
+CREATE GLOBAL TEMPORARY TABLE DeltasPregnancy
   (PATID VARCHAR(128) NOT NULL,
-  ADMIT_DATE date NULL
-  dif INT);
+  ADMIT_DATE date NULL,
+  dif INT)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE NumberPregnancy
   (PATID VARCHAR(128) NOT NULL,
   ADMIT_DATE date NULL,
-  rn INT);
+  rn INT)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE FinalPregnancy
   (PATID VARCHAR(128) NOT NULL, 
-  1_PregnancyDate date NULL, 
-  2_PregnancyDate date NULL, 
-  3_PregnancyDate date NULL, 
-  4_PregnancyDate date NULL, 
-  5_PregnancyDate date NULL,
-  6_PregnancyDate date NULL, 
-  7_PregnancyDate date NULL, 
-  8_PregnancyDate date NULL, 
-  9_PregnancyDate date NULL, 
-  10_PregnancyDate date NULL,
-  11_PregnancyDate date NULL, 
-  12_PregnancyDate date NULL, 
-  13_PregnancyDate date NULL, 
-  14_PregnancyDate date NULL, 
-  15_PregnancyDate date NULL,
-  16_PregnancyDate date NULL, 
-  17_PregnancyDate date NULL, 
-  18_PregnancyDate date NULL, 
-  19_PregnancyDate date NULL, 
-  20_PregnancyDate date NULL,
-  21_PregnancyDate date NULL);
+  PregnancyDate_1 date NULL, 
+  PregnancyDate_2 date NULL, 
+  PregnancyDate_3 date NULL, 
+  PregnancyDate_4 date NULL, 
+  PregnancyDate_5 date NULL,
+  PregnancyDate_6 date NULL, 
+  PregnancyDate_7 date NULL, 
+  PregnancyDate_8 date NULL, 
+  PregnancyDate_9 date NULL, 
+  PregnancyDate_10 date NULL,
+  PregnancyDate_11 date NULL, 
+  PregnancyDate_12 date NULL, 
+  PregnancyDate_13 date NULL, 
+  PregnancyDate_14 date NULL, 
+  PregnancyDate_15 date NULL,
+  PregnancyDate_16 date NULL, 
+  PregnancyDate_17 date NULL, 
+  PregnancyDate_18 date NULL, 
+  PregnancyDate_19 date NULL, 
+  PregnancyDate_20 date NULL,
+  PregnancyDate_21 date NULL)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE FinalStatTable
   (PATID VARCHAR(128) NOT NULL, 
   FirstVisit date NULL, 
-  NumberOfVisits date NULL, 
+  NumberOfVisits INT, 
   DMonsetDate date NULL, 
   DEATH_DATE date NULL,
-  1_PregnancyDate date NULL, 
-  2_PregnancyDate date NULL, 
-  3_PregnancyDate date NULL, 
-  4_PregnancyDate date NULL, 
-  5_PregnancyDate date NULL,
-  6_PregnancyDate date NULL, 
-  7_PregnancyDate date NULL, 
-  8_PregnancyDate date NULL, 
-  9_PregnancyDate date NULL, 
-  10_PregnancyDate date NULL,
-  11_PregnancyDate date NULL, 
-  12_PregnancyDate date NULL, 
-  13_PregnancyDate date NULL, 
-  14_PregnancyDate date NULL, 
-  15_PregnancyDate date NULL,
-  16_PregnancyDate date NULL, 
-  17_PregnancyDate date NULL, 
-  18_PregnancyDate date NULL, 
-  19_PregnancyDate date NULL, 
-  20_PregnancyDate date NULL,
-  21_PregnancyDate date NULL );
+  PregnancyDate_1 date NULL, 
+  PregnancyDate_2 date NULL, 
+  PregnancyDate_3 date NULL, 
+  PregnancyDate_4 date NULL, 
+  PregnancyDate_5 date NULL,
+  PregnancyDate_6 date NULL, 
+  PregnancyDate_7 date NULL, 
+  PregnancyDate_8 date NULL, 
+  PregnancyDate_9 date NULL, 
+  PregnancyDate_10 date NULL,
+  PregnancyDate_11 date NULL, 
+  PregnancyDate_12 date NULL, 
+  PregnancyDate_13 date NULL, 
+  PregnancyDate_14 date NULL, 
+  PregnancyDate_15 date NULL,
+  PregnancyDate_16 date NULL, 
+  PregnancyDate_17 date NULL, 
+  PregnancyDate_18 date NULL, 
+  PregnancyDate_19 date NULL, 
+  PregnancyDate_20 date NULL,
+  PregnancyDate_21 date NULL)
+  on commit preserve rows;
 COMMIT;
 /*---------------------------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------------------------
@@ -263,7 +324,7 @@ COMMIT;
 -----          The date of the first encounter and total number of encounters is collected.               -----
 ---------------------------------------------------------------------------------------------------------------
           Get all encounters for each patient sorted by date: */     
-insert into Denominator_initial
+insert into Denominator_init
 select e.PATID, e.ADMIT_DATE, row_number() over (partition by e.PATID order by e.ADMIT_DATE asc) rn 
   from "&&PCORNET_CDM".ENCOUNTER e
   join "&&PCORNET_CDM".DEMOGRAPHIC d
@@ -271,39 +332,36 @@ select e.PATID, e.ADMIT_DATE, row_number() over (partition by e.PATID order by e
   where e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED') 
   and cast(((cast(e.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <= 89 
   and cast(((cast(e.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18; 
+COMMIT;
 /* Collect visits reported on different days: */
-insert into Denomtemp0
+insert into Denomtemp0v
 select uf.PATID, uf.ADMIT_DATE, row_number() over (partition by un.PATID order by uf.ADMIT_DATE asc) rn 
-  from Denominator_initial un
-  join Denominator_initial uf
+  from Denominator_init un
+  join Denominator_init uf
   on un.PATID = uf.PATID
   where abs(un.ADMIT_DATE-uf.ADMIT_DATE)>1;
+COMMIT;
 /* Collect number of visits (from ones recorded on different days) for each person: */
-insert into Denomtemp1
+insert into Denomtemp1v
 select x.PATID, count(distinct x.ADMIT_DATE) as NumberOfVisits 
-  from Denomtemp0 x
+  from Denomtemp0v x
   group by x.PATID
   order by x.PATID;
+COMMIT;
 /* Collect date of the first visit: */
-insert into Denomtemp2
+insert into Denomtemp2v
 select x.PATID, x.ADMIT_DATE as FirstVisit 
-  from Denomtemp0 x
+  from Denomtemp0v x
   where x.rn=1;
-/* 
-Delete temporary tables not needed anymore 
-*/
-drop table Denominator_initial;
-drop table Denomtemp0;
-drop table Denomtemp1;
-drop table Denomtemp2;
+COMMIT;
 /* 
 Collect data to put summary for the study sample. 
 Further data collection will be performed for this population: 
 */
 insert into DenominatorSummary
 select x.PATID, b.FirstVisit, x.NumerOfVisits
-  from Denomtemp1 x
-  left join Denomtemp2 b
+  from Denomtemp1v x
+  left join Denomtemp2v b
   on a.PATID=b.PATID;
 COMMIT;
 /*-------------------------------------------------------------------------------------------------------------
@@ -337,6 +395,7 @@ select ds.PATID, l.LAB_ORDER_DATE, row_number() over (partition by l.PATID order
   and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
   and cast(((cast(l.LAB_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <= 89 
   and cast(((cast(l.LAB_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18;
+COMMIT;
 /*    The first date out the first pair of encounters is selected:      */
 insert into temp1
 select uf.PATID, uf.LAB_ORDER_DATE,
@@ -372,9 +431,9 @@ select ds.PATID, l.LAB_ORDER_DATE, row_number() over (partition by l.CAP_ID orde
   from DenominatorSummary ds
   join "&&PCORNET_CDM".CAP_LABS l 
   on ds.PATID=l.PATID
-  join "&&PCORNET_CDM".CAP_ENCOUNTERS e
+  join capricorn.dbo.CAP_ENCOUNTERS e
   on l.ENCOUNTERID=e.ENCOUNTERID 
-  join "&&PCORNET_CDM".CAP_DEMOGRAPHICS d
+  join capricorn.dbo.CAP_DEMOGRAPHICS d
   on e.CAP_ID=d.CAP_ID
   where (l.LAB_LOINC in ('1558-6', '1493-6', '10450-5', '1554-5', '17865-7', '14771-0', '77145-1', '1500-8', '1523-0', '1550-3','14769-4') 
 	and (l.TESTNAME in ('GLUF') or l.LAB_NAME in ('GLUF','RUGLUF'))
@@ -382,6 +441,7 @@ select ds.PATID, l.LAB_ORDER_DATE, row_number() over (partition by l.CAP_ID orde
 	and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
 	and cast(((cast(l.LAB_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <= 89 
   and cast(((cast(l.LAB_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18;
+COMMIT;
 /*                     The first date out the first pair of encounters is selected:		*/
 insert into temp2
 select uf.PATID, uf.LAB_ORDER_DATE,row_number() over (partition by un.PATID order by uf.LAB_ORDER_DATE asc) rn 
@@ -427,7 +487,8 @@ select ds.PATID, l.LAB_ORDER_DATE, row_number() over (partition by l.CAP_ID orde
 	and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
 	and cast(((cast(l.LAB_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer)<=89 
   and cast(((cast(l.LAB_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer)>=18;
--- The first date out the first pair of encounters is selected:		
+COMMIT;
+/*-- The first date out the first pair of encounters is selected:		*/
 insert into temp3
 select uf.PATID, uf.LAB_ORDER_DATE, row_number() over (partition by un.PATID order by uf.LAB_ORDER_DATE asc) rn 
   from RG_initial un
@@ -435,6 +496,7 @@ select uf.PATID, uf.LAB_ORDER_DATE, row_number() over (partition by un.PATID ord
   on un.PATID = uf.PATID
   where abs(un.LAB_ORDER_DATE-uf.LAB_ORDER_DATE)>1 
   and abs(cast(((cast(un.LAB_ORDER_DATE as date)-cast(uf.LAB_ORDER_DATE as date))/365.25 ) as integer))<=2;
+COMMIT;
 insert into RG_final_FirstPair
 select x.PATID, x.LAB_ORDER_DATE as EventDate 
   from temp1 x where x.rn=1; 
@@ -463,7 +525,8 @@ select uf.PATID, uf.LAB_ORDER_DATE as RG_date, un.LAB_ORDER_DATE as A1c_date,row
   on un.PATID = uf.PATID
   where abs(un.LAB_ORDER_DATE-uf.LAB_ORDER_DATE)>1 
   and abs(cast(((cast(un.LAB_ORDER_DATE as date)-cast(uf.LAB_ORDER_DATE as date))/365.25 ) as integer))<=2;
--- Select the date for the first lab within the first pair:
+COMMIT;
+/*-- Select the date for the first lab within the first pair:*/
 insert into A1cRG_final_FirstPair
 select x.PATID,
   case when RG_date < A1c_date then RG_date
@@ -496,6 +559,7 @@ select uf.PATID, uf.LAB_ORDER_DATE as FG_date, un.LAB_ORDER_DATE as A1c_date,row
   on un.PATID = uf.PATID
   where abs(un.LAB_ORDER_DATE-uf.LAB_ORDER_DATE)>1 
   and abs(cast(((cast(un.LAB_ORDER_DATE as date)-cast(uf.LAB_ORDER_DATE as date))/365.25 ) as integer))<=2;
+COMMIT;
 /*     Select the date for the first lab within the first pair:      */
 insert into A1cFG_final_FirstPair
 select x.PATID,
@@ -532,6 +596,7 @@ select ds.PATID, l.ADMIT_DATE, row_number() over (partition by l.PATID order by 
 	and (l.ENC_TYPE in ('IP', 'EI', 'AV', 'ED'))
 	and cast(((cast(l.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer)<=89 
   and cast(((cast(l.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer)>=18;
+COMMIT;
 /* Select the date for the first visit within the first pair: */
 insert into temp6
 select uf.PATID, uf.ADMIT_DATE,row_number() over (partition by un.PATID order by uf.ADMIT_DATE asc) rn 
@@ -588,6 +653,7 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer)<=89 
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer)>=18;
   /*            collect meds based on matching RXNORM codes:  */
+COMMIT;
 insert into SulfonylureaByRXNORM_initial
 select ds.PATID, a.RX_ORDER_DATE as MedDate
   from DenominatorSummary ds
@@ -604,7 +670,7 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
 COMMIT;
 /*                             Alpha-glucosidase inhibitor:
                            collect meds based on matching names:     */
-insert into AlphaGlucosidaseInhByNames_initial
+insert into AlGluInhByNames_init
 select ds.PATID, a.RX_ORDER_DATE as MedDate
   from DenominatorSummary ds
   join "&&PCORNET_CDM".PRESCRIBING a
@@ -620,8 +686,9 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
   and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer)<=89 
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer)>=18;
+COMMIT;
 /*  collect meds based on matching RXNORM codes:  */
-insert into AlphaGlucosidaseInhByByRXNORM_initial
+insert into AlGluInhByByRXNORM_init
 select ds.PATID, a.RX_ORDER_DATE as MedDate
   from DenominatorSummary ds
   join "&&PCORNET_CDM".PRESCRIBING a
@@ -654,6 +721,7 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
   and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <=89 
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18;
+COMMIT;
 /*   collect meds based on matching RXNORM codes:  */
 insert into GLP1AByRXNORM_initial
 select ds.PATID, a.RX_ORDER_DATE as MedDate
@@ -700,6 +768,7 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
   and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer)<=89 
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer)>=18;
+COMMIT;
 /* collect meds based on matching RXNORM codes:  */
 insert into DPIVInhByRXNORM_initial
 select ds.PATID, a.RX_ORDER_DATE as MedDate
@@ -733,6 +802,7 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
   and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <=89 
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18;
+COMMIT;
 /*   collect meds based on matching RXNORM codes:  */
 insert into MeglitinideByRXNORM_initial
 select ds.PATID, a.RX_ORDER_DATE as MedDate
@@ -750,7 +820,7 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
 COMMIT;
 /*  Amylinomimetics:
  collect meds based on matching names:  */
-insert into AmylinomimeticsByNames_initial
+insert into AmylByNames_init
 select ds.PATID, a.RX_ORDER_DATE as MedDate
   from DenominatorSummary ds
   join "&&PCORNET_CDM".PRESCRIBING a
@@ -765,6 +835,7 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
   and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <=89 
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18;
+COMMIT;
 /* collect meds based on matching RXNORM codes:  */
 insert into AmylinomimeticsByRXNORM_initial
 select ds.PATID, a.RX_ORDER_DATE as MedDate
@@ -807,6 +878,7 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
   and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <=89 
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18;
+COMMIT;
 /* collect meds based on matching RXNORM codes:   */
 insert into InsulinByRXNORM_initial
 select ds.PATID, a.RX_ORDER_DATE as MedDate
@@ -843,6 +915,7 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
   and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <=89 
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18;
+COMMIT;
 /* collect meds based on matching RXNORM codes:  */
 insert into SGLT2InhByRXNORM_initial
 select ds.PATID, a.RX_ORDER_DATE as MedDate
@@ -871,7 +944,7 @@ from
 		from SulfonylureaByNames_initial as a
 		union
 		select b.PATID, b.MedDate
-		from AlphaGlucosidaseInhByNames_initial as b
+		from AlGluInhByNames_init as b
 		union
 		select d.PATID, d.MedDate
 		from DPIVInhByNames_initial as d
@@ -880,7 +953,7 @@ from
 		from MeglitinideByNames_initial as e
 		union
 		select f.PATID, f.MedDate
-		from AmylinomimeticsByNames_initial as f
+		from AmylByNames_init as f
 		union
 		select g.PATID, g.MedDate
 		from InsulinByNames_initial as g	
@@ -951,6 +1024,7 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
   and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <=89 
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18;
+COMMIT;
 /*   collect meds based on matching RXNORM codes:   */
 insert into BiguanideByRXNORM_initial
 select ds.PATID, a.RX_ORDER_DATE as MedDate
@@ -968,7 +1042,7 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
 COMMIT;
 /*  Thiazolidinedione:
   collect meds based on matching names:  */
-insert into ThiazolidinedioneByNames_initial
+insert into ThiazolByNames_init
 select ds.PATID, a.RX_ORDER_DATE as MedDate
   from DenominatorSummary ds
   join "&&PCORNET_CDM".PRESCRIBING a
@@ -1000,8 +1074,9 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
   and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <=89 
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18;
+COMMIT;
 /* collect meds based on matching RXNORM codes:  */
-insert into ThiazolidinedioneByRXNORM_initial
+insert into ThiazolByRXNORM_init
 select ds.PATID, a.RX_ORDER_DATE as MedDate
   from DenominatorSummary ds
   join "&&PCORNET_CDM".PRESCRIBING a
@@ -1033,6 +1108,7 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
   and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <=89 
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18;
+COMMIT;
 /* collect meds based on matching RXNORM codes:  */
 insert into GLP1AexByRXNORM_initial
 select ds.PATID, a.RX_ORDER_DATE as MedDate
@@ -1050,7 +1126,7 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
 COMMIT;
 /*---------------------------------------------------------------------------------------------------------------
   Combine all meds:    */
-insert into InclusionUnderRestrictionMeds_initial
+insert into InclUnderRestrMeds_init
 select y.PATID, y.MedDate 
   from 
 	(select x.PATID,x.MedDate,row_number() over (partition by x.PATID order by x.MedDate asc) rn
@@ -1059,7 +1135,7 @@ select y.PATID, y.MedDate
 		from #BiguanideByNames_initial as a
 		union
 		select b.PATID, b.MedDate
-		from #ThiazolidinedioneByNames_initial as b
+		from #ThiazolByNames_init as b
 		union
 		select c.PATID, c.MedDate
 		from #GLP1AexByNames_initial as c
@@ -1070,33 +1146,33 @@ COMMIT;
 /* Get set of patients having one med & one visit:  */
 insert into p1
 select x.PATID, x.MedDate 
-  from InclusionUnderRestrictionMeds_initial x
+  from InclUnderRestrMeds_init x
   join Visits_initial y
   on x.PATID=y.PATID;
 COMMIT;
 /* Get set of patients having one med & one HbA1c:  */
 insert into p2
 select x.PATID, x.MedDate 
-  from InclusionUnderRestrictionMeds_initial x
+  from InclUnderRestrMeds_init x
   join A1c_initial y
   on x.PATID=y.PATID;
 COMMIT;
 /* Get set of patients having one med & fasting glucose measurement:  */
 insert into p3
 select x.PATID, x.MedDate 
-  from InclusionUnderRestrictionMeds_initial x
+  from InclUnderRestrMeds_init x
   join FG_initial y
   on x.PATID=y.PATID;
 COMMIT;
 /* Get set of patients having one med & random glucose measurement:  */
 insert into p4
 select x.PATID, x.MedDate
-  from InclusionUnderRestrictionMeds_initial x
+  from InclUnderRestrMeds_init x
   join RG_initial y
   on x.PATID=y.PATID;
 COMMIT;
 /* Collect all non-specific to Diabetes Mellitus meds:  */
-insert into InclusionUnderRestrictionMeds_final
+insert into InclUnderRestrMeds_final
 select y.PATID, y.MedDate as EventDate 
   from
   (select x.PATID, x.MedDate,row_number() over(partition by x.PATID order by x.MedDate asc)rn
@@ -1118,7 +1194,7 @@ COMMIT;
 /*-------------------------------------------------------------------------------------------------------------
 -----                                      Defining onset date                                            -----
 -------------------------------------------------------------------------------------------------------------*/
-insert into All
+insert into AllDM
 select y.PATID, y.EventDate
   from 
 	(select x.PATID,x.EventDate,row_number() over (partition by x.PATID order by x.EventDate asc) rn
@@ -1148,7 +1224,7 @@ select y.PATID, y.EventDate
 		from InclusionMeds_final h
 		union
 		select k.PATID, k.EventDate
-		from InclusionUnderRestrictionMeds_final k
+		from InclUnderRestrMeds_final k
 		) x
 	) y
   where y.rn=1;
@@ -1178,6 +1254,7 @@ select ds.PATID, dia.ADMIT_DATE
 		where ((dia.DX like '63[0-9]._%' and dia.DX_TYPE = '09') or (dia.DX like 'O%' and dia.DX_TYPE = '10'))
 		and cast(((cast(dia.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <= 89 
     and cast(((cast(dia.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18;
+COMMIT;
 /*-- Cases with pregnancy and birth diagnosis codes:*/
 insert into Pregn_Birth
 select ds.PATID,dia.ADMIT_DATE 
@@ -1191,11 +1268,12 @@ select ds.PATID,dia.ADMIT_DATE
 	where (dia.DX like '6[4-7][0-9]._%' and dia.DX_TYPE = '09') 
   and cast(((cast(dia.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <= 89 
   and cast(((cast(dia.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18);
+COMMIT;
 /* Cases with delivery procedures in ICD-9 coding:*/
 insert into DelivProc
 select ds.PATID, p.ADMIT_DATE 
   from DenominatorSummary ds
-  join "&&PCORNET_CDM".PROCEDURES as p 
+  join capricorn.dbo.PROCEDURES as p 
   on ds.PATID=p.PATID
 	join "&&PCORNET_CDM".ENCOUNTER e
 	on p.ENCOUNTERID=e.ENCOUNTERID 
@@ -1204,11 +1282,12 @@ select ds.PATID, p.ADMIT_DATE
 		where ((p.PX like '7[2-5]._%' and p.PX_TYPE = '09') or (p.PX like '1%' and p.PX_TYPE = '10'))
 		and cast(((cast(p.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <= 89 
     and cast(((cast(p.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer)>=18;
+COMMIT;
 /* Cases with delivery procedures in CPT coding:		*/
 insert into PregProc
 select ds.PATID, p.ADMIT_DATE 
   from DenominatorSummary ds
-  join "&&PCORNET_CDM".PROCEDURES as p 
+  join capricorn.dbo.PROCEDURES as p 
   on ds.PATID=p.PATID
 	join "&&PCORNET_CDM".ENCOUNTER e
 	on p.ENCOUNTERID=e.ENCOUNTERID 
@@ -1245,17 +1324,19 @@ select x2.PATID,x2.ADMIT_DATE,x2.dif
   (select x.PATID,x.ADMIT_DATE,DATEDIFF(m, Lag(x.ADMIT_DATE, 1,NULL) OVER(partition by x.PATID ORDER BY x.ADMIT_DATE), x.ADMIT_DATE) as dif
   from AllPregnancyWithAllDates x)x2
   where x2.dif is NULL or x2.dif>=12;
+COMMIT;
 /* Number pregnancies:  */
 insert into NumberPregnancy
 select x.PATID, x.ADMIT_DATE, row_number() over (partition by x.PATID order by x.ADMIT_DATE asc) rn 
   from DeltasPregnancy x;
+COMMIT;
 /* Transponse pregnancy table into single row per patient. Currently allows 21 sepearate pregnacy events:  */
 insert into FinalPregnancy
 select * 
   from
   (select PATID, ADMIT_DATE, rn
   from NumberPregnancy) 
-  pivot (max(ADMIT_DATE) as PregnancyDate for (rn) IN (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21)
+  pivot (max(ADMIT_DATE) for (rn) in (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21)
   ) order by PATID;     
 COMMIT;
 /*-------------------------------------------------------------------------------------------------------------
@@ -1265,13 +1346,13 @@ COMMIT;
 -------------------------------------------------------------------------------------------------------------*/
 insert into FinalStatTable
 select ds.PATID, ds.FirstVisit, ds.NumberOfVisits, x.EventDate as DMonsetDate, d.DEATH_DATE, 
-p.1_PregnancyDate, p.2_PregnancyDate, p.3_PregnancyDate, p.4_PregnancyDate, p.5_PregnancyDate,
-p.6_PregnancyDate, p.7_PregnancyDate, p.8_PregnancyDate, p.9_PregnancyDate, p.10_PregnancyDate,
-p.11_PregnancyDate, p.12_PregnancyDate, p.13_PregnancyDate, p.14_PregnancyDate, p.15_PregnancyDate,
-p.16_PregnancyDate, p.17_PregnancyDate, p.18_PregnancyDate, p.19_PregnancyDate, p.20_PregnancyDate,
-p.21_PregnancyDate
+p.PregnancyDate_1, p.PregnancyDate_2, p.PregnancyDate_3, p.PregnancyDate_4, p.PregnancyDate_5,
+p.PregnancyDate_6, p.PregnancyDate_7, p.PregnancyDate_8, p.PregnancyDate_9, p.PregnancyDate_10,
+p.PregnancyDate_11, p.PregnancyDate_12, p.PregnancyDate_13, p.PregnancyDate_14, p.PregnancyDate_15,
+p.PregnancyDate_16, p.PregnancyDate_17, p.PregnancyDate_18, p.PregnancyDate_19, p.PregnancyDate_20,
+p.PregnancyDate_21
   from DenominatorSummary ds
-  left join All x
+  left join AllDM x
   on a.PATID=x.PATID
   left join "&&PCORNET_CDM".DEATH d
   on a.PATID=d.PATID
