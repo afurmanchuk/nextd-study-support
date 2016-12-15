@@ -52,10 +52,10 @@ select x.PATID, x.ADMIT_DATE as FirstVisit
   where x.rn=1
 )
 
-select x.PATID, b.FirstVisit, x.NumerOfVisits
+select x.PATID, b.FirstVisit, x.NumberOfVisits
   from Denomtemp1v x
   left join Denomtemp2v b
-  on a.PATID=b.PATID;
+  on x.PATID=b.PATID;
 
 /*-------------------------------------------------------------------------------------------------------------
                          Part 2: Defining Deabetes Mellitus sample                                   
