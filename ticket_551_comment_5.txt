@@ -1,0 +1,45 @@
+Hemoglobin A1c definition for GPC sides without PCORNET CDM:
+LOINC codes: 
+'4547-6','17855-8','17856-6','4548-4','4549-2','62388-4','41995-2','59261-8','41995-2'
+Names:
+'Hemoglobin A1c','HBAC','Glycated Hemoglobin',
+'GLYCOHEMOGLOBIN','HbA1C for Type 1 Diabetes (250.01)','HbA1C for Type 2 Diabetes (250.00)',
+'Hemoglobin A1C','Hemoglobin A1C (Glycohemoglobin)','HEMOGLOBIN A1C',
+'Glycated Hemoglobin','Hemoglobin A1C','Hgb A1c SFr Bld','HGB A1C','Hgb A1c MFr Bld',
+'Hemoglobin a1c/hemoglobin.total in blood','Hemoglobin A1c/Hemoglobin.total:MFr:Pt:Bld:Qn',
+'Hemoglobin A1c/Hemoglobin.total in Blood by HPLC','Hemoglobin A1c/Hemoglobin.total',
+'Hgb A1c MFr Bld Calc','Hgb A1c Bld-mCnc','Hgb A1 MFr Bld','Hgb A1c MFr Bld',
+'Hgb A1c MFr Bld Elph','Hgb A1c Bld', 'Hgb A1c SFr Bld IFCC','Hgb A1c MFr Bld JDS/JSCC',
+'Hgb A1c MFr.DF Bld', 'Hgb A Bld Elph-aCnc'
+units: %
+
+Note: make sure check for units, some HbA1c labs could be measured in g/dL. For those (if present) conversion to percents must be done.
+
+
+
+Fasting glucose:
+LOINC codes 
+for labs measured in mg/DL:
+'1493-6','1556-0','10450-5','1554-5','1555-2','17865-7','1556-0','41604-0','1557-8','1558-6','1550-3','41604-0',
+analogues codes for measurements done in mmol/L:
+'14770-2','14771-0','76629-5','77145-1', '14769-4'
+
+Names:
+'GLUF','RUGLUF','GLUF','GLUCOSE TOLERANCE 2 HR 75G','GLUCOSE TOLERANCE 2 HR 75G WITH 1 HR',
+'Gluc Tolerance - Fasting','GLUCOSE TOLERANCE 3 HR','Glucose Fasting','_RUO Glucose Fasting',
+'Fasting glucose [Mass/volume] in Capillary blood',
+'Glucose [Mass/volume] in Serum or Plasma --1.5 hours post 0.05-0.15 U insulin/kg IV 12 hours fasting','Glucose [Mass/volume] in Serum or Plasma --12 hours fasting',
+'Glucose [Mass/volume] in Urine --12 hours fasting',
+'Glucose [Mass/volume] in Serum or Plasma --10 hours fasting',
+'Glucose [Mass/volume] in Serum or Plasma --8 hours fasting',
+'Fasting glucose [Mass/volume] in Capillary blood',
+'Fasting glucose [Mass/volume] in Capillary blood by Glucometer',
+'Fasting glucose [Mass/volume] in Venous blood',
+'Fasting glucose [Mass/volume] in Serum or Plasma',
+'Glucose [Mass/volume] in Serum or Plasma --pre 12 hour fast',
+'Fasting glucose [Moles/volume] in Blood',
+'Fasting glucose [Moles/volume] in Serum, Plasma or Blood'
+
+
+Notes: Values should be converted if lab results are reported in mmol/L. 
+It is OK not to have fasting glucose records, since some places will record such measurements under random glucose codes. 
