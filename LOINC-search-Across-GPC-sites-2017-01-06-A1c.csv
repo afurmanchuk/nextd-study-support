@@ -1,0 +1,158 @@
+gpc,,
+c_name,c_totalnum,c_basecode
+Hgb A1c MFr Bld Calc (17855-8),\N,LOINC:17855-8
+Hgb A1c MFr Bld HPLC (17856-6),\N,LOINC:17856-6
+Hgb A1c Bld-mCnc (41995-2),\N,LOINC:41995-2
+Hgb A1c MFr Bld (4548-4),\N,LOINC:4548-4
+Hgb A1c MFr Bld Elph (4549-2),\N,LOINC:4549-2
+Hgb A1c SFr Bld IFCC (59261-8),\N,LOINC:59261-8
+Hgb A1c MFr Bld JDS/JSCC (62388-4),\N,LOINC:62388-4
+Hgb A1c MFr.DF Bld (71875-9),\N,LOINC:71875-9
+Hemoglobin A1c | Bld-Ser-Plas (LP100945-7),\N,LOINC:LP100945-7
+Hemoglobin A1c (LP16413-4),\N,LOINC:LP16413-4
+mcw,,
+c_name,c_totalnum,c_basecode
+"HEMOGLOBIN A1C, WB (LOINC:17856-6) [ < 10 patients ]",0,LOINC:17856-6
+"GHBA1C (Group:GHBA1C) [ 373,315 facts / 95,421 patients ]",95421,LOINC:4548-4
+"HGB A1C (LOINC:4548-4) [ 373,315 facts / 95,424 patients ]",95424,LOINC:4548-4
+uiowa_terms,,
+c_name,c_totalnum,c_basecode
+"Hgb A1c MFr Bld [ 106,626 patients]",106626,LOINC:4548-4
+unmc,,
+c_name,c_totalnum,c_basecode
+Hemoglobin A1c/Hemoglobin.total in Blood by calculation,0,LOINC:17855-8
+"Hemoglobin A1c/Hemoglobin.total in Blood by HPLC [283,633 facts; 77,543 patients]",77543,LOINC:17856-6
+"Hemoglobin A1c/Hemoglobin.total in Blood by HPLC [283,633 facts; 77,543 patients]",77543,LOINC:17856-6
+"Hemoglobin A1c/Hemoglobin.total in Blood by HPLC [283,633 facts; 77,543 patients]",77543,LOINC:17856-6
+"Hemoglobin A1c/Hemoglobin.total in Blood by HPLC [283,633 facts; 77,543 patients]",77543,LOINC:17856-6
+"Hemoglobin A1c/Hemoglobin.total in Blood by HPLC [283,633 facts; 77,543 patients]",77543,LOINC:17856-6
+"Hemoglobin A1c/Hemoglobin.total in Blood by HPLC [283,633 facts; 77,543 patients]",77543,LOINC:17856-6
+"Hemoglobin A1c/Hemoglobin.total in Blood by HPLC [283,633 facts; 77,543 patients]",77543,LOINC:17856-6
+"Hemoglobin A1c/Hemoglobin.total in Blood by HPLC [283,633 facts; 77,543 patients]",77543,LOINC:17856-6
+"Hemoglobin A1c/Hemoglobin.total in Blood by HPLC [283,633 facts; 77,543 patients]",77543,LOINC:17856-6
+"Hemoglobin A1c/Hemoglobin.total in Blood by HPLC  [283,633 facts; 77,543 patients]",77543,LOINC:17856-6
+"Hemoglobin A1c/Hemoglobin.total in Blood by HPLC [283,633 facts; 77,543 patients]",77543,LOINC:17856-6
+"Hemoglobin A1c/Hemoglobin.total in Blood by HPLC [283,633 facts; 77,543 patients]",77543,LOINC:17856-6
+"Hemoglobin A1c/Hemoglobin.total in Blood by HPLC [283,633 facts; 77,543 patients]",77543,LOINC:17856-6
+"Hemoglobin A1c/Hemoglobin.total in Blood by HPLC [283,633 facts; 77,543 patients]",77543,LOINC:17856-6
+Type of HbA1c measurement device,0,LOINC:41960-6
+HbA1c measurement device Vendor name,0,LOINC:41961-4
+HbA1c measurement device Vendor model code,0,LOINC:41962-2
+HbA1c measurement device Vendor serial number,0,LOINC:41963-0
+HbA1c measurement device Vendor software version,0,LOINC:41964-8
+Hemoglobin A1c ,0,LOINC:41995-2
+Hemoglobin A1c measurement device panel,0,LOINC:43150-2
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood,0,LOINC:4548-4
+Hemoglobin A1c/Hemoglobin.total in Blood by Electrophoresis,0,LOINC:4549-2
+Hemoglobin A1c/Hemoglobin.total in Blood by Electrophoresis,0,LOINC:4549-2
+Hemoglobin A1c/Hemoglobin.total in Blood by Electrophoresis,0,LOINC:4549-2
+Hemoglobin A1c/Hemoglobin.total in Blood by Electrophoresis,0,LOINC:4549-2
+Hemoglobin A1c/Hemoglobin.total in Blood by Electrophoresis,0,LOINC:4549-2
+Hemoglobin A1c/Hemoglobin.total in Blood by Electrophoresis,0,LOINC:4549-2
+Hemoglobin A1c/Hemoglobin.total in Blood by Electrophoresis,0,LOINC:4549-2
+Hemoglobin A1c/Hemoglobin.total in Blood by Electrophoresis,0,LOINC:4549-2
+Hemoglobin A1c/Hemoglobin.total in Blood by Electrophoresis,0,LOINC:4549-2
+Hemoglobin A1c/Hemoglobin.total in Blood by Electrophoresis,0,LOINC:4549-2
+Hemoglobin A1c/Hemoglobin.total in Blood by Electrophoresis,0,LOINC:4549-2
+Hemoglobin A1c/Hemoglobin.total in Blood by Electrophoresis,0,LOINC:4549-2
+Hemoglobin A1c/Hemoglobin.total in Blood by Electrophoresis,0,LOINC:4549-2
+"HEDIS 2009-2011 Codes to identify HbA1c tests (CDC-D) [283,633 facts; 77,543 patients]",77543,LOINC:54039-3
+"HEDIS 2009-2011 Codes to identify HbA1c tests (CDC-D) [283,633 facts; 77,543 patients]",77543,LOINC:54039-3
+"HEDIS 2009-2011 Codes to identify HbA1c tests (CDC-D) [283,633 facts; 77,543 patients]",77543,LOINC:54039-3
+"HEDIS 2009-2011 Codes to identify HbA1c tests (CDC-D) [283,633 facts; 77,543 patients]",77543,LOINC:54039-3
+Hemoglobin A1c in Blood,0,LOINC:55454-3
+Hemoglobin A1c/Hemoglobin.total in Blood by IFCC protocol,0,LOINC:59261-8
+Hemoglobin A1c/Hemoglobin.total in Blood by IFCC protocol,0,LOINC:59261-8
+Hemoglobin A1c/Hemoglobin.total in Blood by IFCC protocol,0,LOINC:59261-8
+Hemoglobin A1c/Hemoglobin.total in Blood by IFCC protocol,0,LOINC:59261-8
+Hemoglobin A1c/Hemoglobin.total in Blood by IFCC protocol,0,LOINC:59261-8
+Hemoglobin A1c/Hemoglobin.total in Blood by IFCC protocol,0,LOINC:59261-8
+Hemoglobin A1c/Hemoglobin.total in Blood by JDS/JSCC protocol,0,LOINC:62388-4
+Hemoglobin A1c/Hemoglobin.total in Blood by JDS/JSCC protocol,0,LOINC:62388-4
+Hemoglobin A1c/Hemoglobin.total in Blood by JDS/JSCC protocol,0,LOINC:62388-4
+"HEDIS 2012, 2013 Codes to identify HbA1c tests (CDC-D) [283,633 facts; 77,543 patients]",77543,LOINC:67761-7
+"HEDIS 2012, 2013 Codes to identify HbA1c tests (CDC-D) [283,633 facts; 77,543 patients]",77543,LOINC:67761-7
+"HEDIS 2012, 2013 Codes to identify HbA1c tests (CDC-D) [283,633 facts; 77,543 patients]",77543,LOINC:67761-7
+Hemoglobin A1c/Hemoglobin.total ,0,LOINC:71875-9
+Hemoglobin A1c/Hemoglobin.total ,0,LOINC:71875-9
+Hemoglobin A1c/Hemoglobin.total ,0,LOINC:71875-9
+"HEDIS 2014 Value Set - HbA1c Tests [283,633 facts; 77,543 patients]",77543,LOINC:74246-0
+"HEDIS 2014 Value Set - HbA1c Tests [283,633 facts; 77,543 patients]",77543,LOINC:74246-0
+"HEDIS 2015, 2016 Value Set - HbA1C Tests [283,633 facts; 77,543 patients]",77543,LOINC:75862-3
+"HEDIS 2015, 2016 Value Set - HbA1C Tests [283,633 facts; 77,543 patients]",77543,LOINC:75862-3
+"HEDIS 2015, 2016 Value Set - HbA1C Tests [283,633 facts; 77,543 patients]",77543,LOINC:75862-3
+uthscsa,,
+c_name,c_totalnum,c_basecode
+Hgb A1c MFr Bld Calc (17855-8),\N,LOINC:17855-8
+Hgb A1c MFr Bld HPLC (17856-6),\N,LOINC:17856-6
+Hgb A1c Bld-mCnc (41995-2),\N,LOINC:41995-2
+"Hgb A1c MFr Bld (4548-4) [69,244 facts; 15,573 patients]",15573,LOINC:4548-4
+Hgb A1c MFr Bld Elph (4549-2),\N,LOINC:4549-2
+Hgb A1c SFr Bld IFCC (59261-8),\N,LOINC:59261-8
+Hgb A1c MFr Bld JDS/JSCC (62388-4),\N,LOINC:62388-4
+Hgb A1c MFr.DF Bld (71875-9),\N,LOINC:71875-9
+"Hemoglobin A1c | Bld-Ser-Plas (LP100945-7) [69,244 facts; 15,573 patients]",15573,LOINC:LP100945-7
+"Hemoglobin A1c (LP16413-4) [69,244 facts; 15,573 patients]",15573,LOINC:LP16413-4
+mu,,
+c_name,c_totalnum,c_basecode
+Hgb A1c SFr Bld Calc (17855-8),0,LOINC:17855-8
+Hgb A1c SFr Bld HPLC (17856-6),0,LOINC:17856-6
+Hgb A1c Bld-mCnc (41995-2),48816,LOINC:41995-2
+Hgb A1c SFr Bld (4548-4),0,LOINC:4548-4
+Hgb A1c SFr Bld Elph (4549-2),0,LOINC:4549-2
+Hgb A1c SFr Bld IFCC (59261-8),0,LOINC:59261-8
+Hemoglobin A1c | Bld-Ser-Plas (LP100945-7),48816,LOINC:LP100945-7
+Hemoglobin A1c (LP16413-4),48816,LOINC:LP16413-4
+iu_lab,,
+c_name,c_totalnum,c_basecode
+Hgb A1c MFr Bld Calc (17855-8),48,LOINC:17855-8
+Hgb A1c MFr Bld HPLC (17856-6),160873,LOINC:17856-6
+Hgb A1c Bld-mCnc (41995-2),0,LOINC:41995-2
+Hgb A1c MFr Bld (4548-4),71627,LOINC:4548-4
+Hgb A1c MFr Bld Elph (4549-2),0,LOINC:4549-2
+Hgb A1c SFr Bld IFCC (59261-8),0,LOINC:59261-8
+Hgb A1c MFr Bld JDS/JSCC (62388-4),0,LOINC:62388-4
+Hgb A1c MFr.DF Bld (71875-9),0,LOINC:71875-9
+Hemoglobin A1c | Bld-Ser-Plas (LP100945-7),213866,LOINC:LP100945-7
+Hemoglobin A1c (LP16413-4),213866,LOINC:LP16413-4
+umn,,
+c_name,c_totalnum,c_basecode
+Hemoglobin A1c/Hemoglobin.total:MFr:Pt:Bld:Qn:Calculated (LOINC:17855-8),0,\N
+Hemoglobin A1c/Hemoglobin.total:MFr:Pt:Bld:Qn:HPLC (LOINC:17856-6),0,\N
+Hemoglobin A1c:MCnc:Pt:Bld:Qn (LOINC:41995-2),0,\N
+Hemoglobin A1c/Hemoglobin.total:MFr:Pt:Bld:Qn (LOINC:4548-4),168791,\N
+Hemoglobin A1c/Hemoglobin.total:MFr:Pt:Bld:Qn:Electrophoresis (LOINC:4549-2),0,\N
+Hemoglobin A1c/Hemoglobin.total:SFr:Pt:Bld:Qn:IFCC (LOINC:59261-8),0,\N
+Hemoglobin A1c/Hemoglobin.total:MFr:Pt:Bld:Qn:JDS/JSCC (LOINC:62388-4),0,\N
+Hemoglobin A1c/Hemoglobin.total:MFr.DF:Pt:Bld:Qn (LOINC:71875-9),0,\N
