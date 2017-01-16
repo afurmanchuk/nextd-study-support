@@ -81,7 +81,7 @@ select ds.PATID, l.LAB_ORDER_DATE, row_number() over (partition by l.PATID order
   on l.ENCOUNTERID=e.ENCOUNTERID 
   join "&&PCORNET_CDM".DEMOGRAPHIC d
   on e.PATID=d.PATID
-  where l.LAB_NAME='A1C' and l.LAB_LOINC in ('27352-2','4548-4') 
+  where l.LAB_NAME='A1C'  
   and l.RESULT_NUM >=6.5 and l.RESULT_UNIT='PERCENT' 
   and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
   and cast(((cast(l.LAB_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <= 89 
@@ -126,8 +126,10 @@ select ds.PATID, l.LAB_ORDER_DATE, row_number() over (partition by l.CAP_ID orde
   on l.ENCOUNTERID=e.ENCOUNTERID 
   join capricorn.dbo.CAP_DEMOGRAPHICS d
   on e.CAP_ID=d.CAP_ID
-  where (l.LAB_LOINC in ('1558-6', '1493-6', '10450-5', '1554-5', '17865-7', '14771-0', '77145-1', '1500-8', '1523-0', '1550-3','14769-4') 
-	and (l.TESTNAME in ('GLUF') or l.LAB_NAME in ('GLUF','RUGLUF'))
+  where (c_basecode in ('1558-6', '1493-6', '10450-5', '1554-5', '17865-7', '14771-0', '77145-1', '1500-8', '1523-0', '1550-3','14769-4','14770-2','14771-0','1556-0','1557-8','21004-7','35184-1','40193-5','41604-0','53049-3','62851-1','62852-9','76629-5','77145-1') 
+	and 
+	 (c_name in ('Fasting glucose  ','Glucose ','GLUCOSE FASTING ','Glucose p 10h fast SerPl-mCnc ','Glucose p 12h fast SerPl-mCnc ','Glucose p 8h fast SerPl-mCnc ','Glucose p fast BldC Glucomtr-mCnc ','Glucose p fast BldC Glucomtr-sCnc ','Glucose p fast BldC-mCnc ','Glucose p fast BldV-mCnc ','Glucose p fast SerPl-mCnc ','Glucose p fast SerPl-msCnc ','Glucose p fast SerPl-sCnc ','Glucose pre-meal SerPl-mCnc ','Glucose pre-meal SerPl-sCnc ','Glucose tolerance ','Glucose Tolerance Test ','PhenX - fasting plasma glucose for diabetes screening - blood draw protocol','PhenX - fasting plasma glucose for diabetes screening - glucometer protocol'
+))
 	and l.VALUE_NUMERIC >= 126 and l.UNIT='mg/dL' and RESULT_NUMERIC='Y')
 	and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
 	and cast(((cast(l.LAB_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <= 89 
@@ -172,8 +174,10 @@ select ds.PATID, l.LAB_ORDER_DATE, row_number() over (partition by l.CAP_ID orde
   on l.ENCOUNTERID=e.ENCOUNTERID 
   join "&&PCORNET_CDM".DEMOGRAPHIC d
   on e.PATID=d.PATID
-  where (l.LAB_LOINC in ('2345-7','14749-6')
-	and (l.TESTNAME in ('GLU') or l.LAB_NAME in ('CHEMP','GLU CP','KIDP','SGLU','GLU','SBAMET','SCHEM','SRENAL'))
+  where (c_basecode in ('2345-7','14749-6','10449-7','12614-4','14743-9','14760-3','14761-1','14768-6','14769-4','15074-8','1521-4','1547-9','16165-3','16166-1','16167-9','16168-7','16169-5','16170-3','16915-1','21004-7','2339-0','2340-8','2341-6','27353-2','34546-2','35211-2','39480-9','39481-7','40858-3','41651-1','41652-9','41653-7','41896-2','41897-0','41898-8','41899-6','41900-2','43151-0','44919-9','45052-8','45053-6','45054-4','45055-1','45056-9','47995-6','48986-4','48988-0','48989-8','48990-6','48991-4','48992-2','48993-0','48994-8','51596-5','52041-1','53094-9','53474-3','53553-4','54246-4','5914-7','59812-8','59813-6','59814-4','59815-1','62856-0','6689-4','6777-7','72171-2','72516-8','74244-5','74774-1','75864-9','77135-2','77677-3','80959-0','LP43629-2','LP51365-2','LP51830-5','LP71758-4'
+)
+	and (c_name in ('Blood glucose monitors','Est. average glucose Bld gHb Est-mCnc ','Est. average glucose Bld gHb Est-sCnc ','EST AVG GLUCOSE ','Estimated average glucose ','Glucose','Glucose 10 AM SerPl-mCnc ','Glucose 10 PM SerPl-mCnc ','Glucose 11 AM SerPl-mCnc ','Glucose 11 AM SerPl-sCnc ','GLUCOSE @11AM, SERUM ','Glucose 12 AM SerPl-mCnc ','Glucose 12 AM SerPl-sCnc ','Glucose 12 PM SerPl-mCnc ','Glucose 12 PM SerPl-sCnc ','Glucose 1.5h p meal SerPl-sCnc ','Glucose 1h p meal SerPl-mCnc ','Glucose 2h p meal BldC-sCnc ','Glucose 2h p meal Bld-mCnc ','Glucose 2h p meal SerPl-mCnc ','Glucose 2h p meal SerPl-sCnc ','GLUCOSE, 2 HR POST PRANDIAL ','Glucose 2 PM SerPl-mCnc ','Glucose 3 AM SerPl-mCnc ','Glucose 3 PM SerPl-mCnc ','Glucose 3 PM SerPl-sCnc ','Glucose 4 AM specimen SerPl-sCnc','Glucose 4 PM SerPl-mCnc ','Glucose 4 PM SerPl-sCnc ','GLUCOSE @4PM, SERUM ','Glucose 5 PM SerPl-mCnc ','Glucose 6 AM SerPl-mCnc ','Glucose 6 PM SerPl-mCnc ','Glucose 7 AM BldC Glucomtr-sCnc ','Glucose 7 AM SerPl-sCnc ','Glucose 7h p meal SerPl-mCnc ','Glucose 8 AM SerPl-mCnc ','Glucose 8 AM SerPl-sCnc ','Glucose 8 PM SerPl-mCnc ','Glucose 8 PM SerPl-sCnc ','GLUCOSE, ACCU-CHEK, mg/dl ','Glucose BldA-mCnc ','Glucose BldA-sCnc ','Glucose BldC Glucomtr-mCnc ','Glucose BldC Glucomtr-sCnc ','Glucose BldCo-sCnc ','Glucose BldC-sCnc ','Glucose Bld Manual Strip-mCnc ','Glucose Bld-mCnc ','Glucose Bld Ql Strip ','Glucose Bld-sCnc ','Glucose Bld Strip.auto-mCnc ','Glucose Bld Strip.auto-sCnc ','Glucose Bld Test Str Auto-mCnc ','Glucose BldV-mCnc ','Glucose BldV-sCnc ','Glucose BS BldC-mCnc ','Glucose BS SerPl-mCnc ','Glucose BS SerPl-sCnc ','Glucose mean value ','Glucose meter device panel','Glucose meter device Vendor name','Glucose meter device Vendor serial number','Glucose meter device Vendor software version','GLUCOSE, PLASMA ','Glucose p meal SerPl-mCnc ','Glucose p meal SerPl-sCnc ','Glucose pre 12h fast SerPl-sCnc ','Glucose SerPlBld-mCnc ','Glucose SerPl-mCnc ','Glucose SerPl-msCnc ','Glucose SerPl-sCnc ','Glucose tolerance','Glucose tolerance 2 hours panel - Serum or Plasma','HEDIS 2014 Value Set - Glucose Tests ','HEDIS 2015, 2016 Value Set - Glucose Tests ','Model Cd Glucose Mtr Dev ','PhenX - oral glucose tolerance test protocol ','Protein and Glucose panel  ','Type of Glucose meter device','Vendor device model code of Glucose meter','WHOLE BLOOD GLUCOSE '
+))
 	and l.VALUE_NUMERIC >= 200 and l.UNIT='mg/dL' and RESULT_NUMERIC='Y')
 	and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
 	and cast(((cast(l.LAB_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer)<=89 
@@ -283,7 +287,7 @@ select ds.PATID, l.ADMIT_DATE, row_number() over (partition by l.PATID order by 
   on l.ENCOUNTERID=e.ENCOUNTERID 
   join "&&PCORNET_CDM".DEMOGRAPHIC d
   on e.PATID=d.PATID
-  where ((l.DX like '250._[0,1,2,3]' and l.DX_TYPE = '09') or (l.DX like 'E1[0,1]%' and l.DX_TYPE = '10')) 
+  where ((REGEXP_LIKE (l.DX, '250\..[0|1|2|3]') and l.DX_TYPE = '09') or (REGEXP_LIKE (l.DX, 'E1[0|1]') and l.DX_TYPE = '10'))
 	and (l.ENC_TYPE in ('IP', 'EI', 'AV', 'ED'))
 	and cast(((cast(l.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer)<=89 
   and cast(((cast(l.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer)>=18;
@@ -322,23 +326,23 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
   join "&&PCORNET_CDM".DEMOGRAPHIC d
   on e.PATID=d.PATID
   where (
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Acetohexamide%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%D[i,y]melor%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%glimep[e,i]ride%') or
+  regexp_like(a.RAW_RX_MED_NAME, 'Acetohexamide','i') or regexp_like(a.RAW_RX_MED_NAME, 'D[i|y]melor','i') or regexpr_like(a.RAW_RX_MED_NAME, 'glimep[e,i]ride','i') or
   /*  This is combination of glimeperide-rosiglitazone :  */
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Avandaryl%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Amaryl%') or
+  regexp_like(a.RAW_RX_MED_NAME,'Avandaryl','i') or regexp_like(a.RAW_RX_MED_NAME,'Amaryl','i') or
   /*  this is combination of glimepiride-pioglitazone:  */
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Duetact') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%gliclazide%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Uni Diamicron%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%glipizide%') or
+  regexp_like(a.RAW_RX_MED_NAME,'Duetact','i') or
+ regexp_like(a.RAW_RX_MED_NAME,'gliclazide','i') or regexp_like(a.RAW_RX_MED_NAME,'Uni Diamicron','i') or regexp_like(a.RAW_RX_MED_NAME,'glipizide','i') or
   /*  this is combination of metformin-glipizide :  */
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Metaglip%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Glucotrol%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Min[i,o]diab%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Glibenese%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Glucotrol XL%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Glipizide XL%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%glyburide%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Glucovance%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%glibenclamide%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%DiaBeta%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Glynase%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Micronase%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%chlorpropamide%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Diabinese%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Apo-Chlorpropamide%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Glucamide%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Novo-Propamide%') or  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Insulase%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%tolazamide%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Tolinase%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Glynase PresTab%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Tolamide%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%tolbutamide%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Orinase%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Tol-Tab%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Apo-Tolbutamide%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Novo-Butamide%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Glyclopyramide%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Deamelin[-]S%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Gliquidone%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Glurenorm%') 
+ regexp_like(a.RAW_RX_MED_NAME,'Metaglip','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Glucotrol','i') or regexp_like(a.RAW_RX_MED_NAME,'Min[i|o]diab','i') or regexp_like(a.RAW_RX_MED_NAME,'Glibenese','i') or regexp_likeUPPER(a.RAW_RX_MED_NAME,'Glucotrol XL','i') or regexp_like(a.RAW_RX_MED_NAME,'Glipizide XL','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'glyburide','i') or regexp_like(a.RAW_RX_MED_NAME,'Glucovance','i') or
+regexp_like(a.RAW_RX_MED_NAME,'glibenclamide','i') or regexp_like(a.RAW_RX_MED_NAME,'DiaBeta','i') or regexp_like(a.RAW_RX_MED_NAME,'Glynase','i') or
+regexp_like(a.RAW_RX_MED_NAME,'Micronase','i') or regexp_like(a.RAW_RX_MED_NAME,'chlorpropamide','i') or regexp_like(a.RAW_RX_MED_NAME,'Diabinese','i') or regexp_like(a.RAW_RX_MED_NAME,'Apo-Chlorpropamide','i') or
+regexp_like(a.RAW_RX_MED_NAME,'Glucamide','i') or regexp_like(a.RAW_RX_MED_NAME,'Novo-Propamide','i') or regexp_like(a.RAW_RX_MED_NAME,'Insulase','i') or
+regexp_like(a.RAW_RX_MED_NAME,'tolazamide','i') or regexp_like(a.RAW_RX_MED_NAME,'Tolinase','i') or regexp_like(a.RAW_RX_MED_NAME,'Glynase PresTab','i') or
+regexp_like(a.RAW_RX_MED_NAME,'Tolamide','i') or regexp_like(a.RAW_RX_MED_NAME,'tolbutamide','i') or regexp_like(a.RAW_RX_MED_NAME,'Orinase','i') or
+regexp_like(a.RAW_RX_MED_NAME,'Tol-Tab','i') or regexp_like(a.RAW_RX_MED_NAME,'Apo-Tolbutamide','i') or regexp_like(a.RAW_RX_MED_NAME,('Novo-Butamide','i') or regexp_like(a.RAW_RX_MED_NAME,'Glyclopyramide','i') or
+regexp_like(a.RAW_RX_MED_NAME,'Deamelin[-]S','i') or regexp_like(a.RAW_RX_MED_NAME,'Gliquidone','i') or regexp_like(a.RAW_RX_MED_NAME,'Glurenorm','i') 
   )
   and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer)<=89 
@@ -371,8 +375,8 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
   join "&&PCORNET_CDM".DEMOGRAPHIC d
   on e.PATID=d.PATID
   where (
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%acarbose%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Precose%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Glucobay%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%miglitol%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Glyset%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Voglibose%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Basen%') 
+  regexp_like(a.RAW_RX_MED_NAME,'acarbose','i') or regexp_like(a.RAW_RX_MED_NAME,'Precose','i') or regexp_like(a.RAW_RX_MED_NAME,'Glucobay','i') or regexp_like(a.RAW_RX_MED_NAME,'miglitol','i') or regexp_like(a.RAW_RX_MED_NAME,'Glyset','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Voglibose','i') or regexp_like(a.RAW_RX_MED_NAME,'Basen','i') 
     )
   and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer)<=89 
@@ -405,9 +409,9 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
   join "&&PCORNET_CDM".DEMOGRAPHIC d
   on e.PATID=d.PATID
   where (
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Lixisenatide%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Adlyxin%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Lyxumia%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Albiglutide%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Tanzeum%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Eperzan%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Dulaglutide%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Trulicity%') 
+  regexp_like(a.RAW_RX_MED_NAME,'Lixisenatide','i') or regexp_like(a.RAW_RX_MED_NAME,'Adlyxin','i') or regexp_like(a.RAW_RX_MED_NAME,'Lyxumia','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Albiglutide','i') or regexp_like(a.RAW_RX_MED_NAME,'Tanzeum','i') or regexp_like(a.RAW_RX_MED_NAME,'Eperzan','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Dulaglutide','i') or regexp_like(a.RAW_RX_MED_NAME,'Trulicity','i') 
   )
   and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <=89 
@@ -440,21 +444,21 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
   join "&&PCORNET_CDM".DEMOGRAPHIC d
   on e.PATID=d.PATID
   where (
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%alogliptin%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Kazano%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Oseni%')
-  or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Nesina%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Anagliptin%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Suiny%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%linagliptin%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Jentadueto%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Jentadueto XR%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Glyxambi%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Tradjenta%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%saxagliptin%') or
+  regexp_like(a.RAW_RX_MED_NAME,'alogliptin','i') or regexp_like(a.RAW_RX_MED_NAME,'Kazano','i') or regexp_like(a.RAW_RX_MED_NAME,'Oseni','i')
+  or regexp_like(a.RAW_RX_MED_NAME,'Nesina','i') or regexp_like(a.RAW_RX_MED_NAME,'Anagliptin','i') or regexp_like(a.RAW_RX_MED_NAME,'Suiny','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'linagliptin','i') or regexp_like(a.RAW_RX_MED_NAME,'Jentadueto','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Jentadueto XR','i') or regexp_like(a.RAW_RX_MED_NAME,'Glyxambi','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Tradjenta','i') or regexp_like(a.RAW_RX_MED_NAME,'saxagliptin','i') or
   /*  this is combination of metformin-saxagliptin :   */
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Kombiglyze XR%')
-  or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Onglyza%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%sitagliptin%') or
+  regexp_like(a.RAW_RX_MED_NAME,'Kombiglyze XR','i')
+  or regexp_like(a.RAW_RX_MED_NAME,'Onglyza','i') or regexp_like(a.RAW_RX_MED_NAME, 'sitagliptin','i') or
   /*  this is combination of metformin-vildagliptin :   */
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Eucreas%') or
+  regexp_like(a.RAW_RX_MED_NAME,'Eucreas','i') or
   /*  this is combination of sitagliptin-simvastatin:   */
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Juvisync%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Epistatin%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Synvinolin%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Zocor%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Janumet%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('% Janumet XR%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Januvia%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Teneligliptin%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Tenelia%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Vildagliptin%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Galvus%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Zomelis%')
+  regexp_like(a.RAW_RX_MED_NAME,'Juvisync','i') or regexp_like(a.RAW_RX_MED_NAME,'Epistatin','i') or regexp_like(a.RAW_RX_MED_NAME,'Synvinolin','i') or regexp_like(a.RAW_RX_MED_NAME,'Zocor','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Janumet','i') or regexp_like(a.RAW_RX_MED_NAME,'Janumet XR','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Januvia','i') or regexp_like(a.RAW_RX_MED_NAME,'Teneligliptin','i') or regexp_like(a.RAW_RX_MED_NAME,'Tenelia','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Vildagliptin','i') or regexp_like(a.RAW_RX_MED_NAME,'Galvus','i') or regexp_like(a.RAW_RX_MED_NAME,'Zomelis','i')
   )
   and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer)<=89 
@@ -487,8 +491,8 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
   join "&&PCORNET_CDM".DEMOGRAPHIC d
   on e.PATID=d.PATID
   where (
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%nateglinide%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Starlix%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Prandin%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%NovoNorm%') 
+  regexp_like(a.RAW_RX_MED_NAME,'nateglinide','i') or regexp_like(a.RAW_RX_MED_NAME,'Starlix','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Prandin','i') or regexp_like(a.RAW_RX_MED_NAME,'NovoNorm','i') 
   )
   and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <=89 
@@ -521,7 +525,7 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
   join "&&PCORNET_CDM".DEMOGRAPHIC d
   on e.PATID=d.PATID
   where (
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Pramlintide%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Symlin%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%SymlinPen 120%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%SymlinPen 60%') 
+  regexp_like(a.RAW_RX_MED_NAME,'Pramlintide','i') or regexp_like(a.RAW_RX_MED_NAME,'Symlin','i') or regexp_like(a.RAW_RX_MED_NAME,'SymlinPen 120','i') or regexp_like(a.RAW_RX_MED_NAME,'SymlinPen 60','i') 
   )
   and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <=89 
@@ -554,17 +558,17 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
   join "&&PCORNET_CDM".DEMOGRAPHIC d
   on e.PATID=d.PATID
   where (
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Insulin aspart%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%NovoLog%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Insulin glulisine%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Apidra%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Insulin lispro%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Humalog%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Insulin inhaled%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Afrezza%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Regular insulin%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Humulin R%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Novolin R%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Insulin NPH%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Humulin N%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Novolin N%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Insulin detemir%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Levemir%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Insulin glargine%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Lantus%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Lantus SoloStar%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Toujeo%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Basaglar%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Insulin degludec%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Tresiba%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Insulin aspart protamine%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Insulin aspart%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Actrapid%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Hypurin%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Iletin%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Insulatard%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Insuman%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Mixtard%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%NovoMix%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%NovoRapid%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Oralin%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Abasaglar%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%V-go%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Ryzodeg%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Insulin lispro protamine%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('insulin lispro%') 
+  regexp_like(a.RAW_RX_MED_NAME,'Insulin aspart','i') or regexp_like(a.RAW_RX_MED_NAME,'NovoLog','i') or regexp_like(a.RAW_RX_MED_NAME,'Insulin glulisine','i') or regexp_like(a.RAW_RX_MED_NAME,'Apidra','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Insulin lispro','i') or regexp_like(a.RAW_RX_MED_NAME,'Humalog','i') or regexp_like(a.RAW_RX_MED_NAME,'Insulin inhaled','i') or regexp_like(a.RAW_RX_MED_NAME,'Afrezza','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Regular insulin','i') or regexp_like(a.RAW_RX_MED_NAME,'Humulin R','i') or regexp_like(a.RAW_RX_MED_NAME,'Novolin R','i') or regexp_like(a.RAW_RX_MED_NAME,'Insulin NPH','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Humulin N','i') or regexp_like(a.RAW_RX_MED_NAME,'Novolin N','i') or regexp_like(a.RAW_RX_MED_NAME,'Insulin detemir','i') or regexp_like(a.RAW_RX_MED_NAME,'Levemir','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Insulin glargine','i') or regexp_like(a.RAW_RX_MED_NAME,'Lantus','i') or regexp_like(a.RAW_RX_MED_NAME,'Lantus SoloStar','i') or regexp_like(a.RAW_RX_MED_NAME,'Toujeo','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Basaglar','i') or regexp_like(a.RAW_RX_MED_NAME,'Insulin degludec','i') or regexp_like(a.RAW_RX_MED_NAME,'Tresiba','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Insulin aspart protamine','i') or regexp_like(a.RAW_RX_MED_NAME,'Insulin aspart','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Actrapid','i') or regexp_like(a.RAW_RX_MED_NAME,'Hypurin','i') or regexp_like(a.RAW_RX_MED_NAME,'Iletin','i') or regexp_like(a.RAW_RX_MED_NAME,'Insulatard','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Insuman','i') or regexp_like(a.RAW_RX_MED_NAME,'Mixtard','i') or regexp_like(a.RAW_RX_MED_NAME,'NovoMix','i') or regexp_like(a.RAW_RX_MED_NAME,'NovoRapid','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Oralin','i') or regexp_like(a.RAW_RX_MED_NAME,'Abasaglar','i') or regexp_like(a.RAW_RX_MED_NAME,'V-go','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Ryzodeg','i') or regexp_like(a.RAW_RX_MED_NAME,'Insulin lispro protamine','i') or regexp_like(a.RAW_RX_MED_NAME,'insulin lispro','i') 
   )
   and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <=89 
@@ -597,11 +601,11 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
   join "&&PCORNET_CDM".DEMOGRAPHIC d
   on e.PATID=d.PATID
   where (
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%dapagliflozin%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%F[a,o]rxiga%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%canagliflozin%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Invokana%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Invokamet%') or  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Xigduo XR%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Sulisent%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%empagliflozin%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Jardiance%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Synjardy%') or
+  regexp_like(a.RAW_RX_MED_NAME,'dapagliflozin','i') or regexp_like(a.RAW_RX_MED_NAME,'F[a,o]rxiga','i') or regexp_like(a.RAW_RX_MED_NAME,'canagliflozin','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Invokana','i') or regexp_like(a.RAW_RX_MED_NAME,'Invokamet','i') or regexp_like(a.RAW_RX_MED_NAME,'Xigduo XR','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Sulisent','i') or regexp_like(a.RAW_RX_MED_NAME,'empagliflozin','i') or regexp_like(a.RAW_RX_MED_NAME,'Jardiance','i') or regexp_like(a.RAW_RX_MED_NAME,'Synjardy','i') or
   /*  this one is combination of linagliptin-empagliflozin, see also Dipeptidyl Peptidase IV Inhibitors section  */
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Glyxambi%') 
+  regexp_like(a.RAW_RX_MED_NAME,'Glyxambi','i') 
   )
   and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <=89 
@@ -689,28 +693,28 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
   join "&&PCORNET_CDM".DEMOGRAPHIC d
   on e.PATID=d.PATID
   where (
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Glucophage%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Fortamet%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Glumetza%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Riomet%') or
+  regexp_like(a.RAW_RX_MED_NAME,'Glucophage','i') or regexp_like(a.RAW_RX_MED_NAME,'Fortamet','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Glumetza','i') or regexp_like(a.RAW_RX_MED_NAME,'Riomet','i') or
   /*   this is combination of rosiglitizone-metformin:   */
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Amaryl M%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Avandamet%') or
-  (UPPER(a.RAW_RX_MED_NAME) like UPPER('%Metformin%')
+  regexp_like(a.RAW_RX_MED_NAME,'Amaryl M','i') or regexp_like(a.RAW_RX_MED_NAME,'Avandamet','i') or
+  (regexp_like(a.RAW_RX_MED_NAME,'Metformin','i')
   and not (
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Kazano%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Invokamet%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Xigduo XR%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Synjardy%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Metaglip%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Glucovance%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Jentadueto%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Jentadueto XR%') or
+  regexp_like(a.RAW_RX_MED_NAME,'Kazano','i') or regexp_like(a.RAW_RX_MED_NAME,'Invokamet','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Xigduo XR','i') or regexp_like(a.RAW_RX_MED_NAME,'Synjardy','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Metaglip','i') or regexp_like(a.RAW_RX_MED_NAME,'Glucovance','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Jentadueto','i') or regexp_like(a.RAW_RX_MED_NAME,'Jentadueto XR','i') or
   /*  this one is combination of metformin-vildagliptin:  */
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Eucreas%')
+  regexp_like(a.RAW_RX_MED_NAME,'Eucreas','i')
   )
   ) or
   /*  this one is combination of metformin-pioglitazone :  */
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Actoplus%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Actoplus Met%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Actoplus Met XR%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Competact%') or
+  regexp_like(a.RAW_RX_MED_NAME,'Actoplus','i') or regexp_like(a.RAW_RX_MED_NAME,'Actoplus Met','i') or regexp_like(a.RAW_RX_MED_NAME,'Actoplus Met XR','i') or regexp_like(a.RAW_RX_MED_NAME,'Competact','i') or
   /*  this one is combination of metformin-repaglinide:  */
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%PrandiMet%') or
+  regexp_like(a.RAW_RX_MED_NAME,'PrandiMet','i') or
   /*  this is combination of metformin-saxagliptin :  */
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Kombiglyze XR%') or
+  regexp_like(a.RAW_RX_MED_NAME,'Kombiglyze XR','i') or
   /*  this is combination of:  */
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Janumet%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('% Janumet XR%') 
+  regexp_like(a.RAW_RX_MED_NAME,'Janumet','i') or regexp_like(a.RAW_RX_MED_NAME,' Janumet XR','i') 
   )
   and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <=89 
@@ -743,24 +747,24 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
   join "&&PCORNET_CDM".DEMOGRAPHIC d
   on e.PATID=d.PATID
   where (
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Avandia%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Actos%') or
-  (UPPER(a.RAW_RX_MED_NAME) like UPPER('%rosiglitazone%') and not
+  regexp_like(a.RAW_RX_MED_NAME,'Avandia','i') or regexp_like(a.RAW_RX_MED_NAME,'Actos','i') or
+  (regexp_like(a.RAW_RX_MED_NAME,'rosiglitazone','i') and not
   /*  this ione is combination of metformin-rosiglitazone:  */
-  (UPPER(a.RAW_RX_MED_NAME) like UPPER('%Avandamet%') or
+  (regexp_like(a.RAW_RX_MED_NAME,'Avandamet','i') or
   /*  this is combination of rosiglitizone-metformin:  */
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Amaryl M%') or
+  regexp_like(a.RAW_RX_MED_NAME,'Amaryl M','i') or
   /*  this is combination of glimeperide-rosiglitazone :  */
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Avandaryl%')
+  regexp_like(a.RAW_RX_MED_NAME,'Avandaryl','i')
   )) or
-  (UPPER(a.RAW_RX_MED_NAME) like UPPER('%pioglitazone%') and not
+  (regexp_like(a.RAW_RX_MED_NAME,'pioglitazone','i') and not
   /*  this ione is combination of metformin-pioglitazone :  */
-  (UPPER(a.RAW_RX_MED_NAME) like UPPER('%Actoplus%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Actoplus Met%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Actoplus Met XR%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Competact%') or
+  (regexp_like(a.RAW_RX_MED_NAME,'Actoplus','i') or regexp_like(a.RAW_RX_MED_NAME,'Actoplus Met','i') or regexp_like(a.RAW_RX_MED_NAME,'Actoplus Met XR','i') or regexp_like(a.RAW_RX_MED_NAME,'Competact','i') or
   /*  this is combination of glimepiride-pioglitazone:  */
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Duetact') or
+  regexp_like(a.RAW_RX_MED_NAME,'Duetact','i') or
   /* this is combination of alogliptin-pioglitazone:  */
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Oseni)')
+  regexp_like(a.RAW_RX_MED_NAME,'Oseni','i')
   )) or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Troglitazone%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Noscal%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Re[z,s]ulin%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Romozin%') 
+  regexp_like(a.RAW_RX_MED_NAME,'Troglitazone','i') or regexp_like(a.RAW_RX_MED_NAME,'Noscal','i') or regexp_like(a.RAW_RX_MED_NAME,'Re[z|s]ulin','i') or regexp_like(a.RAW_RX_MED_NAME,'Romozin','i') 
   )
   and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <=89 
@@ -793,8 +797,8 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
   join "&&PCORNET_CDM".DEMOGRAPHIC d
   on e.PATID=d.PATID
   where (
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Exenatide%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Byetta%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Bydureon%') or
-  UPPER(a.RAW_RX_MED_NAME) like UPPER('%Liraglutide%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Victoza%') or UPPER(a.RAW_RX_MED_NAME) like UPPER('%Saxenda%') 
+  regexp_like(a.RAW_RX_MED_NAME,'Exenatide','i') or regexp_like(a.RAW_RX_MED_NAME,'Byetta','i') or regexp_like(a.RAW_RX_MED_NAME,'Bydureon','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Liraglutide','i') or regexp_like(a.RAW_RX_MED_NAME,'Victoza','i') or regexp_like(a.RAW_RX_MED_NAME,'Saxenda','i') 
   )
   and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <=89 
@@ -862,6 +866,12 @@ select x.PATID, x.MedDate
   join RG_initial y
   on x.PATID=y.PATID;
 COMMIT;
+insert into p5
+select x.PATID, x.MedDate
+from #InclusionUnderRestrictionMeds_initial x
+join #A1cFG_final_FirstPair y
+on x.PATID=y.PATID
+COMMIT;
 /* Collect all non-specific to Diabetes Mellitus meds:  */
 insert into InclUnderRestrMeds_final
 select y.PATID, y.MedDate as EventDate 
@@ -878,7 +888,14 @@ select y.PATID, y.MedDate as EventDate
   from p3 c
   union
   select d.PATID, d.MedDate  
-  from p4 d)x
+  from p4 d
+  union
+  select e.PATID, e.MedDate
+  from p5 as e
+  union
+  select f.PATID, f.MedDate
+  from p6 as f
+  )x
   )y
   where y.rn=1;
 COMMIT;
@@ -942,7 +959,7 @@ select ds.PATID, dia.ADMIT_DATE
 	on dia.ENCOUNTERID=e.ENCOUNTERID 
 	join "&&PCORNET_CDM".DEMOGRAPHIC d
 	on e.PATID=d.PATID
-		where ((dia.DX like '63[0-9]._%' and dia.DX_TYPE = '09') or (dia.DX like 'O%' and dia.DX_TYPE = '10'))
+		where ((regexp_like(dia.DX,'63[0|1|2|3|4|5|6|7|8|9]\..') and dia.DX_TYPE = '09') or (regexp_like(dia.DX, '^O') and dia.DX_TYPE = '10'))
 		and cast(((cast(dia.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <= 89 
     and cast(((cast(dia.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18;
 COMMIT;
@@ -956,7 +973,7 @@ select ds.PATID,dia.ADMIT_DATE
 	on dia.ENCOUNTERID=e.ENCOUNTERID 
 	join "&&PCORNET_CDM".DEMOGRAPHIC d
 	on e.PATID=d.PATID	
-	where (dia.DX like '6[4-7][0-9]._%' and dia.DX_TYPE = '09') 
+	where (regexp_like(dia.DX,'6[4|5|6|7][0|1|2|3|4|5|6|7|8|9]\..' and dia.DX_TYPE = '09') 
   and cast(((cast(dia.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <= 89 
   and cast(((cast(dia.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18);
 COMMIT;
@@ -970,7 +987,7 @@ select ds.PATID, p.ADMIT_DATE
 	on p.ENCOUNTERID=e.ENCOUNTERID 
 	join "&&PCORNET_CDM".DEMOGRAPHIC d
 	on e.PATID=d.PATID	
-		where ((p.PX like '7[2-5]._%' and p.PX_TYPE = '09') or (p.PX like '1%' and p.PX_TYPE = '10'))
+		where ((regexp_like(p.PX,'7[2|3|4|5]\..' and p.PX_TYPE = '09') or (p.PX like '^1' and p.PX_TYPE = '10'))
 		and cast(((cast(p.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <= 89 
     and cast(((cast(p.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer)>=18;
 COMMIT;
@@ -984,7 +1001,7 @@ select ds.PATID, p.ADMIT_DATE
 	on p.ENCOUNTERID=e.ENCOUNTERID 
 	join "&&PCORNET_CDM".DEMOGRAPHIC d
 	on e.PATID=d.PATID	
-	where (p.PX like '59[0-9][0-9][0-9]' and p.PX_TYPE='C3') 
+	where (regexp_like(p.PX,'59[0|1|2|3|4|5|6|7|8|9][0|1|2|3|4|5|6|7|8|9][0|1|2|3|4|5|6|7|8|9]' and p.PX_TYPE='C3') 
 	and cast(((cast(p.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <= 89 
   and cast(((cast(p.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18);
 COMMIT;
