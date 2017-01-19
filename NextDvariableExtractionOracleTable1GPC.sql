@@ -293,14 +293,10 @@ select ds.PATID, l.ADMIT_DATE, row_number() over (partition by l.PATID order by 
   from DenominatorSummary ds
   join "&&PCORNET_CDM".DIAGNOSIS l 
   on ds.PATID=l.PATID
-  join "&&PCORNET_CDM".ENCOUNTER e
+  join encounter_of_interest e
   on l.ENCOUNTERID=e.ENCOUNTERID 
-  join "&&PCORNET_CDM".DEMOGRAPHIC d
-  on e.PATID=d.PATID
   where ((REGEXP_LIKE (l.DX, '250\..[0|1|2|3]') and l.DX_TYPE = '09') or (REGEXP_LIKE (l.DX, 'E1[0|1]') and l.DX_TYPE = '10'))
-	and (l.ENC_TYPE in ('IP', 'EI', 'AV', 'ED'))
-	and cast(((cast(l.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer)<=89 
-  and cast(((cast(l.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer)>=18;
+;
 COMMIT;
 /* Select the date for the first visit within the first pair: */
 insert into temp6
