@@ -13,6 +13,18 @@
 -----          The date of the first encounter and total number of encounters is collected.               -----
 ---------------------------------------------------------------------------------------------------------------
 */
+
+create or replace view encounter_of_interest as
+select e.ENCOUNTERID, e.patid, e.admit_date, e.enc_type
+  from "&&PCORNET_CDM".ENCOUNTER e
+  join "&&PCORNET_CDM".DEMOGRAPHIC d
+  on e.PATID=d.PATID
+  where e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED') 
+  and cast(((cast(e.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <= 89 
+  and cast(((cast(e.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18
+;
+
+
 /* 
 Collect data to put summary for the study sample. 
 Further data collection will be performed for this population: 
@@ -23,12 +35,7 @@ create table DenominatorSummary as
 /*          Get all encounters for each patient sorted by date: */     
 with Denominator_init as(
 select e.PATID, e.ADMIT_DATE, row_number() over (partition by e.PATID order by e.ADMIT_DATE asc) rn 
-  from "&&PCORNET_CDM".ENCOUNTER e
-  join "&&PCORNET_CDM".DEMOGRAPHIC d
-  on e.PATID=d.PATID
-  where e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED') 
-  and cast(((cast(e.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <= 89 
-  and cast(((cast(e.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18
+  from encounter_of_interest e
 )
 /* Collect visits reported on different days: */
 , Denomtemp0v as (
