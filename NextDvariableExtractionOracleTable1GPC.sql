@@ -135,18 +135,48 @@ order by l.lab_name, l.result_unit
 ;
 */
  
+create or replace view glucose_concepts as
+with loinc_concepts as (
+  select concept_path, name_char, concept_cd, substr(concept_cd, length('LOINC:_')) lab_loinc
+  from "&&I2B2_STAR".concept_dimension cd
+  where concept_path like '\i2b2\Laboratory Tests\%'
+  and concept_cd like 'LOINC:%'
+)
+, loinc_fasting_glucose as (
+  select 1 fasting, l.* from loinc_concepts l
+  where l.LAB_LOINC in ('1558-6', '1493-6', '10450-5', '1554-5', '17865-7', '14771-0', '77145-1', '1500-8', '1523-0', '1550-3','14769-4','14770-2','14771-0','1556-0','1557-8','21004-7','35184-1','40193-5','41604-0','53049-3','62851-1','62852-9','76629-5','77145-1') 
+)
+, loinc_random_glucose as (
+  select 0 fasting, l.* from loinc_concepts l
+  where l.LAB_LOINC in ('2345-7','14749-6','10449-7','12614-4','14743-9','14760-3','14761-1','14768-6','14769-4','15074-8','1521-4','1547-9','16165-3','16166-1','16167-9','16168-7','16169-5','16170-3','16915-1','21004-7','2339-0','2340-8','2341-6','27353-2','34546-2','35211-2','39480-9','39481-7','40858-3','41651-1','41652-9','41653-7','41896-2','41897-0','41898-8','41899-6','41900-2','43151-0','44919-9','45052-8','45053-6','45054-4','45055-1','45056-9','47995-6','48986-4','48988-0','48989-8','48990-6','48991-4','48992-2','48993-0','48994-8','51596-5','52041-1','53094-9','53474-3','53553-4','54246-4','5914-7','59812-8','59813-6','59814-4','59815-1','62856-0','6689-4','6777-7','72171-2','72516-8','74244-5','74774-1','75864-9','77135-2','77677-3','80959-0','LP43629-2','LP51365-2','LP51830-5','LP71758-4')
+)
+select fasting, lrg.lab_loinc, cd.name_char, cd.concept_cd, cd.concept_path
+from loinc_random_glucose lrg
+join "&&I2B2_STAR".concept_dimension cd
+  on cd.concept_path like (lrg.concept_path || '%')
+;
+
+
+create or replace view glucose_results as
+select obs.patient_num, obs.start_date, obs.encounter_num
+     , obs.nval_num, obs.units_cd, obs.concept_cd
+     , gc.name_char, gc.fasting
+from
+  glucose_concepts gc
+join "&&I2B2_STAR".observation_fact obs on obs.concept_cd = gc.concept_cd
+where gc.fasting = 0
+;
+
 insert into FG_initial
-select ds.PATID, l.LAB_ORDER_DATE, row_number() over (partition by l.PATID order by l.LAB_ORDER_DATE asc) rn  
+-- LAB_ORDER_DATE became start_date, which is more likely result date-time than order date.
+select ds.PATID, l.start_date, row_number() over (partition by l.patient_num order by l.start_date asc) rn  
   from DenominatorSummary ds
-  join "&&PCORNET_CDM".LAB_RESULT_CM l 
-  on ds.PATID=l.PATID
+  join glucose_results l 
+  on ds.PATID=l.patient_num
   join encounter_of_interest e
-  on l.ENCOUNTERID=e.ENCOUNTERID 
-  where (l.LAB_LOINC in ('1558-6', '1493-6', '10450-5', '1554-5', '17865-7', '14771-0', '77145-1', '1500-8', '1523-0', '1550-3','14769-4','14770-2','14771-0','1556-0','1557-8','21004-7','35184-1','40193-5','41604-0','53049-3','62851-1','62852-9','76629-5','77145-1') 
-	or 
-	 (l.RAW_LAB_NAME in ('Fasting glucose  ','Glucose ','GLUCOSE FASTING ','Glucose p 10h fast SerPl-mCnc ','Glucose p 12h fast SerPl-mCnc ','Glucose p 8h fast SerPl-mCnc ','Glucose p fast BldC Glucomtr-mCnc ','Glucose p fast BldC Glucomtr-sCnc ','Glucose p fast BldC-mCnc ','Glucose p fast BldV-mCnc ','Glucose p fast SerPl-mCnc ','Glucose p fast SerPl-msCnc ','Glucose p fast SerPl-sCnc ','Glucose pre-meal SerPl-mCnc ','Glucose pre-meal SerPl-sCnc ','Glucose tolerance ','Glucose Tolerance Test ','PhenX - fasting plasma glucose for diabetes screening - blood draw protocol','PhenX - fasting plasma glucose for diabetes screening - glucometer protocol'
-))
-	and l.RESULT_NUM >= 126 and l.RESULT_UNIT='mg/dL')
+  on l.encounter_num=e.ENCOUNTERID
+  where l.fasting = 1
+	and l.nval_num >= 126 and lower(l.units_cd)='mg/dl'
 ;
 COMMIT;
 /*                     The first date out the first pair of encounters is selected:		*/
@@ -180,17 +210,14 @@ COMMIT;
 ---------------------------------------------------------------------------------------------------------------
                            Get all labs for each patient sorted by date:            */
 insert into RG_initial
-select ds.PATID, l.LAB_ORDER_DATE, row_number() over (partition by l.PATID order by l.LAB_ORDER_DATE asc) rn  
+select ds.PATID, l.start_date, row_number() over (partition by l.patient_num order by l.start_date asc) rn  
   from DenominatorSummary ds
-  join "&&PCORNET_CDM".LAB_RESULT_CM l 
-  on ds.PATID=l.PATID
+  join glucose_results l 
+  on ds.PATID=l.patient_num
   join encounter_of_interest e
-  on l.ENCOUNTERID=e.ENCOUNTERID 
-  where (l.LAB_LOINC in ('2345-7','14749-6','10449-7','12614-4','14743-9','14760-3','14761-1','14768-6','14769-4','15074-8','1521-4','1547-9','16165-3','16166-1','16167-9','16168-7','16169-5','16170-3','16915-1','21004-7','2339-0','2340-8','2341-6','27353-2','34546-2','35211-2','39480-9','39481-7','40858-3','41651-1','41652-9','41653-7','41896-2','41897-0','41898-8','41899-6','41900-2','43151-0','44919-9','45052-8','45053-6','45054-4','45055-1','45056-9','47995-6','48986-4','48988-0','48989-8','48990-6','48991-4','48992-2','48993-0','48994-8','51596-5','52041-1','53094-9','53474-3','53553-4','54246-4','5914-7','59812-8','59813-6','59814-4','59815-1','62856-0','6689-4','6777-7','72171-2','72516-8','74244-5','74774-1','75864-9','77135-2','77677-3','80959-0','LP43629-2','LP51365-2','LP51830-5','LP71758-4'
-)
-	and (l.RAW_LAB_NAME in ('Blood glucose monitors','Est. average glucose Bld gHb Est-mCnc ','Est. average glucose Bld gHb Est-sCnc ','EST AVG GLUCOSE ','Estimated average glucose ','Glucose','Glucose 10 AM SerPl-mCnc ','Glucose 10 PM SerPl-mCnc ','Glucose 11 AM SerPl-mCnc ','Glucose 11 AM SerPl-sCnc ','GLUCOSE @11AM, SERUM ','Glucose 12 AM SerPl-mCnc ','Glucose 12 AM SerPl-sCnc ','Glucose 12 PM SerPl-mCnc ','Glucose 12 PM SerPl-sCnc ','Glucose 1.5h p meal SerPl-sCnc ','Glucose 1h p meal SerPl-mCnc ','Glucose 2h p meal BldC-sCnc ','Glucose 2h p meal Bld-mCnc ','Glucose 2h p meal SerPl-mCnc ','Glucose 2h p meal SerPl-sCnc ','GLUCOSE, 2 HR POST PRANDIAL ','Glucose 2 PM SerPl-mCnc ','Glucose 3 AM SerPl-mCnc ','Glucose 3 PM SerPl-mCnc ','Glucose 3 PM SerPl-sCnc ','Glucose 4 AM specimen SerPl-sCnc','Glucose 4 PM SerPl-mCnc ','Glucose 4 PM SerPl-sCnc ','GLUCOSE @4PM, SERUM ','Glucose 5 PM SerPl-mCnc ','Glucose 6 AM SerPl-mCnc ','Glucose 6 PM SerPl-mCnc ','Glucose 7 AM BldC Glucomtr-sCnc ','Glucose 7 AM SerPl-sCnc ','Glucose 7h p meal SerPl-mCnc ','Glucose 8 AM SerPl-mCnc ','Glucose 8 AM SerPl-sCnc ','Glucose 8 PM SerPl-mCnc ','Glucose 8 PM SerPl-sCnc ','GLUCOSE, ACCU-CHEK, mg/dl ','Glucose BldA-mCnc ','Glucose BldA-sCnc ','Glucose BldC Glucomtr-mCnc ','Glucose BldC Glucomtr-sCnc ','Glucose BldCo-sCnc ','Glucose BldC-sCnc ','Glucose Bld Manual Strip-mCnc ','Glucose Bld-mCnc ','Glucose Bld Ql Strip ','Glucose Bld-sCnc ','Glucose Bld Strip.auto-mCnc ','Glucose Bld Strip.auto-sCnc ','Glucose Bld Test Str Auto-mCnc ','Glucose BldV-mCnc ','Glucose BldV-sCnc ','Glucose BS BldC-mCnc ','Glucose BS SerPl-mCnc ','Glucose BS SerPl-sCnc ','Glucose mean value ','Glucose meter device panel','Glucose meter device Vendor name','Glucose meter device Vendor serial number','Glucose meter device Vendor software version','GLUCOSE, PLASMA ','Glucose p meal SerPl-mCnc ','Glucose p meal SerPl-sCnc ','Glucose pre 12h fast SerPl-sCnc ','Glucose SerPlBld-mCnc ','Glucose SerPl-mCnc ','Glucose SerPl-msCnc ','Glucose SerPl-sCnc ','Glucose tolerance','Glucose tolerance 2 hours panel - Serum or Plasma','HEDIS 2014 Value Set - Glucose Tests ','HEDIS 2015, 2016 Value Set - Glucose Tests ','Model Cd Glucose Mtr Dev ','PhenX - oral glucose tolerance test protocol ','Protein and Glucose panel  ','Type of Glucose meter device','Vendor device model code of Glucose meter','WHOLE BLOOD GLUCOSE '
-))
-	and l.RESULT_NUM >= 200 and l.RESULT_UNIT='mg/dL')
+  on l.encounter_num=e.ENCOUNTERID
+  where l.fasting = 0
+	and l.nval_num >= 200 and lower(l.units_cd)='mg/dl'
 ;
 COMMIT;
 /*-- The first date out the first pair of encounters is selected:		*/
