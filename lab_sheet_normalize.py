@@ -37,9 +37,8 @@ from code_to_data import LabReview
 def main(argv, stdout):
     if '--pretty' in argv:
         out = csv.writer(stdout)
-        lab_review = dict((n, getattr(LabReview, n))
-                          for n in LabReview.__dict__.keys()
-                          if not n.startswith('__'))
+        lab_review = {'A1C': LabReview.A1C,
+                      'glucose': LabReview.glucose}
         for info in BabelAudit.reviewable_form(lab_review):
             out.writerow(info)
     else:
