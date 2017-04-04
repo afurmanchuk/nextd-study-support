@@ -19,18 +19,19 @@ r'''lab_sheet_normalize -- normalize lab curation spreadsheets
 
 import csv
 from collections import namedtuple
+from io import StringIO
 
-SHEETS = {
-    'A1C': 'LOINC-search-Across-GPC-sites-2017-01-06-A1c.csv',
-    'glucose': 'LOINC-search-Across-GPC-sites-2017-01-06-glucose.csv'}
+import pkg_resources as pkg
 
 
-def main(stdout, cwd):
-    terms = []
-    for lab, fn in SHEETS.items():
-        with (cwd / fn).open('r') as data:
-            terms.extend(Term.from_sheet(lab, csv.reader(data)))
-    export(stdout, Term._fields, terms)
+def main(argv, stdout):
+    if '--pretty' in argv:
+        out = csv.writer(stdout)
+        for info in BabelAudit.reviewable_form():
+            out.writerow(info)
+    else:
+        terms = BabelAudit.normal_form()
+        export(stdout, Term._fields, terms)
 
 
 def export(wr, cols, rows):
@@ -61,10 +62,49 @@ def _null(s, ty=str):
     return ty(s)
 
 
+class BabelAudit(object):
+    A1C = pkg.resource_string(
+        __name__, 'LOINC-search-Across-GPC-sites-2017-01-06-A1c.csv')
+    glucose = pkg.resource_string(
+        __name__, 'LOINC-search-Across-GPC-sites-2017-01-06-glucose.csv')
+
+    labs = {'A1C': A1C,
+            'glucose': glucose}
+
+    @classmethod
+    def normal_form(cls):
+        terms = []
+        for lab in sorted(cls.labs.keys()):
+            rows = cls.csv_rows(lab)
+            terms.extend(Term.from_sheet(lab, rows))
+        return terms
+
+    @classmethod
+    def csv_rows(cls, lab):
+        with StringIO(cls.labs[lab].decode('utf-8')) as data:
+            rows = csv.reader(data)
+            for row in rows:
+                yield row
+
+    @classmethod
+    def reviewable_form(cls):
+        yield Term._fields
+        for lab in sorted(cls.labs.keys()):
+            yield [lab, '', '', '', '']
+            for row in cls.csv_rows(lab):
+                col_a, col_b, col_c = row
+                if col_b == '':
+                    site = col_a
+                    yield '', site, '', '', ''
+                elif col_b == 'c_totalnum':
+                    pass
+                else:
+                    yield '', '', col_a, col_b, col_c
+
+
 if __name__ == '__main__':
     def _script():
-        from pathlib import Path
-        from sys import stdout
-        main(stdout, cwd=Path('.'))
+        from sys import argv, stdout
+        main(argv, stdout)
 
     _script()
