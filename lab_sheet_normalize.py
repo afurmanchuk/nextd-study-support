@@ -15,6 +15,14 @@ r'''lab_sheet_normalize -- normalize lab curation spreadsheets
  Term(lab='A1c', site='mcw', c_name='GHBA1C (Group:GHBA1C)',
       c_totalnum=95421, c_basecode='LOINC:4548-4')]
 
+>>> list(BabelAudit.reviewable_form({}))[:5]
+... # doctest: +NORMALIZE_WHITESPACE
+[['lab', 'site', 'c_name', 'c_totalnum', 'c_basecode'],
+ ['A1C', '', '', '', ''],
+ ['', 'gpc', '', '', ''],
+ ['', '', 'Hgb A1c MFr Bld Calc (17855-8)', '\\N', 'LOINC:17855-8'],
+ ['', '', 'Hgb A1c MFr Bld HPLC (17856-6)', '\\N', 'LOINC:17856-6']]
+
 '''
 
 import csv
@@ -23,11 +31,16 @@ from io import StringIO
 
 import pkg_resources as pkg
 
+from code_to_data import LabReview
+
 
 def main(argv, stdout):
     if '--pretty' in argv:
         out = csv.writer(stdout)
-        for info in BabelAudit.reviewable_form():
+        lab_review = dict((n, getattr(LabReview, n))
+                          for n in LabReview.__dict__.keys()
+                          if not n.startswith('__'))
+        for info in BabelAudit.reviewable_form(lab_review):
             out.writerow(info)
     else:
         terms = BabelAudit.normal_form()
@@ -87,19 +100,28 @@ class BabelAudit(object):
                 yield row
 
     @classmethod
-    def reviewable_form(cls):
-        yield Term._fields
+    def reviewable_form(cls, predicates):
+        hd = list(Term._fields)
+        hd = hd[:1] + sorted(predicates.keys()) + hd[1:]
+        yield hd
+        filler = [''] * len(hd)
+
+        pred_funs = [fun for _n, fun
+                     in sorted(predicates.items())]
         for lab in sorted(cls.labs.keys()):
-            yield [lab, '', '', '', '']
+            yield [lab] + filler[1:]
             for row in cls.csv_rows(lab):
                 col_a, col_b, col_c = row
                 if col_b == '':
                     site = col_a
-                    yield '', site, '', '', ''
+                    yield [''] + filler[1:-4] + [site, '', '', '']
                 elif col_b == 'c_totalnum':
                     pass
                 else:
-                    yield '', '', col_a, col_b, col_c
+                    yield ([''] +
+                           [p(col_a, col_c)
+                            for p in pred_funs] +
+                           ['', col_a, col_b, col_c])
 
 
 if __name__ == '__main__':

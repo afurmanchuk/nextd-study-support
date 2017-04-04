@@ -2,7 +2,7 @@
 
 Get codes used in glucose_concepts SQL view:
 
->>> glucose_codes = GlucoseConcepts.codes()
+>>> glucose_codes = Table1Script.glucose_codes()
 
 
 Get all LOINC codes from the babel audit:
@@ -49,7 +49,7 @@ Compare recent comments to SQL code:
 import pkg_resources as pkg
 
 
-class GlucoseConcepts(object):
+class Table1Script(object):
     sql_lines = (pkg.resource_string(
         __name__, 'NextDvariableExtractionOracleTable1GPC.sql')
                  .decode('utf-8').split('\n'))
@@ -63,7 +63,7 @@ class GlucoseConcepts(object):
     }
 
     @classmethod
-    def codes(cls):
+    def glucose_codes(cls):
         insides = [
             (alias, _parens(cls.glucose_lines[alias]))
             for alias in ['loinc_fasting_glucose', 'loinc_random_glucose']]
@@ -74,6 +74,30 @@ class GlucoseConcepts(object):
 
 def _parens(txt):
     return txt.split('(')[1].split(')')[0]
+
+
+class LabReview(object):
+    @classmethod
+    def glucose(cls, c_name, c_basecode):
+        if not c_basecode.startswith('LOINC:'):
+            return ''
+        loinc_code = c_basecode[len('LOINC:'):]
+        random = ('random'
+                  if loinc_code in RANDOM_GLUCOSE_LOINC_CODES_6
+                  else '')
+        fasting = ('fasting'
+                   if loinc_code in FASTING_GLUCOSE_LOINC_CODES_5
+                   else '')
+
+        return random + fasting
+
+    @classmethod
+    def A1C(cls, c_name, c_basecode):
+        if not c_basecode.startswith('LOINC:'):
+            return ''
+        loinc_code = c_basecode[len('LOINC:'):]
+        return ('A1C' if loinc_code in A1C_LOINC_5
+                else '')
 
 
 # comment:1 Dec 19 2016
@@ -158,7 +182,7 @@ FASTING_GLUCOSE_NAMES_5 = [
 #  mcw_terms, uiowa_terms, and uthscsa_terms.
 
 # The following should be added to earlier posted lists:
-A1C_LOINC_codes_6 = ['LP100945-7', 'LP16413-4']
+A1C_LOINC_CODES_6 = ['LP100945-7', 'LP16413-4']
 A1C_NAMES_6 = ['Hemoglobin A1c | Bld-Ser-Plas', 'Hemoglobin A1c']
 
 RANDOM_GLUCOSE_LOINC_CODES_6 = [
