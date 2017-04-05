@@ -44,15 +44,75 @@ Compare recent comments to SQL code:
  '50673-3', '55399-0', '81637-1', 'LP31895-3', 'LP42107-0']
 
 
+>>> next(Table1Script.med_codes())
+... # doctest: +ELLIPSIS
+('SulfonylureaByRXNORM_initial', ['3842', '153843', '153844', ...
+
+    >>> from pprint import pprint
+    >>> for x in Table1Script.med_names():
+    ...     pprint(x)
+    ... # doctest: +ELLIPSIS
+    ('SulfonylureaByNames_initial',
+     ['OR',
+      [['call',
+        'regexp_like',
+        [['IDENT', 'a.RAW_RX_MED_NAME'],
+         ['LIT', "'Acetohexamide'"],
+         ['LIT', "'i'"]]],
+       ['call',
+        'regexp_like',
+        ...
+    ('BiguanideByNames_initial',
+     ['OR',
+      [['call',
+        'regexp_like',
+        [['IDENT', 'a.RAW_RX_MED_NAME'], ['LIT', "'Glucophage'"], ['LIT', "'i'"]]],
+       ...
+       ['call',
+        'regexp_like',
+        [['IDENT', 'a.RAW_RX_MED_NAME'], ['LIT', "'Avandamet'"], ['LIT', "'i'"]]],
+       ['AND',
+        [['call',
+          'regexp_like',
+          [['IDENT', 'a.RAW_RX_MED_NAME'], ['LIT', "'Metformin'"], ['LIT', "'i'"]]],
+         ['NOT',
+          ['OR',
+           [['call',
+             'regexp_like',
+             [['IDENT', 'a.RAW_RX_MED_NAME'], ['LIT', "'Kazano'"], ...
+
 '''
+
+from collections import namedtuple
+import re
 
 import pkg_resources as pkg
 
 
 class Table1Script(object):
+    r'''
+
+    The SQL code is a design-time constant:
+
+    >>> sql = Table1Script.sql_lines
+    >>> [l for l in sql if 'select' in l][0].strip()
+    'select e.ENCOUNTERID, e.patid, e.admit_date, e.enc_type'
+
+    We can pick out the glucose codes:
+
+    >>> ix = Table1Script.fasting_ix
+    >>> sql[ix - 2:ix + 1]
+    ... # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+    [', loinc_fasting_glucose as (\r',
+     '  select 1 fasting, l.* from loinc_concepts l\r',
+     "  where l.LAB_LOINC in ('1558-6', '1493-6', ..."]
+
+    '''
     sql_lines = (pkg.resource_string(
         __name__, 'NextDvariableExtractionOracleTable1GPC.sql')
                  .decode('utf-8').split('\n'))
+
+    sql_statements = '\n'.join(sql_lines).split(';\r\n')
 
     [fasting_ix, random_ix] = [
         ix for ix, l in enumerate(sql_lines)
@@ -70,6 +130,135 @@ class Table1Script(object):
         return dict(
             (alias, set(_values(inside)))
             for alias, inside in insides)
+
+    @classmethod
+    def _med_inserts(cls):
+        return [(s[s.index('insert into '):].split()[2], s)
+                for s in cls.sql_statements
+                if 'PRESCRIBING' in s and 'insert into ' in s]
+
+    @classmethod
+    def med_codes(cls):
+        for dest, stmt in cls._med_inserts():
+            if 'RXNORM_CUI' not in stmt:
+                continue
+            where = [line for line in stmt.split('\n')
+                     if line.strip().startswith('where a.RXNORM_CUI in (')][0]
+            yield dest, _parens(where).split(',')
+
+    @classmethod
+    def med_names(cls):
+        for dest, stmt in cls._med_inserts():
+            if 'RXNORM_CUI' in stmt:
+                continue
+            where = stmt.split('where (', 1)[1]
+            where = where.split('and e.ENC_TYPE in', 1)[0].strip()[:-1]
+            expr = SQLExpr(where)
+            yield dest, expr.conditional()
+
+
+Token = namedtuple('Token', ['type', 'value', 'span'])
+
+
+def generate_tokens(pattern, txt):
+    for m in re.finditer(pattern, txt):
+        token = Token(m.lastgroup, m.group(), m.span())
+
+        if token.type not in ('WS', 'COMMENT'):
+            yield token
+
+
+class SQLExpr(object):
+    # ack: https://docs.python.org/3/library/re.html#writing-a-tokenizer
+    '''
+    >>> re.match(SQLExpr.lex_pattern, 'regexp_like').group('IDENT')
+    'regexp_like'
+    '''
+    token_specification = [
+        ('LIT',     r"'[^']*'"),
+        ('LPAREN',  r'\('),
+        ('RPAREN',  r'\)'),
+        ('COMMA',   r','),
+        ('OR',      r'or'),
+        ('AND',     r'and'),
+        ('NOT',     r'not'),
+        ('IDENT',   r"[\w_]+(\.[\w_]+)?"),
+        ('COMMENT', r'/\*([^*]|\*[^/])*\*/'),
+        ('WS',      r'\s+'),
+        ]
+    lex_pattern = '|'.join('(?P<%s>%s)' % pair for pair in token_specification)
+
+    def __init__(self, txt):
+        self.tokens = generate_tokens(self.lex_pattern, txt)
+        self.current_token = None
+        self.next_token = None
+        self._advance()
+
+    def _advance(self):
+        self.current_token, self.next_token = (
+            self.next_token, next(self.tokens, None))
+
+    def _accept(self, token_type):
+        # if there is next token and token type matches
+        if self.next_token and self.next_token.type == token_type:
+            self._advance()
+            return True
+        else:
+            return False
+
+    def _expect(self, token_type):
+        if not self._accept(token_type):
+            raise SyntaxError(
+                'Expected %s got: %s' % (token_type, self.next_token))
+
+    def conditional(self, connectives=['OR', 'AND']):
+        parts = []
+        connective = connectives[0]
+        while 1:
+            parts.append(self.comp(connectives))
+            if not self._accept(connective):
+                break
+        if len(parts) == 1:
+            return parts[0]
+        else:
+            return [connective, parts]
+
+        if connective == 'OR' and self.next_token:
+            raise SyntaxError(
+                'Expected EOF; got: %s', self.next_token)
+
+    def comp(self, connectives):
+        if self._accept('LPAREN'):
+            inner = self.conditional()
+            self._expect('RPAREN')
+            return inner
+
+        if self._accept('NOT'):
+            inner = self.conditional()
+            return ['NOT', inner]
+
+        rest = connectives[1:]
+        if rest:
+            return self.conditional(rest)
+        else:
+            return self.call()
+
+    def call(self):
+        self._expect('IDENT')
+        fun = self.current_token.value
+        self._expect('LPAREN')
+        args = []
+        while 1:
+            args.append(self.arg())
+            if not self._accept('COMMA'):
+                break
+        self._expect('RPAREN')
+        return ['call', fun, args]
+
+    def arg(self):
+        if not self._accept('LIT'):
+            self._expect('IDENT')
+        return [self.current_token.type, self.current_token.value]
 
 
 def _parens(txt):
