@@ -43,12 +43,17 @@ Compare recent comments to SQL code:
  '50586-7', '50587-5', '50588-3', '50589-1', '50608-9',
  '50673-3', '55399-0', '81637-1', 'LP31895-3', 'LP42107-0']
 
-
->>> next(Table1Script.med_codes())
-... # doctest: +ELLIPSIS
-('SulfonylureaByRXNORM_initial', ['3842', '153843', '153844', ...
-
     >>> from pprint import pprint
+    >>> list(Table1Script.med_codes())
+    ... # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+    [('Sulfonylurea', 'RXNORM', '3842', None, None, None),
+     ('Sulfonylurea', 'RXNORM', '153843', None, None, None),
+     ('Sulfonylurea', 'RXNORM', '153844', None, None, None),
+     ...
+     ('GLP1Aex', 'RXNORM', '1727493', None, None, None),
+     ('GLP1Aex', 'RXNORM', '1804447', None, None, None),
+     ('GLP1Aex', 'RXNORM', '1804505', None, None, None)]
+
     >>> for x in Table1Script.med_name_exprs():
     ...     pprint(x)
     ... # doctest: +ELLIPSIS
@@ -84,15 +89,15 @@ Compare recent comments to SQL code:
     >>> for x in Table1Script.med_names():
     ...     print(x)
     ... # doctest: +ELLIPSIS
-    ('SulfonylureaByNames_initial', 'Acetohexamide', None)
-    ('SulfonylureaByNames_initial', 'D[i|y]melor', None)
-    ('SulfonylureaByNames_initial', 'glimep[e,i]ride', None)
+    ('Sulfonylurea', 'Names', None, 'Acetohexamide', None)
+    ('Sulfonylurea', 'Names', None, 'D[i|y]melor', None)
+    ('Sulfonylurea', 'Names', None, 'glimep[e,i]ride', None)
     ...
-    ('BiguanideByNames_initial', 'Amaryl M', None)
-    ('BiguanideByNames_initial', 'Avandamet', None)
-    ('BiguanideByNames_initial', 'Metformin', 'Kazano')
-    ('BiguanideByNames_initial', 'Metformin', 'Invokamet')
-    ('BiguanideByNames_initial', 'Metformin', 'Xigduo XR')
+    ('Biguanide', 'Names', None, 'Amaryl M', None)
+    ('Biguanide', 'Names', None, 'Avandamet', None)
+    ('Biguanide', 'Names', None, 'Metformin', 'Kazano')
+    ('Biguanide', 'Names', None, 'Metformin', 'Invokamet')
+    ('Biguanide', 'Names', None, 'Metformin', 'Xigduo XR')
     ...
 
 '''
@@ -156,9 +161,11 @@ class Table1Script(object):
     @classmethod
     def med_codes(cls):
         for dest, stmt in cls._med_inserts(has_cui=True):
+            drug, by = _dest2drug(dest)
             where = [line for line in stmt.split('\n')
                      if line.strip().startswith('where a.RXNORM_CUI in (')][0]
-            yield dest, _parens(where).split(',')
+            for code in _parens(where).split(','):
+                yield drug, by, code, None, None, None
 
     @classmethod
     def med_name_exprs(cls):
@@ -171,12 +178,13 @@ class Table1Script(object):
     @classmethod
     def med_names(cls):
         for dest, expr in cls.med_name_exprs():
+            drug, by = _dest2drug(dest)
             if expr[0] != 'OR':
                 raise SyntaxError(expr[0])
             outer = None
             for disjunct in expr[1]:
                 if disjunct[0] == 'call':
-                    yield dest, _pattern(disjunct), None
+                    yield drug, by, None, _pattern(disjunct), None
                 elif disjunct[0] == 'AND':
                     for conjunct in disjunct[1]:
                         if conjunct[0] == 'call':
@@ -187,7 +195,7 @@ class Table1Script(object):
                                 for inner_dis in negated[1]:
                                     if inner_dis[0] == 'call':
                                         inner = _pattern(inner_dis)
-                                        yield dest, outer, inner
+                                        yield drug, by, None, outer, inner
                                     else:
                                         raise SyntaxError(inner_dis)
                             else:
@@ -208,6 +216,11 @@ def _pattern(call):
         raise SyntaxError(call)
     pattern_lit = call[2][1][1]
     return pattern_lit[1:-1]
+
+
+def _dest2drug(name):
+    name = name.rsplit('_', 1)[0]
+    return name.split('By', 1)
 
 
 Token = namedtuple('Token', ['type', 'value', 'span'])
