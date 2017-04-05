@@ -374,7 +374,7 @@ regexp_like(a.RAW_RX_MED_NAME,'Micronase','i') or regexp_like(a.RAW_RX_MED_NAME,
 regexp_like(a.RAW_RX_MED_NAME,'Glucamide','i') or regexp_like(a.RAW_RX_MED_NAME,'Novo-Propamide','i') or regexp_like(a.RAW_RX_MED_NAME,'Insulase','i') or
 regexp_like(a.RAW_RX_MED_NAME,'tolazamide','i') or regexp_like(a.RAW_RX_MED_NAME,'Tolinase','i') or regexp_like(a.RAW_RX_MED_NAME,'Glynase PresTab','i') or
 regexp_like(a.RAW_RX_MED_NAME,'Tolamide','i') or regexp_like(a.RAW_RX_MED_NAME,'tolbutamide','i') or regexp_like(a.RAW_RX_MED_NAME,'Orinase','i') or
-regexp_like(a.RAW_RX_MED_NAME,'Tol-Tab','i') or regexp_like(a.RAW_RX_MED_NAME,'Apo-Tolbutamide','i') or regexp_like(a.RAW_RX_MED_NAME,('Novo-Butamide','i') or regexp_like(a.RAW_RX_MED_NAME,'Glyclopyramide','i') or
+regexp_like(a.RAW_RX_MED_NAME,'Tol-Tab','i') or regexp_like(a.RAW_RX_MED_NAME,'Apo-Tolbutamide','i') or regexp_like(a.RAW_RX_MED_NAME,'Novo-Butamide','i') or regexp_like(a.RAW_RX_MED_NAME,'Glyclopyramide','i') or
 regexp_like(a.RAW_RX_MED_NAME,'Deamelin[-]S','i') or regexp_like(a.RAW_RX_MED_NAME,'Gliquidone','i') or regexp_like(a.RAW_RX_MED_NAME,'Glurenorm','i') 
   )
   and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
