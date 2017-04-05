@@ -15,13 +15,18 @@
 */
 
 create or replace view encounter_of_interest as
-select e.ENCOUNTERID, e.patid, e.admit_date, e.enc_type
+with age_at_visit as (
+  select cast(d.BIRTH_DATE as date) BIRTH_DATE
+       , cast(((cast(e.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) age
+       , e.*
   from "&&PCORNET_CDM".ENCOUNTER e
   join "&&PCORNET_CDM".DEMOGRAPHIC d
   on e.PATID=d.PATID
+)
+select e.ENCOUNTERID, e.patid, e.BIRTH_DATE, e.admit_date, e.enc_type
+from age_at_visit e
   where e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED') 
-  and cast(((cast(e.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <= 89 
-  and cast(((cast(e.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18
+  and e.age between 18 and 89 
 ;
 
 
@@ -31,36 +36,54 @@ Further data collection will be performed for this population:
 */
 drop table DenominatorSummary;
 create table DenominatorSummary as
-
 /*          Get all encounters for each patient sorted by date: */     
 with Denominator_init as(
-select e.PATID, e.ADMIT_DATE, row_number() over (partition by e.PATID order by e.ADMIT_DATE asc) rn 
+select e.PATID, e.BIRTH_DATE, e.ADMIT_DATE
+     , row_number() over (partition by e.PATID order by e.ADMIT_DATE asc) rn 
   from encounter_of_interest e
 )
 /* Collect visits reported on different days: */
 , Denomtemp0v as (
-select distinct uf.PATID, uf.ADMIT_DATE
+select distinct uf.PATID, uf.BIRTH_DATE, uf.ADMIT_DATE
 , row_number() over (partition by uf.PATID order by uf.ADMIT_DATE asc) rn 
   from Denominator_init uf
 )
 /* Collect number of visits (from ones recorded on different days) for each person: */
 , Denomtemp1v as (
-select x.PATID, count(distinct x.ADMIT_DATE) as NumberOfVisits 
+select x.PATID, x.BIRTH_DATE, count(distinct x.ADMIT_DATE) as NumberOfVisits 
   from Denomtemp0v x
-  group by x.PATID
+  group by x.PATID, x.BIRTH_DATE
   order by x.PATID
 )
 /* Collect date of the first visit: */
 , Denomtemp2v as (
-select x.PATID, x.ADMIT_DATE as FirstVisit 
+select x.PATID, x.BIRTH_DATE, x.ADMIT_DATE as FirstVisit 
   from Denomtemp0v x
   where x.rn=1
 )
 
-select x.PATID, b.FirstVisit, x.NumberOfVisits
+select x.PATID, b.BIRTH_DATE, b.FirstVisit, x.NumberOfVisits
   from Denomtemp1v x
   left join Denomtemp2v b
   on x.PATID=b.PATID;
+create index DenominatorSummary_patid on DenominatorSummary (patid);
+
+/* Constrain encounters using just DenominatorSummary, not all of DEMOGRAPHIC. */
+create or replace view encounter_type_age_denominator as
+with age_at_visit as (
+  select cast(d.BIRTH_DATE as date) BIRTH_DATE
+       , cast(((cast(e.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) age
+       , e.*
+  from "&&PCORNET_CDM".ENCOUNTER e
+  join DenominatorSummary d
+  on e.PATID=d.PATID
+)
+select e.ENCOUNTERID, e.patid, e.BIRTH_DATE, e.admit_date, e.enc_type
+  from age_at_visit e
+  where e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED') 
+  and e.age between 18 and 89
+;
+
 
 /*-------------------------------------------------------------------------------------------------------------
                          Part 2: Defining Deabetes Mellitus sample                                   
@@ -680,10 +703,12 @@ with med_info_aux as (
   from med_info_aux
 )
 , each_med_obs as (
-  select /*+ leading(a) */ a.PATID, round(a.RX_ORDER_DATE) as MedDate
+  select /*+ leading(a) */ a.PATID, a.encounterid, round(a.RX_ORDER_DATE) as MedDate
       , med_info.drug
       , a.RAW_RX_MED_NAME
-    from (select * from "&&PCORNET_CDM".PRESCRIBING where rownum < 1000) a
+    from
+    -- (select * from "&&PCORNET_CDM".PRESCRIBING where rownum < 1000) a
+    "&&PCORNET_CDM".PRESCRIBING a
     join med_info
        on regexp_like(a.RAW_RX_MED_NAME, med_info.pattern, 'i')
        and (med_info.but_not is null or
@@ -697,6 +722,7 @@ from
 	from
 		(select distinct a.PATID, a.MedDate 
 		from each_med_obs a
+    join encounter_type_age_denominator e on a.encounterid = e.encounterid
 		) x
 	) y
 where y.rn=1;
