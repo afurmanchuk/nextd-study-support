@@ -49,8 +49,9 @@ Medications
 Medication codes are managed in long hard-coded lists in insert statements::
 
     >>> from pprint import pprint
-    >>> for _s, dest, stmt in Table1Script.med_inserts(has_cui=True):
-    ...     print(stmt)
+    >>> for _s, dest, stmt in Table1Script.med_inserts():
+    ...     if 'RXNORM' in stmt:
+    ...         print(stmt)
     ... # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
     insert into SulfonylureaByRXNORM_initial
     select ds.PATID, a.RX_ORDER_DATE as MedDate
@@ -68,24 +69,14 @@ Medication codes are managed in long hard-coded lists in insert statements::
       where a.RXNORM_CUI in (...,1727493,1804447,1804505)
       and ...
 
-Let's turn this into tabular data::
-
-    >>> pprint(list(Table1Script.med_codes()))
-    ... # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
-    [MedInfo(dm_drug=1, drug='Sulfonylurea', by='RXNORM', code=3842, pattern=None, but_not=None),
-     MedInfo(dm_drug=1, drug='Sulfonylurea', by='RXNORM', code=153843, pattern=None, but_not=None),
-     MedInfo(dm_drug=1, drug='Sulfonylurea', by='RXNORM', code=153844, pattern=None, but_not=None),
-     ...
-     MedInfo(dm_drug=0, drug='GLP1Aex', by='RXNORM', code=1727493, pattern=None, but_not=None),
-     MedInfo(dm_drug=0, drug='GLP1Aex', by='RXNORM', code=1804447, pattern=None, but_not=None),
-     MedInfo(dm_drug=0, drug='GLP1Aex', by='RXNORM', code=1804505, pattern=None, but_not=None)]
-
 Likewise, medication names are managed in long lists of patterns in
 conditional expressions::
 
-    >>> for dm_drug, dest, where in Table1Script.med_name_conditions():
-    ...     print(dm_drug, _dest2drug(dest))
-    ...     print(where)
+    >>> for dm_drug, dest, stmt in Table1Script.med_inserts():
+    ...     if 'RXNORM' not in stmt:
+    ...         print(dm_drug, _dest2drug(dest))
+    ...         where = Table1Script.med_name_condition(stmt)
+    ...         print(where)
     ... # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
     1 ['Sulfonylurea', 'Names']
     regexp_like(a.RAW_RX_MED_NAME, 'Acetohexamide','i') or
@@ -101,27 +92,53 @@ conditional expressions::
          )
       ) or ...
 
-And we likewise turn these into tabular data::
+Let's turn this into tabular data::
 
-    >>> for x in Table1Script.med_names():
-    ...     print(x)
-    ... # doctest: +ELLIPSIS
-    MedInfo(dm_drug=1, drug='Sulfonylurea', by='Names', code=None, pattern='Acetohexamide', but_not=None)
-    MedInfo(dm_drug=1, drug='Sulfonylurea', by='Names', code=None, pattern='D[i|y]melor', but_not=None)
-    MedInfo(dm_drug=1, drug='Sulfonylurea', by='Names', code=None, pattern='glimep[e,i]ride', but_not=None)
+    >>> for x in Table1Script.med_info():
+    ...     pprint(x)
+    ... # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+    MedInfo(dm_drug=1, drug='Sulfonylurea', by='Names', code=None, pattern='Acetohexamide',
+            but_not=None, note=None)
+    MedInfo(dm_drug=1, drug='Sulfonylurea', by='Names', code=None, pattern='D[i|y]melor',
+            but_not=None, note=None)
+    MedInfo(dm_drug=1, drug='Sulfonylurea', by='Names', code=None, pattern='glimep[e,i]ride',
+            but_not=None, note=None)
+    MedInfo(dm_drug=1, drug='Sulfonylurea', by='Names', code=None, pattern='Avandaryl',
+            but_not=None,
+            note='This is combination of glimeperide-rosiglitazone')
     ...
-    MedInfo(dm_drug=0, drug='Biguanide', by='Names', code=None, pattern='Glucophage', but_not=None)
+    MedInfo(dm_drug=1, drug='Sulfonylurea', by='RXNORM', code=3842, pattern=None,
+            but_not=None, note=None)
+    MedInfo(dm_drug=1, drug='Sulfonylurea', by='RXNORM', code=153843, pattern=None,
+            but_not=None, note=None)
+    MedInfo(dm_drug=1, drug='Sulfonylurea', by='RXNORM', code=153844, pattern=None,
+            but_not=None, note=None)
     ...
-    MedInfo(dm_drug=0, drug='Biguanide', by='Names', code=None, pattern='Avandamet', but_not=None)
-    MedInfo(dm_drug=0, drug='Biguanide', by='Names', code=None, pattern='Metformin', but_not='Kazano')
-    MedInfo(dm_drug=0, drug='Biguanide', by='Names', code=None, pattern='Metformin', but_not='Invokamet')
-    MedInfo(dm_drug=0, drug='Biguanide', by='Names', code=None, pattern='Metformin', but_not='Xigduo XR')
+    MedInfo(dm_drug=0, drug='Biguanide', by='Names', code=None, pattern='Glucophage',
+            but_not=None, note=None)
     ...
+    MedInfo(dm_drug=0, drug='Biguanide', by='Names', code=None, pattern='Amaryl M',
+            but_not=None,
+            note='this is combination of rosiglitizone-metformin')
+    MedInfo(dm_drug=0, drug='Biguanide', by='Names', code=None, pattern='Avandamet',
+            but_not=None, note=None)
+    MedInfo(dm_drug=0, drug='Biguanide', by='Names', code=None, pattern='Metformin', but_not='Kazano',
+            note=None)
+    MedInfo(dm_drug=0, drug='Biguanide', by='Names', code=None, pattern='Metformin', but_not='Invokamet',
+            note=None)
+    MedInfo(dm_drug=0, drug='Biguanide', by='Names', code=None, pattern='Metformin', but_not='Xigduo XR',
+            note=None)
+    ...
+    MedInfo(dm_drug=0, drug='GLP1Aex', by='RXNORM', code=1727493, pattern=None,
+            but_not=None, note=None)
+    MedInfo(dm_drug=0, drug='GLP1Aex', by='RXNORM', code=1804447, pattern=None,
+            but_not=None, note=None)
+    MedInfo(dm_drug=0, drug='GLP1Aex', by='RXNORM', code=1804505, pattern=None,
+            but_not=None, note=None)
 
 '''
 
 from collections import namedtuple
-from itertools import chain
 import csv
 import re
 
@@ -129,8 +146,7 @@ import pkg_resources as pkg
 
 
 def main(stdout):
-    data = chain(Table1Script.med_codes(),
-                 Table1Script.med_names())
+    data = Table1Script.med_info()
     export(stdout, MedInfo._fields, data)
 
 
@@ -141,7 +157,7 @@ def export(wr, cols, rows):
 
 
 class MedInfo(namedtuple(
-        'MedInfo', 'dm_drug, drug, by, code, pattern, but_not')):
+        'MedInfo', 'dm_drug, drug, by, code, pattern, but_not, note')):
     pass
 
 
@@ -151,8 +167,8 @@ class Table1Script(object):
     The SQL code is a design-time constant:
 
     >>> sql = Table1Script.sql_lines
-    >>> [l for l in sql if 'select' in l][0].strip()
-    'select e.ENCOUNTERID, e.patid, e.admit_date, e.enc_type'
+    >>> [l for l in sql if 'select e.' in l][0].strip()
+    'select e.ENCOUNTERID, e.patid, e.BIRTH_DATE, e.admit_date, e.enc_type'
 
     We can pick out the glucose codes:
 
@@ -188,7 +204,18 @@ class Table1Script(object):
             for alias, inside in insides)
 
     @classmethod
-    def med_inserts(cls, has_cui):
+    def med_info(cls):
+        for dm_drug, dest, stmt in cls.med_inserts():
+            if 'RXNORM_CUI' in stmt:
+                for info in cls.med_codes(dm_drug, dest, stmt):
+                    yield info
+            else:
+                where = cls.med_name_condition(stmt)
+                for info in cls.med_names(dm_drug, dest, where):
+                    yield info
+
+    @classmethod
+    def med_inserts(cls):
         prefix = 'People with at least one ordered medications '
         suffixes = [(1, 'specific to Diabetes Mellitus'),
                     (0, 'non-specific to Diabetes Mellitus')]
@@ -198,59 +225,57 @@ class Table1Script(object):
                 if (prefix + suffix) in s:
                     dm_drug = status
             if ('insert into ' in s and
-                    'PRESCRIBING' in s and
-                    has_cui == ('RXNORM_CUI' in s)):
+                    'PRESCRIBING' in s):
                 dest = s[s.index('insert into '):].split()[2]
                 yield (dm_drug, dest, s)
 
     @classmethod
-    def med_codes(cls):
-        for dm_drug, dest, stmt in cls.med_inserts(has_cui=True):
-            drug, by = _dest2drug(dest)
-            where = [line for line in stmt.split('\n')
-                     if line.strip().startswith('where a.RXNORM_CUI in (')][0]
-            for code in _parens(where).split(','):
-                yield MedInfo(dm_drug, drug, by, int(code), None, None)
+    def med_codes(cls, dm_drug, dest, stmt):
+        drug, by = _dest2drug(dest)
+        where = [line for line in stmt.split('\n')
+                 if line.strip().startswith('where a.RXNORM_CUI in (')][0]
+        for code in _parens(where).split(','):
+            yield MedInfo(dm_drug, drug, by, int(code), None, None, None)
 
     @classmethod
-    def med_name_conditions(cls):
-        for dm_drug, dest, stmt in cls.med_inserts(has_cui=False):
-            where = stmt.split('where (', 1)[1]
-            where = where.split('and e.ENC_TYPE in', 1)[0].strip()[:-1]
-            yield dm_drug, dest, where
+    def med_name_condition(cls, stmt):
+        where = stmt.split('where (', 1)[1]
+        # Strip stuff after name constraint.
+        where = where.split('and e.ENC_TYPE in', 1)[0]
+        return where.strip()[:-1]  # no parens
 
     @classmethod
-    def med_names(cls):
-        for dm_drug, dest, where in cls.med_name_conditions():
-            expr = SQLExpr(where).conditional()
-            drug, by = _dest2drug(dest)
-            if expr[0] != 'OR':
-                raise SyntaxError(expr[0])
-            outer = None
-            for disjunct in expr[1]:
-                if disjunct[0] == 'call':
-                    yield MedInfo(dm_drug, drug, by,
-                                  None, _pattern(disjunct), None)
-                elif disjunct[0] == 'AND':
-                    for conjunct in disjunct[1]:
-                        if conjunct[0] == 'call':
-                            outer = _pattern(conjunct)
-                        elif conjunct[0] == 'NOT':
-                            negated = conjunct[1]
-                            if negated[0] == 'OR':
-                                for inner_dis in negated[1]:
-                                    if inner_dis[0] == 'call':
-                                        inner = _pattern(inner_dis)
-                                        yield MedInfo(dm_drug, drug, by,
-                                                      None, outer, inner)
-                                    else:
-                                        raise SyntaxError(inner_dis)
-                            else:
-                                raise SyntaxError(negated)
+    def med_names(cls, dm_drug, dest, where):
+        expr = SQLExpr(where).conditional()
+        drug, by = _dest2drug(dest)
+        if expr[0] != 'OR':
+            raise SyntaxError(expr[0])
+        outer = None
+        for disjunct in expr[1]:
+            if disjunct[0] == 'call':
+                pat, doc = _pattern(disjunct)
+                yield MedInfo(dm_drug, drug, by,
+                              None, pat, None, doc)
+            elif disjunct[0] == 'AND':
+                for conjunct in disjunct[1]:
+                    if conjunct[0] == 'call':
+                        outer, _doc = _pattern(conjunct)
+                    elif conjunct[0] == 'NOT':
+                        negated = conjunct[1]
+                        if negated[0] == 'OR':
+                            for inner_dis in negated[1]:
+                                if inner_dis[0] == 'call':
+                                    inner, doc = _pattern(inner_dis)
+                                    yield MedInfo(dm_drug, drug, by,
+                                                  None, outer, inner, doc)
+                                else:
+                                    raise SyntaxError(inner_dis)
                         else:
-                            raise SyntaxError(conjunct)
-                else:
-                    raise SyntaxError(disjunct)
+                            raise SyntaxError(negated)
+                    else:
+                        raise SyntaxError(conjunct)
+            else:
+                raise SyntaxError(disjunct)
 
 
 def _pattern(call):
@@ -262,7 +287,11 @@ def _pattern(call):
             call[2][2] == ['LIT', "'i'"]):
         raise SyntaxError(call)
     pattern_lit = call[2][1][1]
-    return pattern_lit[1:-1]
+    docstring = call[3]
+    if docstring:
+        docstring = docstring.replace('/* ', '').replace('*/', '')
+        docstring = docstring.strip().rstrip(':').strip()
+    return pattern_lit[1:-1], docstring
 
 
 def _dest2drug(name):
@@ -277,7 +306,8 @@ def generate_tokens(pattern, txt):
     for m in re.finditer(pattern, txt):
         token = Token(m.lastgroup, m.group(), m.span())
 
-        if token.type not in ('WS', 'COMMENT'):
+        if token.type not in ('WS'):
+            # print("token:", token, file=stderr)
             yield token
 
 
@@ -357,6 +387,9 @@ class SQLExpr(object):
             return self.call()
 
     def call(self):
+        docstring = None
+        if self._accept('COMMENT'):
+            docstring = self.current_token.value
         self._expect('IDENT')
         fun = self.current_token.value
         self._expect('LPAREN')
@@ -366,7 +399,7 @@ class SQLExpr(object):
             if not self._accept('COMMA'):
                 break
         self._expect('RPAREN')
-        return ['call', fun, args]
+        return ['call', fun, args, docstring]
 
     def arg(self):
         if not self._accept('LIT'):

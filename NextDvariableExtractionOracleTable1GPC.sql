@@ -814,16 +814,19 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
   where (
   regexp_like(a.RAW_RX_MED_NAME,'Avandia','i') or regexp_like(a.RAW_RX_MED_NAME,'Actos','i') or
   (regexp_like(a.RAW_RX_MED_NAME,'rosiglitazone','i') and not
+  (
   /*  this ione is combination of metformin-rosiglitazone:  */
-  (regexp_like(a.RAW_RX_MED_NAME,'Avandamet','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Avandamet','i') or
   /*  this is combination of rosiglitizone-metformin:  */
   regexp_like(a.RAW_RX_MED_NAME,'Amaryl M','i') or
   /*  this is combination of glimeperide-rosiglitazone :  */
   regexp_like(a.RAW_RX_MED_NAME,'Avandaryl','i')
   )) or
   (regexp_like(a.RAW_RX_MED_NAME,'pioglitazone','i') and not
+  (
   /*  this ione is combination of metformin-pioglitazone :  */
-  (regexp_like(a.RAW_RX_MED_NAME,'Actoplus','i') or regexp_like(a.RAW_RX_MED_NAME,'Actoplus Met','i') or regexp_like(a.RAW_RX_MED_NAME,'Actoplus Met XR','i') or regexp_like(a.RAW_RX_MED_NAME,'Competact','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Actoplus','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Actoplus Met','i') or regexp_like(a.RAW_RX_MED_NAME,'Actoplus Met XR','i') or regexp_like(a.RAW_RX_MED_NAME,'Competact','i') or
   /*  this is combination of glimepiride-pioglitazone:  */
   regexp_like(a.RAW_RX_MED_NAME,'Duetact','i') or
   /* this is combination of alogliptin-pioglitazone:  */
