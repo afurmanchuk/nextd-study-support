@@ -2044,7 +2044,7 @@ dm_drug,drug,by,code,pattern,but_not,note
 0,Biguanide,RXNORM,1796092,,,
 0,Biguanide,RXNORM,1796094,,,
 0,Biguanide,RXNORM,1796097,,,
-0,Thiazol,Names,,Avandia,,
+0,Thiazol,Names,,Avandia,,Thiazolidinedione
 0,Thiazol,Names,,Actos,,
 0,Thiazol,Names,,rosiglitazone,Avandamet,this ione is combination of metformin-rosiglitazone
 0,Thiazol,Names,,rosiglitazone,Amaryl M,this is combination of rosiglitizone-metformin
@@ -2608,7 +2608,7 @@ dm_drug,drug,by,code,pattern,but_not,note
 0,Thiazol,RXNORM,1746354,,,
 0,Thiazol,RXNORM,1746954,,,
 0,Thiazol,RXNORM,1805299,,,
-0,GLP1Aex,Names,,Exenatide,,
+0,GLP1Aex,Names,,Exenatide,,Glucagon-like Peptide-1 Agonist
 0,GLP1Aex,Names,,Byetta,,
 0,GLP1Aex,Names,,Bydureon,,
 0,GLP1Aex,Names,,Liraglutide,,

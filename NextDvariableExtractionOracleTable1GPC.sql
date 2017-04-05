@@ -376,42 +376,53 @@ COMMIT;
 -----                   Combine all medications specific to Diabetes Mellitus                             -----
 -----         The date of the first medication of any kind will be recorded for each patient              -----
 -------------------------------------------------------------------------------------------------------------*/
-insert /*+ append */ into InclusionMeds_final
+
+create or replace view each_med_obs as
 with med_info_aux as (
   select distinct dm_drug, drug, rxcui, pattern
        /* combine but_not patterns using (pat1)|(pat2)|(pat3)... */
        , listagg(but_not, ')|(') within group (order by dm_drug, drug, rxcui, pattern, but_not) but_not
   from nextd_med_info info
-  where dm_drug = 1
   group by dm_drug, drug, rxcui, pattern
 )
 , med_info as (
-  select drug, rxcui, pattern
+  select dm_drug, drug, rxcui, pattern
        , case when but_not is null then null else '(' || but_not || ')' end but_not
   from med_info_aux
 )
-, each_med_obs as (
-  select /*+ leading(a) */ a.PATID, a.encounterid, round(a.RX_ORDER_DATE) as MedDate
-      , med_info.drug
-      , a.RAW_RX_MED_NAME
-    from
-    -- (select * from "&&PCORNET_CDM".PRESCRIBING where rownum < 1000) a
-    "&&PCORNET_CDM".PRESCRIBING a
-    join med_info
-       on to_char(med_info.rxcui) = a.RXNORM_CUI
-       or (
-       regexp_like(a.RAW_RX_MED_NAME, med_info.pattern, 'i')
-       and (med_info.but_not is null or
-            not regexp_like(a.RAW_RX_MED_NAME, med_info.but_not, 'i')))
-)
+select /*+ leading(a) */ a.PATID, a.encounterid, round(a.RX_ORDER_DATE) as MedDate
+    , med_info.dm_drug
+    , med_info.drug
+    , a.RAW_RX_MED_NAME
+  from
+  -- for testing:
+  -- (select * from "&&PCORNET_CDM".PRESCRIBING where rownum < 1000) a
+  "&&PCORNET_CDM".PRESCRIBING a
+  join med_info
+     on to_char(med_info.rxcui) = a.RXNORM_CUI
+     or (
+     regexp_like(a.RAW_RX_MED_NAME, med_info.pattern, 'i')
+     and (med_info.but_not is null or
+          not regexp_like(a.RAW_RX_MED_NAME, med_info.but_not, 'i')))
+;
 
+/* Performance note:
+
+We expect full table scans only on DENOMINATORSUMMARY, ENCOUNTER.
+The PRESCRIBING is indexed by PRESCRIBING_ENCOUNTERID.
+
+SELECT PLAN_TABLE_OUTPUT line FROM TABLE(DBMS_XPLAN.DISPLAY());
+*/
+-- explain plan for
+insert /*+ append */ into InclusionMeds_final
 select y.PATID, y.MedDate as EventDate 
 from 
 	(select x.PATID, x.MedDate, row_number() over (partition by x.PATID order by x.MedDate asc) rn
 	from
-		(select distinct a.PATID, a.MedDate 
+		(select a.PATID, a.MedDate 
 		from each_med_obs a
     join encounter_type_age_denominator e on a.encounterid = e.encounterid
+    where dm_drug = 1  -- specific to Diabetes Mellitus
 		) x
 	) y
 where y.rn=1;
@@ -434,167 +445,25 @@ COMMIT;
 -----                         18 >= Age <=89 during the lab ordering day                                  -----
 -----                    the date the first time med is recorded will be used                             -----
 
----------------------------------------------------------------------------------------------------------------
-   Biguanide:
-   collect meds based on matching names:   */
-insert into BiguanideByNames_initial
-select ds.PATID, a.RX_ORDER_DATE as MedDate
-  from DenominatorSummary ds
-  join "&&PCORNET_CDM".PRESCRIBING a
-  on ds.PATID=a.PATID
-  join "&&PCORNET_CDM".ENCOUNTER e
-  on a.ENCOUNTERID=e.ENCOUNTERID
-  join "&&PCORNET_CDM".DEMOGRAPHIC d
-  on e.PATID=d.PATID
-  where (
-  regexp_like(a.RAW_RX_MED_NAME,'Glucophage','i') or regexp_like(a.RAW_RX_MED_NAME,'Fortamet','i') or
-  regexp_like(a.RAW_RX_MED_NAME,'Glumetza','i') or regexp_like(a.RAW_RX_MED_NAME,'Riomet','i') or
-  /*   this is combination of rosiglitizone-metformin:   */
-  regexp_like(a.RAW_RX_MED_NAME,'Amaryl M','i') or regexp_like(a.RAW_RX_MED_NAME,'Avandamet','i') or
-  (regexp_like(a.RAW_RX_MED_NAME,'Metformin','i')
-  and not (
-  regexp_like(a.RAW_RX_MED_NAME,'Kazano','i') or regexp_like(a.RAW_RX_MED_NAME,'Invokamet','i') or
-  regexp_like(a.RAW_RX_MED_NAME,'Xigduo XR','i') or regexp_like(a.RAW_RX_MED_NAME,'Synjardy','i') or
-  regexp_like(a.RAW_RX_MED_NAME,'Metaglip','i') or regexp_like(a.RAW_RX_MED_NAME,'Glucovance','i') or
-  regexp_like(a.RAW_RX_MED_NAME,'Jentadueto','i') or regexp_like(a.RAW_RX_MED_NAME,'Jentadueto XR','i') or
-  /*  this one is combination of metformin-vildagliptin:  */
-  regexp_like(a.RAW_RX_MED_NAME,'Eucreas','i')
-  )
-  ) or
-  /*  this one is combination of metformin-pioglitazone :  */
-  regexp_like(a.RAW_RX_MED_NAME,'Actoplus','i') or regexp_like(a.RAW_RX_MED_NAME,'Actoplus Met','i') or regexp_like(a.RAW_RX_MED_NAME,'Actoplus Met XR','i') or regexp_like(a.RAW_RX_MED_NAME,'Competact','i') or
-  /*  this one is combination of metformin-repaglinide:  */
-  regexp_like(a.RAW_RX_MED_NAME,'PrandiMet','i') or
-  /*  this is combination of metformin-saxagliptin :  */
-  regexp_like(a.RAW_RX_MED_NAME,'Kombiglyze XR','i') or
-  /*  this is combination of:  */
-  regexp_like(a.RAW_RX_MED_NAME,'Janumet','i') or regexp_like(a.RAW_RX_MED_NAME,' Janumet XR','i') 
-  )
-  and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
-  and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <=89 
-  and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18;
-COMMIT;
-/*   collect meds based on matching RXNORM codes:   */
-insert into BiguanideByRXNORM_initial
-select ds.PATID, a.RX_ORDER_DATE as MedDate
-  from DenominatorSummary ds
-  join "&&PCORNET_CDM".PRESCRIBING a
-  on ds.PATID=a.PATID
-  join "&&PCORNET_CDM".ENCOUNTER e
-  on a.ENCOUNTERID=e.ENCOUNTERID
-  join "&&PCORNET_CDM".DEMOGRAPHIC d
-  on e.PATID=d.PATID
-  where a.RXNORM_CUI in (6809,105376,105377,151827,152161,204045,204047,235743,236325,236510,246522,250919,285065,285129,316255,316256,330861,332809,352381,352450,361841,368254,368526,371466,372803,372804,374635,378729,378730,405304,406082,406257,428759,429841,431724,432366,432780,438507,465455,485822,541766,541768,541774,541775,577093,583192,583194,583195,600868,601021,602411,605605,607999,614348,633695,645109,647241,668418,700516,729717,729919,729920,731442,757603,790326,802051,802646,802742,805670,806287,860974,860975,860976,860977,860978,860979,860980,860981,860982,860983,860984,860985,860995,860996,860997,860998,860999,861000,861001,861002,861003,861004,861005,861006,861007,861008,861009,861010,861011,861012,861014,861015,861016,861017,861018,861019,861020,861021,861022,861023,861024,861025,861026,861027,861730,861731,861736,861740,861743,861748,861753,861760,861761,861762,861763,861764,861765,861769,861770,861771,861783,861784,861785,861787,861788,861789,861790,861791,861792,861795,861796,861797,861806,861807,861808,861816,861817,861818,861819,861820,861821,861822,861823,861824,875864,875865,876009,876010,876033,899988,899989,899991,899992,899993,899994,899995,899996,899998,900000,900001,900002,977566,997965,1007411,1008476,1043561,1043562,1043563,1043565,1043566,1043567,1043568,1043569,1043570,1043572,1043574,1043575,1043576,1043578,1043580,1043582,1043583,1043584,1048346,1083665,1128666,1130631,1130713,1131491,1132606,1143649,1145961,1155467,1155468,1156197,1161597,1161598,1161599,1161600,1161601,1161602,1161603,1161604,1161605,1161606,1161607,1161608,1161609,1161610,1161611,1165205,1165206,1165845,1167810,1167811,1169920,1169923,1171244,1171245,1171254,1171255,1172629,1172630,1175016,1175021,1182890,1182891,1184627,1184628,1185325,1185326,1185653,1185654,1243016,1243017,1243018,1243019,1243020,1243027,1243034,1243826,1243827,1243829,1243833,1243834,1243835,1243839,1243842,1243843,1243844,1243845,1243846,1243848,1243849,1243850,1305366,1308857,1313354,1365405,1365406,1365802,1368381,1368382,1368383,1368384,1368385,1368392,1372716,1372738,1431024,1431025,1486436,1493571,1493572,1540290,1540292,1545146,1545147,1545148,1545149,1545150,1545157,1545161,1545164,1548426,1549776,1592709,1592710,1592722,1593057,1593058,1593059,1593068,1593069,1593070,1593071,1593072,1593073,1593774,1593775,1593776,1593826,1593827,1593828,1593829,1593830,1593831,1593832,1593833,1593835,1598393,1598394,1655477,1664311,1664312,1664313,1664314,1664315,1664323,1664326,1665367,1692194,1741248,1741249,1791055,1796088,1796089,1796092,1796094,1796097)
-  and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
-  and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <=89 
-  and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18;
-COMMIT;
-/*  Thiazolidinedione:
-  collect meds based on matching names:  */
-insert into ThiazolByNames_init
-select ds.PATID, a.RX_ORDER_DATE as MedDate
-  from DenominatorSummary ds
-  join "&&PCORNET_CDM".PRESCRIBING a
-  on ds.PATID=a.PATID
-  join "&&PCORNET_CDM".ENCOUNTER e
-  on a.ENCOUNTERID=e.ENCOUNTERID
-  join "&&PCORNET_CDM".DEMOGRAPHIC d
-  on e.PATID=d.PATID
-  where (
-  regexp_like(a.RAW_RX_MED_NAME,'Avandia','i') or regexp_like(a.RAW_RX_MED_NAME,'Actos','i') or
-  (regexp_like(a.RAW_RX_MED_NAME,'rosiglitazone','i') and not
-  (
-  /*  this ione is combination of metformin-rosiglitazone:  */
-  regexp_like(a.RAW_RX_MED_NAME,'Avandamet','i') or
-  /*  this is combination of rosiglitizone-metformin:  */
-  regexp_like(a.RAW_RX_MED_NAME,'Amaryl M','i') or
-  /*  this is combination of glimeperide-rosiglitazone :  */
-  regexp_like(a.RAW_RX_MED_NAME,'Avandaryl','i')
-  )) or
-  (regexp_like(a.RAW_RX_MED_NAME,'pioglitazone','i') and not
-  (
-  /*  this ione is combination of metformin-pioglitazone :  */
-  regexp_like(a.RAW_RX_MED_NAME,'Actoplus','i') or
-  regexp_like(a.RAW_RX_MED_NAME,'Actoplus Met','i') or regexp_like(a.RAW_RX_MED_NAME,'Actoplus Met XR','i') or regexp_like(a.RAW_RX_MED_NAME,'Competact','i') or
-  /*  this is combination of glimepiride-pioglitazone:  */
-  regexp_like(a.RAW_RX_MED_NAME,'Duetact','i') or
-  /* this is combination of alogliptin-pioglitazone:  */
-  regexp_like(a.RAW_RX_MED_NAME,'Oseni','i')
-  )) or
-  regexp_like(a.RAW_RX_MED_NAME,'Troglitazone','i') or regexp_like(a.RAW_RX_MED_NAME,'Noscal','i') or regexp_like(a.RAW_RX_MED_NAME,'Re[z|s]ulin','i') or regexp_like(a.RAW_RX_MED_NAME,'Romozin','i') 
-  )
-  and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
-  and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <=89 
-  and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18;
-COMMIT;
-/* collect meds based on matching RXNORM codes:  */
-insert into ThiazolByRXNORM_init
-select ds.PATID, a.RX_ORDER_DATE as MedDate
-  from DenominatorSummary ds
-  join "&&PCORNET_CDM".PRESCRIBING a
-  on ds.PATID=a.PATID
-  join "&&PCORNET_CDM".ENCOUNTER e
-  on a.ENCOUNTERID=e.ENCOUNTERID
-  join "&&PCORNET_CDM".DEMOGRAPHIC d
-  on e.PATID=d.PATID
-  where a.RXNORM_CUI in (202,572,1480,2242,2465,4583,4586,4615,4622,4623,4624,4625,4626,4627,4628,4630,4631,4632,4633,4634,4635,4636,4951,5316,6053,6211,6214,6216,6885,7208,7475,8925,10481,11019,11022,11024,17547,19217,20185,21336,25511,25512,25515,25517,25520,25527,25617,25851,26061,26402,28170,30957,30958,33738,39108,39125,39131,39141,39146,39147,39149,39150,39152,39847,40224,40738,41397,46981,47026,47724,48253,50216,50278,53324,59156,59191,59208,59284,59419,59427,59513,61539,67375,68213,71877,71921,72227,72610,72622,75157,75158,82578,84108,88577,97483,97568,97609,97833,97841,97848,97852,97867,97875,97877,97881,97892,97893,97894,97919,97977,97986,98066,98075,98076,114175,117305,124953,153014,153015,153722,153723,153724,153725,160190,170941,182835,199984,199985,200065,203027,203715,204377,212281,212282,213041,217954,224003,235298,235305,237601,237602,237603,237622,237623,237624,238255,240757,242206,242614,242615,246859,248528,253198,259319,259351,259382,259383,259635,260018,260111,261241,261242,261243,261266,261267,261268,261442,261455,283847,283848,283849,284132,308043,308706,311248,311259,311260,311261,312440,312441,312859,312860,312861,314063,316124,316125,316869,316870,316871,317223,317573,331478,332435,332436,336270,336271,336906,340667,353229,358499,358500,358530,358809,368230,368234,368317,373801,374252,374606,375549,375855,378729,381259,386116,391625,391627,391633,391634,391635,391636,391645,391646,391650,391654,391671,391677,391801,393133,401993,401994,420203,428722,429088,429558,429808,430181,430343,433795,435806,436189,437129,437131,437306,437391,437392,440537,441116,476352,476353,483592,483642,565366,565367,565368,572491,572492,572980,574470,574471,574472,574495,574496,574497,577093,577605,577606,578033,580285,582044,582226,601642,602012,602014,602015,602016,602017,602018,602019,602166,602543,602544,602549,602550,602593,602594,602595,605320,606253,607999,614348,615015,615016,618299,629614,629615,631212,631213,631214,631215,631216,631217,633494,647235,647236,647237,647239,687360,690417,690728,691361,691407,692793,704551,704552,706895,706896,729115,729116,730905,731455,731457,731461,731462,731463,755768,757211,792114,792115,795807,799064,833760,834152,855905,860487,860488,860489,861760,861763,861783,861795,861806,861816,861822,885217,885249,885250,885252,895940,899988,899989,899994,899996,900001,967790,968642,968643,968644,968793,968799,968800,979613,985057,990292,1007465,1007707,1008459,1009262,1010582,1010583,1010584,1010585,1010591,1011085,1011086,1011087,1014246,1021902,1022620,1023321,1025110,1041762,1041767,1041785,1049771,1087356,1120060,1121071,1121356,1121421,1121996,1123648,1130713,1131491,1135408,1135409,1141372,1143463,1144222,1144325,1144326,1146169,1147775,1149975,1150961,1153166,1153167,1153620,1153621,1153622,1153623,1153624,1157240,1157241,1157242,1157243,1157987,1157988,1161597,1161598,1161603,1161604,1162196,1162197,1162198,1162199,1163231,1163232,1163351,1163352,1163389,1163390,1169928,1169929,1175666,1175667,1181933,1181934,1233738,1234307,1237081,1239373,1246496,1291129,1291130,1291131,1291132,1291133,1294845,1297455,1301823,1302343,1302344,1302345,1302346,1302361,1302362,1302364,1305527,1305837,1307662,1308784,1310038,1313354,1362181,1362741,1368399,1368400,1368401,1368402,1368403,1368405,1368409,1368410,1368412,1368416,1368417,1368419,1368423,1368424,1368426,1368430,1368431,1368433,1368434,1368437,1368438,1368440,1368444,1374661,1374670,1384487,1424651,1424867,1425574,1425992,1426413,1431048,1436586,1439115,1440947,1441287,1485868,1490457,1492336,1493021,1493170,1493173,1494179,1494180,1494181,1494182,1494183,1494184,1494186,1494187,1494191,1495136,1547254,1548162,1552134,1593260,1593760,1593870,1600083,1601850,1605394,1605395,1608162,1649155,1649302,1661518,1663279,1663413,1670328,1670329,1670330,1670331,1670332,1720681,1720845,1722015,1724842,1733688,1738530,1743163,1743280,1746354,1746954,1805299)
-  and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
-  and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <=89 
-  and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18;
-COMMIT;
-/*  Glucagon-like Peptide-1 Agonist:
--- collect meds based on matching names:   */
-insert into GLP1AexByNames_initial
-select ds.PATID, a.RX_ORDER_DATE as MedDate
-  from DenominatorSummary ds
-  join "&&PCORNET_CDM".PRESCRIBING a
-  on ds.PATID=a.PATID
-  join "&&PCORNET_CDM".ENCOUNTER e
-  on a.ENCOUNTERID=e.ENCOUNTERID
-  join "&&PCORNET_CDM".DEMOGRAPHIC d
-  on e.PATID=d.PATID
-  where (
-  regexp_like(a.RAW_RX_MED_NAME,'Exenatide','i') or regexp_like(a.RAW_RX_MED_NAME,'Byetta','i') or regexp_like(a.RAW_RX_MED_NAME,'Bydureon','i') or
-  regexp_like(a.RAW_RX_MED_NAME,'Liraglutide','i') or regexp_like(a.RAW_RX_MED_NAME,'Victoza','i') or regexp_like(a.RAW_RX_MED_NAME,'Saxenda','i') 
-  )
-  and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
-  and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <=89 
-  and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18;
-COMMIT;
-/* collect meds based on matching RXNORM codes:  */
-insert into GLP1AexByRXNORM_initial
-select ds.PATID, a.RX_ORDER_DATE as MedDate
-  from DenominatorSummary ds
-  join "&&PCORNET_CDM".PRESCRIBING a
-  on ds.PATID=a.PATID
-  join "&&PCORNET_CDM".ENCOUNTER e
-  on a.ENCOUNTERID=e.ENCOUNTERID
-  join "&&PCORNET_CDM".DEMOGRAPHIC d
-  on e.PATID=d.PATID
-  where a.RXNORM_CUI in (60548,475968,604751,847908,847910,847911,847913,847914,847915,847916,847917,847919,897120,897122,897123,897124,897126,1163230,1163790,1169415,1186578,1242961,1242963,1242964,1242965,1242967,1242968,1244651,1359640,1359802,1359979,1360105,1360454,1360495,1544916,1544918,1544919,1544920,1593624,1596425,1598264,1598265,1598267,1598268,1598269,1598618,1653594,1653597,1653600,1653610,1653611,1653613,1653614,1653616,1653619,1653625,1654044,1654730,1727493,1804447,1804505)
-  and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
-  and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <=89 
-  and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18;
-COMMIT;
+---------------------------------------------------------------------------------------------------------------*/
+
+
 /*---------------------------------------------------------------------------------------------------------------
   Combine all meds:    */
-insert into InclUnderRestrMeds_init
-select y.PATID, y.MedDate 
-  from 
-	(select x.PATID,x.MedDate,row_number() over (partition by x.PATID order by x.MedDate asc) rn
+insert /*+ append */ into InclUnderRestrMeds_init
+select y.PATID, y.MedDate as EventDate 
+from 
+	(select x.PATID, x.MedDate, row_number() over (partition by x.PATID order by x.MedDate asc) rn
 	from
-		(select a.PATID,a.MedDate 
-		from #BiguanideByNames_initial as a
-		union
-		select b.PATID, b.MedDate
-		from #ThiazolByNames_init as b
-		union
-		select c.PATID, c.MedDate
-		from #GLP1AexByNames_initial as c
+		(select a.PATID, a.MedDate 
+		from each_med_obs a
+    join encounter_type_age_denominator e on a.encounterid = e.encounterid
+    where dm_drug = 0 -- non-specific to Diabetes Mellitus
 		) x
 	) y
-  where y.rn=1;
-COMMIT;  
+where y.rn=1;
+COMMIT;
+
 /* Get set of patients having one med & one visit:  */
 insert into p1
 select x.PATID, x.MedDate 
