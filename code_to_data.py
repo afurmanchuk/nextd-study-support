@@ -46,6 +46,9 @@ Compare recent comments to SQL code:
 Medications
 ===========
 
+.. note:: These tests are obsolete since the hard-coded inserts have been
+          replaced by use of med_info.
+
 Medication codes are managed in long hard-coded lists in insert statements::
 
     >>> from pprint import pprint
