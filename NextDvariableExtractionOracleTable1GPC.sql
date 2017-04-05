@@ -359,7 +359,7 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
   join "&&PCORNET_CDM".DEMOGRAPHIC d
   on e.PATID=d.PATID
   where (
-  regexp_like(a.RAW_RX_MED_NAME, 'Acetohexamide','i') or regexp_like(a.RAW_RX_MED_NAME, 'D[i|y]melor','i') or regexpr_like(a.RAW_RX_MED_NAME, 'glimep[e,i]ride','i') or
+  regexp_like(a.RAW_RX_MED_NAME, 'Acetohexamide','i') or regexp_like(a.RAW_RX_MED_NAME, 'D[i|y]melor','i') or regexp_like(a.RAW_RX_MED_NAME, 'glimep[e,i]ride','i') or
   /*  This is combination of glimeperide-rosiglitazone :  */
   regexp_like(a.RAW_RX_MED_NAME,'Avandaryl','i') or regexp_like(a.RAW_RX_MED_NAME,'Amaryl','i') or
   /*  this is combination of glimepiride-pioglitazone:  */
@@ -367,7 +367,7 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
  regexp_like(a.RAW_RX_MED_NAME,'gliclazide','i') or regexp_like(a.RAW_RX_MED_NAME,'Uni Diamicron','i') or regexp_like(a.RAW_RX_MED_NAME,'glipizide','i') or
   /*  this is combination of metformin-glipizide :  */
  regexp_like(a.RAW_RX_MED_NAME,'Metaglip','i') or
-  regexp_like(a.RAW_RX_MED_NAME,'Glucotrol','i') or regexp_like(a.RAW_RX_MED_NAME,'Min[i|o]diab','i') or regexp_like(a.RAW_RX_MED_NAME,'Glibenese','i') or regexp_likeUPPER(a.RAW_RX_MED_NAME,'Glucotrol XL','i') or regexp_like(a.RAW_RX_MED_NAME,'Glipizide XL','i') or
+  regexp_like(a.RAW_RX_MED_NAME,'Glucotrol','i') or regexp_like(a.RAW_RX_MED_NAME,'Min[i|o]diab','i') or regexp_like(a.RAW_RX_MED_NAME,'Glibenese','i') or regexp_like(a.RAW_RX_MED_NAME,'Glucotrol XL','i') or regexp_like(a.RAW_RX_MED_NAME,'Glipizide XL','i') or
   regexp_like(a.RAW_RX_MED_NAME,'glyburide','i') or regexp_like(a.RAW_RX_MED_NAME,'Glucovance','i') or
 regexp_like(a.RAW_RX_MED_NAME,'glibenclamide','i') or regexp_like(a.RAW_RX_MED_NAME,'DiaBeta','i') or regexp_like(a.RAW_RX_MED_NAME,'Glynase','i') or
 regexp_like(a.RAW_RX_MED_NAME,'Micronase','i') or regexp_like(a.RAW_RX_MED_NAME,'chlorpropamide','i') or regexp_like(a.RAW_RX_MED_NAME,'Diabinese','i') or regexp_like(a.RAW_RX_MED_NAME,'Apo-Chlorpropamide','i') or
