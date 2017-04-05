@@ -426,7 +426,7 @@ dm_drug,drug,by,code,pattern,but_not,note
 1,Sulfonylurea,RXNORM,1384487,,,
 1,Sulfonylurea,RXNORM,1428269,,,
 1,Sulfonylurea,RXNORM,1741234,,,
-1,AlGluInh,Names,,acarbose,,
+1,AlGluInh,Names,,acarbose,,Alpha-glucosidase inhibitor
 1,AlGluInh,Names,,Precose,,
 1,AlGluInh,Names,,Glucobay,,
 1,AlGluInh,Names,,miglitol,,
@@ -476,7 +476,7 @@ dm_drug,drug,by,code,pattern,but_not,note
 1,AlGluInh,RXNORM,1185238,,,
 1,AlGluInh,RXNORM,1598393,,,
 1,AlGluInh,RXNORM,1741321,,,
-1,GLP1A,Names,,Lixisenatide,,
+1,GLP1A,Names,,Lixisenatide,,Glucagon-like Peptide-1 Agonists
 1,GLP1A,Names,,Adlyxin,,
 1,GLP1A,Names,,Lyxumia,,
 1,GLP1A,Names,,Albiglutide,,
@@ -541,7 +541,7 @@ dm_drug,drug,by,code,pattern,but_not,note
 1,GLP1A,RXNORM,1803898,,,
 1,GLP1A,RXNORM,1803902,,,
 1,GLP1A,RXNORM,1803903,,,
-1,DPIVInh,Names,,alogliptin,,
+1,DPIVInh,Names,,alogliptin,,Dipeptidyl peptidase IV inhibitor
 1,DPIVInh,Names,,Kazano,,
 1,DPIVInh,Names,,Oseni,,
 1,DPIVInh,Names,,Nesina,,
@@ -883,7 +883,7 @@ dm_drug,drug,by,code,pattern,but_not,note
 1,Meglitinide,RXNORM,1178434,,,
 1,Meglitinide,RXNORM,1184631,,,
 1,Meglitinide,RXNORM,1184632,,,
-1,Amyl,Names,,Pramlintide,,
+1,Amyl,Names,,Pramlintide,,Amylinomimetics
 1,Amyl,Names,,Symlin,,
 1,Amyl,Names,,SymlinPen 120,,
 1,Amyl,Names,,SymlinPen 60,,
@@ -1531,7 +1531,7 @@ dm_drug,drug,by,code,pattern,but_not,note
 1,Insulin,RXNORM,1804447,,,
 1,Insulin,RXNORM,1804505,,,
 1,Insulin,RXNORM,1804506,,,
-1,SGLT2Inh,Names,,dapagliflozin,,
+1,SGLT2Inh,Names,,dapagliflozin,,Sodium glucose cotransporter (SGLT) 2 inhibitors
 1,SGLT2Inh,Names,,"F[a,o]rxiga",,
 1,SGLT2Inh,Names,,canagliflozin,,
 1,SGLT2Inh,Names,,Invokana,,
