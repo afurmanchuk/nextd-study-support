@@ -416,7 +416,7 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer)>=18;
 COMMIT;
 /*  collect meds based on matching RXNORM codes:  */
-insert into AlGluInhByByRXNORM_init
+insert into AlGluInhByRXNORM_init
 select ds.PATID, a.RX_ORDER_DATE as MedDate
   from DenominatorSummary ds
   join "&&PCORNET_CDM".PRESCRIBING a

@@ -26,7 +26,7 @@ truncate TABLE Visits_final_FirstPair;
 truncate TABLE SulfonylureaByNames_initial;
 truncate TABLE SulfonylureaByRXNORM_initial;
 truncate TABLE AlGluInhByNames_init;
-truncate TABLE AlGluInhByByRXNORM_init;
+truncate TABLE AlGluInhByRXNORM_init;
 truncate TABLE GLP1AByNames_initial;
 truncate TABLE GLP1AByRXNORM_initial;
 truncate TABLE DPIVInhByNames_initial;
