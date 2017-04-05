@@ -49,7 +49,7 @@ Compare recent comments to SQL code:
 ('SulfonylureaByRXNORM_initial', ['3842', '153843', '153844', ...
 
     >>> from pprint import pprint
-    >>> for x in Table1Script.med_names():
+    >>> for x in Table1Script.med_name_exprs():
     ...     pprint(x)
     ... # doctest: +ELLIPSIS
     ('SulfonylureaByNames_initial',
@@ -80,6 +80,20 @@ Compare recent comments to SQL code:
            [['call',
              'regexp_like',
              [['IDENT', 'a.RAW_RX_MED_NAME'], ['LIT', "'Kazano'"], ...
+
+    >>> for x in Table1Script.med_names():
+    ...     print(x)
+    ... # doctest: +ELLIPSIS
+    ('SulfonylureaByNames_initial', 'Acetohexamide', None)
+    ('SulfonylureaByNames_initial', 'D[i|y]melor', None)
+    ('SulfonylureaByNames_initial', 'glimep[e,i]ride', None)
+    ...
+    ('BiguanideByNames_initial', 'Amaryl M', None)
+    ('BiguanideByNames_initial', 'Avandamet', None)
+    ('BiguanideByNames_initial', 'Metformin', 'Kazano')
+    ('BiguanideByNames_initial', 'Metformin', 'Invokamet')
+    ('BiguanideByNames_initial', 'Metformin', 'Xigduo XR')
+    ...
 
 '''
 
@@ -132,29 +146,68 @@ class Table1Script(object):
             for alias, inside in insides)
 
     @classmethod
-    def _med_inserts(cls):
+    def _med_inserts(cls, has_cui):
         return [(s[s.index('insert into '):].split()[2], s)
                 for s in cls.sql_statements
-                if 'PRESCRIBING' in s and 'insert into ' in s]
+                if 'insert into ' in s and
+                'PRESCRIBING' in s and
+                ('RXNORM_CUI' in s) == has_cui]
 
     @classmethod
     def med_codes(cls):
-        for dest, stmt in cls._med_inserts():
-            if 'RXNORM_CUI' not in stmt:
-                continue
+        for dest, stmt in cls._med_inserts(has_cui=True):
             where = [line for line in stmt.split('\n')
                      if line.strip().startswith('where a.RXNORM_CUI in (')][0]
             yield dest, _parens(where).split(',')
 
     @classmethod
-    def med_names(cls):
-        for dest, stmt in cls._med_inserts():
-            if 'RXNORM_CUI' in stmt:
-                continue
+    def med_name_exprs(cls):
+        for dest, stmt in cls._med_inserts(has_cui=False):
             where = stmt.split('where (', 1)[1]
             where = where.split('and e.ENC_TYPE in', 1)[0].strip()[:-1]
-            expr = SQLExpr(where)
-            yield dest, expr.conditional()
+            expr = SQLExpr(where).conditional()
+            yield dest, expr
+
+    @classmethod
+    def med_names(cls):
+        for dest, expr in cls.med_name_exprs():
+            if expr[0] != 'OR':
+                raise SyntaxError(expr[0])
+            outer = None
+            for disjunct in expr[1]:
+                if disjunct[0] == 'call':
+                    yield dest, _pattern(disjunct), None
+                elif disjunct[0] == 'AND':
+                    for conjunct in disjunct[1]:
+                        if conjunct[0] == 'call':
+                            outer = _pattern(conjunct)
+                        elif conjunct[0] == 'NOT':
+                            negated = conjunct[1]
+                            if negated[0] == 'OR':
+                                for inner_dis in negated[1]:
+                                    if inner_dis[0] == 'call':
+                                        inner = _pattern(inner_dis)
+                                        yield dest, outer, inner
+                                    else:
+                                        raise SyntaxError(inner_dis)
+                            else:
+                                raise SyntaxError(negated)
+                        else:
+                            raise SyntaxError(conjunct)
+                else:
+                    raise SyntaxError(disjunct)
+
+
+def _pattern(call):
+    if not (call[0] == 'call' and
+            call[1] == 'regexp_like' and
+            len(call[2]) == 3 and
+            call[2][0] == ['IDENT', 'a.RAW_RX_MED_NAME'] and
+            call[2][1][0] == 'LIT' and
+            call[2][2] == ['LIT', "'i'"]):
+        raise SyntaxError(call)
+    pattern_lit = call[2][1][1]
+    return pattern_lit[1:-1]
 
 
 Token = namedtuple('Token', ['type', 'value', 'span'])
