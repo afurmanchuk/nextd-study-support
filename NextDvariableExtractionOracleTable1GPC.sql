@@ -659,38 +659,44 @@ select ds.PATID, a.RX_ORDER_DATE as MedDate
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <=89 
   and cast(((cast(a.RX_ORDER_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18;
 COMMIT;
+/* TODO: migrate comments above into notes column of med_info */
+
 /*-------------------------------------------------------------------------------------------------------------
 -----                   Combine all medications specific to Diabetes Mellitus                             -----
 -----         The date of the first medication of any kind will be recorded for each patient              -----
 -------------------------------------------------------------------------------------------------------------*/
-insert into InclusionMeds_final
+insert /*+ append */ into InclusionMeds_final
+with med_info_aux as (
+  select distinct dm_drug, drug, pattern
+       /* combine but_not patterns using (pat1)|(pat2)|(pat3)... */
+       , listagg(but_not, ')|(') within group (order by dm_drug, drug, pattern, but_not) but_not
+  from nextd_med_info info
+  where dm_drug = 1 and pattern is not null
+  group by dm_drug, drug, pattern
+)
+, med_info as (
+  select drug, pattern
+       , case when but_not is null then null else '(' || but_not || ')' end but_not
+  from med_info_aux
+)
+, each_med_obs as (
+  select /*+ leading(a) */ a.PATID, round(a.RX_ORDER_DATE) as MedDate
+      , med_info.drug
+      , a.RAW_RX_MED_NAME
+    from (select * from "&&PCORNET_CDM".PRESCRIBING where rownum < 1000) a
+    join med_info
+       on regexp_like(a.RAW_RX_MED_NAME, med_info.pattern, 'i')
+       and (med_info.but_not is null or
+            not regexp_like(a.RAW_RX_MED_NAME, med_info.but_not, 'i'))
+)
+/* TODO: constrain to denominator cohort, relevant encounters */
+
 select y.PATID, y.MedDate as EventDate 
 from 
-	(select x.PATID,x.MedDate,row_number() over (partition by x.PATID order by x.MedDate asc) rn
+	(select x.PATID, x.MedDate, row_number() over (partition by x.PATID order by x.MedDate asc) rn
 	from
-		(select a.PATID,a.MedDate 
-		from SulfonylureaByNames_initial as a
-		union
-		select b.PATID, b.MedDate
-		from AlGluInhByNames_init as b
-		union
-		select d.PATID, d.MedDate
-		from DPIVInhByNames_initial as d
-		union
-		select e.PATID, e.MedDate
-		from MeglitinideByNames_initial as e
-		union
-		select f.PATID, f.MedDate
-		from AmylByNames_init as f
-		union
-		select g.PATID, g.MedDate
-		from InsulinByNames_initial as g	
-		union
-		select h.PATID, h.MedDate
-		from SGLT2InhByNames_initial as h
-		union
-		select k.PATID, k.MedDate
-		from GLP1AByNames_initial as k
+		(select distinct a.PATID, a.MedDate 
+		from each_med_obs a
 		) x
 	) y
 where y.rn=1;

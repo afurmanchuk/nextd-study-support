@@ -433,3 +433,19 @@ CREATE GLOBAL TEMPORARY TABLE FinalStatTable
   PregnancyDate_21 date NULL)
   on commit preserve rows;
 COMMIT;
+
+
+drop table nextd_med_info;
+create table nextd_med_info (
+  dm_drug integer not null,
+  drug varchar2(128) not null,
+  choose_by varchar2(40) not null,
+  rxcui integer,
+  pattern varchar2(128),
+  but_not varchar2(128),
+  constraint dm_drug_bool check (dm_drug in (0, 1)),
+  constraint code_or_pattern check (
+    (choose_by = 'RXNORM' and rxcui is not null and pattern is null) or
+    (choose_by = 'Names' and pattern is not null and rxcui is null)),
+  constraint but_not_needs_pattern check (but_not is null or pattern is not null)
+);
