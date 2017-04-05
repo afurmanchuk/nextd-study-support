@@ -690,15 +690,15 @@ COMMIT;
 -------------------------------------------------------------------------------------------------------------*/
 insert /*+ append */ into InclusionMeds_final
 with med_info_aux as (
-  select distinct dm_drug, drug, pattern
+  select distinct dm_drug, drug, rxcui, pattern
        /* combine but_not patterns using (pat1)|(pat2)|(pat3)... */
-       , listagg(but_not, ')|(') within group (order by dm_drug, drug, pattern, but_not) but_not
+       , listagg(but_not, ')|(') within group (order by dm_drug, drug, rxcui, pattern, but_not) but_not
   from nextd_med_info info
-  where dm_drug = 1 and pattern is not null
-  group by dm_drug, drug, pattern
+  where dm_drug = 1
+  group by dm_drug, drug, rxcui, pattern
 )
 , med_info as (
-  select drug, pattern
+  select drug, rxcui, pattern
        , case when but_not is null then null else '(' || but_not || ')' end but_not
   from med_info_aux
 )
@@ -710,11 +710,12 @@ with med_info_aux as (
     -- (select * from "&&PCORNET_CDM".PRESCRIBING where rownum < 1000) a
     "&&PCORNET_CDM".PRESCRIBING a
     join med_info
-       on regexp_like(a.RAW_RX_MED_NAME, med_info.pattern, 'i')
+       on to_char(med_info.rxcui) = a.RXNORM_CUI
+       or (
+       regexp_like(a.RAW_RX_MED_NAME, med_info.pattern, 'i')
        and (med_info.but_not is null or
-            not regexp_like(a.RAW_RX_MED_NAME, med_info.but_not, 'i'))
+            not regexp_like(a.RAW_RX_MED_NAME, med_info.but_not, 'i')))
 )
-/* TODO: constrain to denominator cohort, relevant encounters */
 
 select y.PATID, y.MedDate as EventDate 
 from 
