@@ -51,8 +51,8 @@ Medications
 
 Medication codes are managed in long hard-coded lists in insert statements::
 
-    >>> from pprint import pprint
-    >>> for _s, dest, stmt in Table1Script.med_inserts():
+    >>. from pprint import pprint
+    >>. for _s, dest, stmt in Table1Script.med_inserts():
     ...     if 'RXNORM' in stmt:
     ...         print(stmt)
     ... # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
@@ -75,7 +75,7 @@ Medication codes are managed in long hard-coded lists in insert statements::
 Likewise, medication names are managed in long lists of patterns in
 conditional expressions::
 
-    >>> for dm_drug, dest, stmt in Table1Script.med_inserts():
+    >>. for dm_drug, dest, stmt in Table1Script.med_inserts():
     ...     if 'RXNORM' not in stmt:
     ...         print(dm_drug, _dest2drug(dest))
     ...         where = Table1Script.med_name_condition(stmt)
@@ -97,7 +97,7 @@ conditional expressions::
 
 Let's turn this into tabular data::
 
-    >>> for x in Table1Script.med_info():
+    >>. for x in Table1Script.med_info():
     ...     pprint(x)
     ... # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
     MedInfo(dm_drug=1, drug='Sulfonylurea', by='Names', code=None, pattern='Acetohexamide',
