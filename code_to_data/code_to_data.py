@@ -184,7 +184,7 @@ class Table1Script(object):
 
     '''
     sql_lines = (pkg.resource_string(
-        __name__, 'NextDvariableExtractionOracleTable1GPC.sql')
+        __name__, '../NextDvariableExtractionOracleTable1GPC.sql')
                  .decode('utf-8').split('\n'))
 
     sql_statements = '\n'.join(sql_lines).split(';\r\n')
