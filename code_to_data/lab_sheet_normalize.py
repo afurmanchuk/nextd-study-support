@@ -95,17 +95,27 @@ class BabelAudit(object):
     labs = {'A1C': A1C,
             'glucose': glucose}
 
+    A1C2 = pkg.resource_string(
+        __name__, 'LOINC-search-Across-GPC-sites-2017-04-05_ANK-A1c.csv')
+    glucose2 = pkg.resource_string(
+        __name__, 'LOINC-search-Across-GPC-sites-2017-04-05_ANK-glucose.csv')
+
+    labs2 = {'A1C': A1C2,
+             'glucose': glucose2}
+
     @classmethod
-    def normal_form(cls):
+    def normal_form(cls,
+                    labs=labs):
         terms = []
-        for lab in sorted(cls.labs.keys()):
-            rows = cls.csv_rows(lab)
+        for lab in sorted(labs.keys()):
+            rows = cls.csv_rows(lab, labs=labs)
             terms.extend(Term.from_sheet(lab, rows))
         return terms
 
     @classmethod
-    def csv_rows(cls, lab):
-        with StringIO(cls.labs[lab].decode('utf-8')) as data:
+    def csv_rows(cls, lab,
+                 labs=labs):
+        with StringIO(labs[lab].decode('utf-8')) as data:
             rows = csv.reader(data)
             for row in rows:
                 yield row
