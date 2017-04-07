@@ -187,7 +187,6 @@ select obs.patient_num, obs.start_date, obs.encounter_num
 from
   glucose_concepts gc
 join "&&I2B2_STAR".observation_fact obs on obs.concept_cd = gc.concept_cd
-where gc.fasting = 0
 ;
 
 insert into FG_initial
