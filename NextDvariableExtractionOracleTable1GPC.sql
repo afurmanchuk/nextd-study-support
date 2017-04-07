@@ -14,6 +14,19 @@
 ---------------------------------------------------------------------------------------------------------------
 */
 
+/* Check that the curated lab, med data is loaded.
+
+Create them using extraction_tmp_ddl.sql and
+import from med_info.csv, lab_review.csv respectively.
+*/
+select case when labs > 0 and meds > 0 then 1
+       else 1 / 0 end curated_data_loaded from (
+  select
+    (select count(*) from nextd_med_info) meds,
+    (select count(*) from nextd_lab_review) labs
+  from dual
+);
+
 create or replace view encounter_of_interest as
 with age_at_visit as (
   select cast(d.BIRTH_DATE as date) BIRTH_DATE
@@ -167,11 +180,11 @@ with loinc_concepts as (
 )
 , loinc_fasting_glucose as (
   select 1 fasting, l.* from loinc_concepts l
-  where l.LAB_LOINC in ('1558-6', '1493-6', '10450-5', '1554-5', '17865-7', '14771-0', '77145-1', '1500-8', '1523-0', '1550-3','14769-4','14770-2','14771-0','1556-0','1557-8','21004-7','35184-1','40193-5','41604-0','53049-3','62851-1','62852-9','76629-5','77145-1') 
+  where l.concept_cd in ( select c_basecode from nextd_lab_review where category = 'Fasting Glucose') 
 )
 , loinc_random_glucose as (
   select 0 fasting, l.* from loinc_concepts l
-  where l.LAB_LOINC in ('2345-7','14749-6','10449-7','12614-4','14743-9','14760-3','14761-1','14768-6','14769-4','15074-8','1521-4','1547-9','16165-3','16166-1','16167-9','16168-7','16169-5','16170-3','16915-1','21004-7','2339-0','2340-8','2341-6','27353-2','34546-2','35211-2','39480-9','39481-7','40858-3','41651-1','41652-9','41653-7','41896-2','41897-0','41898-8','41899-6','41900-2','43151-0','44919-9','45052-8','45053-6','45054-4','45055-1','45056-9','47995-6','48986-4','48988-0','48989-8','48990-6','48991-4','48992-2','48993-0','48994-8','51596-5','52041-1','53094-9','53474-3','53553-4','54246-4','5914-7','59812-8','59813-6','59814-4','59815-1','62856-0','6689-4','6777-7','72171-2','72516-8','74244-5','74774-1','75864-9','77135-2','77677-3','80959-0','LP43629-2','LP51365-2','LP51830-5','LP71758-4')
+  where l.concept_cd in ( select c_basecode from nextd_lab_review where category = 'Random Glucose')
 )
 select fasting, lrg.lab_loinc, cd.name_char, cd.concept_cd, cd.concept_path
 from loinc_random_glucose lrg

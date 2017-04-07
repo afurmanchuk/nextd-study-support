@@ -449,3 +449,17 @@ create table nextd_med_info (
     (choose_by = 'Names' and pattern is not null and rxcui is null)),
   constraint but_not_needs_pattern check (but_not is null or pattern is not null)
 );
+
+
+drop table nextd_lab_review;
+create table nextd_lab_review (
+   sheet         varchar2(32),
+   site          varchar2(32),
+   c_name        varchar2(128),
+   c_totalnum    integer,
+   c_basecode    varchar2(64),
+   category      varchar2(64),
+   constraint cat_list check (category is null or
+                              category in ('A1c', 'Fasting Glucose', 'Random Glucose'))
+);
+
