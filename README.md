@@ -5,6 +5,9 @@ This is code to support the NEXT-D study.
 by Al'ona Furmanchuk
 with Dan Connolly
 
+ - for MS SQL Server: `NextDcodeForTable1_studyAndDMsampleExtraction.sql`
+ - for Oracle: `NextDvariableExtractionOracleTable1GPC.sql`
+
 See also:
 
  - [NEXT-D Data Request Detail](https://informatics.gpcnetwork.org/trac/Project/attachment/ticket/539/NEXT-D_Request%20for%20Data_Detailed_12.1.16.docx) draft of Nov 15
