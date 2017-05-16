@@ -115,8 +115,7 @@ select e.ENCOUNTERID, e.patid, e.BIRTH_DATE, e.admit_date, e.enc_type
 -----     The date of the first HbA1c lab out the first pair will be recorded as initial event.           -----
 ---------------------------------------------------------------------------------------------------------------
              Get all labs for each patient sorted by date:           */
-insert into A1c_initial (patid, lab_order_date)
-with A1c_initial as(
+insert into A1c_initial
 select ds.PATID, l.LAB_ORDER_DATE, row_number() over (partition by l.PATID order by l.LAB_ORDER_DATE asc) rn 
   from DenominatorSummary ds
   join "&&PCORNET_CDM".LAB_RESULT_CM l 
@@ -124,20 +123,20 @@ select ds.PATID, l.LAB_ORDER_DATE, row_number() over (partition by l.PATID order
   join encounter_of_interest e
   on l.ENCOUNTERID=e.ENCOUNTERID 
   where l.LAB_NAME='A1C'  
-  and l.RESULT_NUM >=6.5 and l.RESULT_UNIT='PERCENT' 
-)
+  and l.RESULT_NUM >=6.5 and l.RESULT_UNIT='PERCENT'
+  ;
+COMMIT;
 /*    The first date out the first pair of encounters is selected:      */
-, temp1 as (
+insert into temp1
 select uf.PATID, uf.LAB_ORDER_DATE,
 row_number() over (partition by un.PATID order by uf.LAB_ORDER_DATE asc) rn 
   from A1c_initial un
   join A1c_initial uf
   on un.PATID = uf.PATID
   where abs(un.LAB_ORDER_DATE-uf.LAB_ORDER_DATE)>1 and 
-  abs(cast(((cast(un.LAB_ORDER_DATE as date)-cast(uf.LAB_ORDER_DATE as date))/365.25 ) as integer))<=2)
-, A1c_final_FirstPair as (
-select x.PATID, x.LAB_ORDER_DATE as EventDate from temp1 x where x.rn=1)
-select * from A1c_final_FirstPair;
+  abs(cast(((cast(un.LAB_ORDER_DATE as date)-cast(uf.LAB_ORDER_DATE as date))/365.25 ) as integer))<=2;
+insert into A1c_final_FirstPair
+select x.PATID, x.LAB_ORDER_DATE as EventDate from temp1 x where x.rn=1;
 COMMIT;
 /*---------------------------------------------------------------------------------------------------------------
 -----     People with fasting glucose having two measures on different days within 2 years interval       -----
