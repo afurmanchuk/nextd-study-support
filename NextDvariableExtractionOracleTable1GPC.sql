@@ -591,7 +591,7 @@ select y.PATID, y.EventDate
 insert into Miscarr_Abort
 select ds.PATID, dia.ADMIT_DATE 
   from DenominatorSummary ds
-  join "&&PCORNET_CDM".DIAGNOSIS as dia 
+  join "&&PCORNET_CDM".DIAGNOSIS dia 
   on ds.PATID=dia.PATID
 	join "&&PCORNET_CDM".ENCOUNTER e
 	on dia.ENCOUNTERID=e.ENCOUNTERID 
@@ -605,27 +605,27 @@ COMMIT;
 insert into Pregn_Birth
 select ds.PATID,dia.ADMIT_DATE 
   from DenominatorSummary ds
-  join "&&PCORNET_CDM".DIAGNOSIS as dia 
+  join "&&PCORNET_CDM".DIAGNOSIS dia 
   on ds.PATID=dia.PATID
 	join "&&PCORNET_CDM".ENCOUNTER e
 	on dia.ENCOUNTERID=e.ENCOUNTERID 
 	join "&&PCORNET_CDM".DEMOGRAPHIC d
 	on e.PATID=d.PATID	
-	where (regexp_like(dia.DX,'6[4|5|6|7][0|1|2|3|4|5|6|7|8|9]\..' and dia.DX_TYPE = '09') 
+	where (regexp_like(dia.DX,'6[4|5|6|7][0|1|2|3|4|5|6|7|8|9]\..') and dia.DX_TYPE = '09')
   and cast(((cast(dia.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <= 89 
-  and cast(((cast(dia.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18);
+  and cast(((cast(dia.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18;
 COMMIT;
 /* Cases with delivery procedures in ICD-9 coding:*/
 insert into DelivProc
 select ds.PATID, p.ADMIT_DATE 
   from DenominatorSummary ds
-  join capricorn.dbo.PROCEDURES as p 
+  join "&&PCORNET_CDM".PROCEDURES p 
   on ds.PATID=p.PATID
 	join "&&PCORNET_CDM".ENCOUNTER e
 	on p.ENCOUNTERID=e.ENCOUNTERID 
 	join "&&PCORNET_CDM".DEMOGRAPHIC d
 	on e.PATID=d.PATID	
-		where ((regexp_like(p.PX,'7[2|3|4|5]\..' and p.PX_TYPE = '09') or (p.PX like '^1' and p.PX_TYPE = '10'))
+		where ((regexp_like(p.PX,'7[2|3|4|5]\..') and p.PX_TYPE = '09') or (p.PX like '^1' and p.PX_TYPE = '10'))
 		and cast(((cast(p.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <= 89 
     and cast(((cast(p.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer)>=18;
 COMMIT;
@@ -633,15 +633,16 @@ COMMIT;
 insert into PregProc
 select ds.PATID, p.ADMIT_DATE 
   from DenominatorSummary ds
-  join capricorn.dbo.PROCEDURES as p 
+  join "&&PCORNET_CDM".PROCEDURES p 
   on ds.PATID=p.PATID
 	join "&&PCORNET_CDM".ENCOUNTER e
 	on p.ENCOUNTERID=e.ENCOUNTERID 
 	join "&&PCORNET_CDM".DEMOGRAPHIC d
 	on e.PATID=d.PATID	
-	where (regexp_like(p.PX,'59[0|1|2|3|4|5|6|7|8|9][0|1|2|3|4|5|6|7|8|9][0|1|2|3|4|5|6|7|8|9]' and p.PX_TYPE='C3') 
+	where (regexp_like(p.PX,'59[0|1|2|3|4|5|6|7|8|9][0|1|2|3|4|5|6|7|8|9][0|1|2|3|4|5|6|7|8|9]') and p.PX_TYPE in ('C3', 'C4', 'CH'))
+    /* Changed to include C4 (and CH for later updates) since it refers to the same thing as C3 according to the CDM 3.1 Specification */
 	and cast(((cast(p.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <= 89 
-  and cast(((cast(p.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18);
+  and cast(((cast(p.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18;
 COMMIT;
 /*---------------------------------------------------------------------------------------------------------------
  Collect all encounters related to pregnancy:  */
