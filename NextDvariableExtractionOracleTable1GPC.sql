@@ -99,19 +99,19 @@ select e.ENCOUNTERID, e.patid, e.BIRTH_DATE, e.admit_date, e.enc_type
 
 
 /*-------------------------------------------------------------------------------------------------------------
-                         Part 2: Defining Deabetes Mellitus sample                                   
+                         Part 2: Defining Diabetes Mellitus sample                                   
 ---------------------------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------------------------
 -----        People with HbA1c having two measures on different days within 2 years interval              -----
 -----                                                                                                     -----            
------                         Lab should meet the following requerements:                                 -----
+-----                         Lab should meet the following requirements:                                 -----
 -----    Patient must be 18 years old >= age <= 89 years old during the lab ordering day.                 -----
 -----    Lab value is >= 6.5 %.                                                                           -----
 -----    Lab name is 'A1C' & LOINC codes '27352-2','4548-4'.                                              -----
------    Lab should meet requerement for encounter types: 'AMBULATORY VISIT', 'EMERGENCY DEPARTMENT',     -----
+-----    Lab should meet requirement for encounter types: 'AMBULATORY VISIT', 'EMERGENCY DEPARTMENT',     -----
 -----    'INPATIENT HOSPITAL STAY', 'EMERGENCY DEPARTMENT TO INPATIENT HOSPITAL STAY'.                    -----
 -----                                                                                                     -----
------                  The first pair of labs meeting requerements is collected.                          -----
+-----                  The first pair of labs meeting requirements is collected.                          -----
 -----     The date of the first HbA1c lab out the first pair will be recorded as initial event.           -----
 ---------------------------------------------------------------------------------------------------------------
              Get all labs for each patient sorted by date:           */
@@ -142,15 +142,15 @@ COMMIT;
 /*---------------------------------------------------------------------------------------------------------------
 -----     People with fasting glucose having two measures on different days within 2 years interval       -----
 -----                                                                                                     -----            
------                         Lab should meet the following requerements:                                 -----
+-----                         Lab should meet the following requirements:                                 -----
 -----    Patient must be 18 years old >= age <= 89 years old during the lab ordering day.                 -----
 -----    Lab value is >= 126 mg/dL.                                                                       -----
 -----    (Lab name is 'GLUF','RUGLUF' or testname 'GLUF') & LOINC codes '1558-6', '1493-6', '10450-5',    -----
 -----    '1554-5', '17865-7', '14771-0', '77145-1', '1500-8', '1523-0', '1550-3','14769-4'.               -----
------    Lab should meet requerement for encounter types: 'AMBULATORY VISIT', 'EMERGENCY DEPARTMENT',     -----
+-----    Lab should meet requirement for encounter types: 'AMBULATORY VISIT', 'EMERGENCY DEPARTMENT',     -----
 -----    'INPATIENT HOSPITAL STAY', 'EMERGENCY DEPARTMENT TO INPATIENT HOSPITAL STAY'.                    -----
 -----                                                                                                     -----
------                   The first pair of labs meeting requerements is collected.                         -----
+-----                   The first pair of labs meeting requirements is collected.                         -----
 -----   The date of the first fasting glucose lab out the first pair will be recorded as initial event.   -----
 ---------------------------------------------------------------------------------------------------------------
 -----                                    Not available in PCORNET                                         -----
@@ -229,12 +229,12 @@ COMMIT;
 /*---------------------------------------------------------------------------------------------------------------
 -----     People with random glucose having two measures on different days within 2 years interval        -----
 -----                                                                                                     -----            
------                         Lab should meet the following requerements:                                 -----
+-----                         Lab should meet the following requirements:                                 -----
 -----    Patient must be 18 years old >= age <= 89 years old during the lab ordering day.                 -----
 -----    Lab value is >= 200 mg/dL.                                                                       -----
 -----    (Lab name is 'GLUF','RUGLUF' or testname 'GLUF') & LOINC codes '1558-6', '1493-6', '10450-5',    -----
 -----    '1554-5', '17865-7', '14771-0', '77145-1', '1500-8', '1523-0', '1550-3','14769-4'.               -----
------    Lab should meet requerement for encounter types: 'AMBULATORY VISIT', 'EMERGENCY DEPARTMENT',     -----
+-----    Lab should meet requirement for encounter types: 'AMBULATORY VISIT', 'EMERGENCY DEPARTMENT',     -----
 -----    'INPATIENT HOSPITAL STAY', 'EMERGENCY DEPARTMENT TO INPATIENT HOSPITAL STAY'.                    -----
 -----                                                                                                     -----
 -----                   The first pair of labs meeting requerements is collected.                         -----
@@ -272,13 +272,13 @@ COMMIT;
 -----     People with one random glucose & one HbA1c having both measures on different days within        -----
 -----                                        2 years interval                                             -----
 -----                                                                                                     -----            
------                         Lab should meet the following requerements:                                 -----
+-----                         Lab should meet the following requirements:                                 -----
 -----    Patient must be 18 years old >= age <= 89 years old during the lab ordering day.                 -----
 -----    See corresponding sections above for the Lab values requerements.                                -----  
------    Lab should meet requerement for encounter types: 'AMBULATORY VISIT', 'EMERGENCY DEPARTMENT',     -----
+-----    Lab should meet requirement for encounter types: 'AMBULATORY VISIT', 'EMERGENCY DEPARTMENT',     -----
 -----    'INPATIENT HOSPITAL STAY', 'EMERGENCY DEPARTMENT TO INPATIENT HOSPITAL STAY'.                    -----
 -----                                                                                                     -----
------               The first pair of HbA1c labs meeting requerements is collected.                       -----
+-----               The first pair of HbA1c labs meeting requirements is collected.                       -----
 -----        The date of the first lab out the first pair will be recorded as initial event.              -----
 ---------------------------------------------------------------------------------------------------------------
 -----                                    Not available in PCORNET                                         -----
@@ -306,13 +306,13 @@ COMMIT;
 -----     People with one fasting glucose & one HbA1c having both measures on different days within       -----
 -----                                        2 years interval                                             -----
 -----                                                                                                     -----            
------                         Lab should meet the following requerements:                                 -----
+-----                         Lab should meet the following requirements:                                 -----
 -----    Patient must be 18 years old >= age <= 89 years old during the lab ordering day.                 -----
 -----    See corresponding sections above for the Lab values requerements.                                -----  
------    Lab should meet requerement for encounter types: 'AMBULATORY VISIT', 'EMERGENCY DEPARTMENT',     -----
+-----    Lab should meet requirement for encounter types: 'AMBULATORY VISIT', 'EMERGENCY DEPARTMENT',     -----
 -----    'INPATIENT HOSPITAL STAY', 'EMERGENCY DEPARTMENT TO INPATIENT HOSPITAL STAY'.                    -----
 -----                                                                                                     -----
------               The first pair of HbA1c labs meeting requerements is collected.                       -----
+-----               The first pair of HbA1c labs meeting requirements is collected.                       -----
 -----           The date of the first lab out the first pair will be recorded as initial event.           -----
 ---------------------------------------------------------------------------------------------------------------
 -----                                    Not available in PCORNET                                         -----
@@ -341,12 +341,12 @@ COMMIT;
 -----             relevant to type 1 Diabetes Mellitus or type 2 Diabetes Mellitus diagnosis              -----
 -----                        recorded on different days within 2 years interval                           -----
 -----                                                                                                     -----            
------                         Visit should meet the following requerements:                               -----
+-----                         Visit should meet the following requirements:                               -----
 -----    Patient must be 18 years old >= age <= 89 years old during on the visit day.                     -----
 -----    Visit should should be of encounter types: 'AMBULATORY VISIT', 'EMERGENCY DEPARTMENT',           -----
 -----    'INPATIENT HOSPITAL STAY', 'EMERGENCY DEPARTMENT TO INPATIENT HOSPITAL STAY'.                    -----
 -----                                                                                                     -----
------                  The first pair of visits meeting requerements is collected.                        -----
+-----                  The first pair of visits meeting requirements is collected.                        -----
 -----     The date of the first visit out the first pair will be recorded as initial event.               -----
 ---------------------------------------------------------------------------------------------------------------
                Get all visits of specified types for each patient sorted by date:  */
@@ -375,13 +375,13 @@ COMMIT;
 /*-------------------------------------------------------------------------------------------------------------
 -----            People with at least one ordered medications specific to Diabetes Mellitus               -----
 -----                                                                                                     -----            
------                         Medication should meet the following requerements:                          -----
+-----                         Medication should meet the following requirements:                          -----
 -----     Patient must be 18 years old >= age <= 89 years old during the ordering of medication           -----
 -----    Medication should relate to encounter types: 'AMBULATORY VISIT', 'EMERGENCY DEPARTMENT',         -----
 -----    'INPATIENT HOSPITAL STAY', 'EMERGENCY DEPARTMENT TO INPATIENT HOSPITAL STAY'.                    -----
 -----                                                                                                     -----
------                The date of the first medication meeting requerements is collected.                  -----
 ---------------------------------------------------------------------------------------------------------------*/
+-----                The date of the first medication meeting requirements is collected.                  -----
 
 
 /*-------------------------------------------------------------------------------------------------------------
@@ -444,12 +444,12 @@ COMMIT;
 -----                                                   &                                                 ----- 
 -----one lab or one visit record described above. Both recorded on different days within 2 years interval.-----
 -----                                                                                                     -----            
------           Medication and another encounter should meet the following requerements:                  -----
+-----           Medication and another encounter should meet the following requirements:                  -----
 -----        Patient must be 18 years old >= age <= 89 years old during the recorded encounter            -----
 -----     Encounter should relate to encounter types: 'AMBULATORY VISIT', 'EMERGENCY DEPARTMENT',         -----
 -----    'INPATIENT HOSPITAL STAY', 'EMERGENCY DEPARTMENT TO INPATIENT HOSPITAL STAY'.                    -----
 -----                                                                                                     -----
------                The date of the first medication meeting requerements is collected.                  -----
+-----                The date of the first medication meeting requirements is collected.                  -----
 ---------------------------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------------------------
 -----                  People with medications non-specific to Diabetes Mellitus                          -----
@@ -582,7 +582,7 @@ select y.PATID, y.EventDate
 ---------------------------------------------------------------------------------------------------------------
 -----                             People with pregnancy-related encounters                                -----
 -----                                                                                                     -----            
------                       Encounter should meet the following requerements:                             -----
+-----                       Encounter should meet the following requirements:                             -----
 -----           Patient must be 18 years old >= age <= 89 years old during the encounter day.             -----
 -----                                                                                                     -----
 -----                 The date of the first encounter for each pregnancy is collected.                    -----
