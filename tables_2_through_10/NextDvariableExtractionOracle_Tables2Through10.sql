@@ -6,7 +6,6 @@
 
 --alter session set current_schema = PCORNET_CDM_C2R2;
 --TODO: change PCORNET_CDM_C2R2 to "&&PCORNET_CDM" wherever it occurs
---TODO: date shifting/formatting
 
 --select x from big_table sample(1) gets 1% of big_table
 
@@ -21,7 +20,10 @@ select * from each_med_obs emo;
 --drop table Demographic_Variables;
 create table Demographic_Variables as
 (
-select demo.patid, demo.birth_date, demo.sex, demo.race, demo.hispanic 
+select demo.patid, 
+    extract(year from demo.birth_date) as birth_year, 
+    extract(month from demo.birth_date) as birth_month,
+    demo.sex, demo.race, demo.hispanic 
     from PCORNET_CDM_C2R2.DEMOGRAPHIC demo
     join each_med_obs emo
     on demo.patid=emo.patid
@@ -39,7 +41,10 @@ select demo.patid, demo.birth_date, demo.sex, demo.race, demo.hispanic
 --drop table Pat_Enc_Date;
 create table Pat_Enc_Date as 
 (
-select enc.patid, enc.encounterid, enc.admit_date, enc.enc_type, enc.facilityid
+select enc.patid, enc.encounterid, 
+    substr(enc.admit_date, 4, 6) as admit_date, 
+    (enc.admit_date - emo.meddate) as days_from_first_enc, 
+    enc.enc_type, enc.facilityid
     from PCORNET_CDM_C2R2.ENCOUNTER enc
     join each_med_obs emo
     on enc.patid=emo.patid
@@ -55,15 +60,15 @@ select enc.patid, enc.encounterid, enc.admit_date, enc.enc_type, enc.facilityid
 --drop table Prescription_Meds;
 create table Prescription_Meds as
 (
-select presc.patid, presc.encounterid, presc.prescribingid, presc.rxnorm_cui, 
-    presc.rx_providerid, presc.rx_days_supply, presc.rx_refills 
+select presc.patid, presc.encounterid, presc.prescribingid, presc.rxnorm_cui,
+    substr(presc.rx_order_date, 4, 6) as rx_order_date, 
+    (presc.rx_order_date - emo.meddate) as days_from_first_enc,
+    presc.rx_providerid, presc.rx_days_supply, 
+    (case when presc.rx_refills is null then 0 else presc.rx_refills end) as rx_refills
     from PCORNET_CDM_C2R2.PRESCRIBING presc
     join each_med_obs emo
     on presc.patid=emo.patid
 );
-update Prescription_Meds
-    set rx_refills = 0
-    where rx_refills is null;
     
 --select count(*) from Prescription_Meds; 
 --12,035
@@ -75,8 +80,11 @@ update Prescription_Meds
 --drop table Vital_Signs;
 create table Vital_Signs as
 (
-select vital.patid, vital.encounterid, vital.measure_date, vital.vitalid, vital.ht, 
-vital.wt, vital.systolic, vital.diastolic, vital.smoking
+select vital.patid, vital.encounterid, vital.measure_date,
+    substr(measure_date, 4, 6) as measure_date_noday,
+    (measure_date - emo.meddate) as days_from_first_enc,
+    vital.vitalid, vital.ht, vital.wt, 
+    vital.systolic, vital.diastolic, vital.smoking
     from PCORNET_CDM_C2R2.VITAL vital
     join each_med_obs emo
     on vital.patid=emo.patid
@@ -324,7 +332,9 @@ select * from NEXTD_Vital_Signs;
 create table Lab_Results as
 (
 select labs.patid, labs.encounterid, labs.lab_order_date, labs.lab_result_cm_id, 
-labs.specimen_date, labs.result_num, labs.result_unit, labs.lab_name, labs.lab_loinc
+    substr(labs.specimen_date, 4, 6) as specimen_date_noday, 
+    round((labs.specimen_date - emo.meddate), 4) as days_from_first_enc, labs.specimen_date, emo.meddate, --why does days_from_first_enc yield fractions of a day?
+    labs.result_num, labs.result_unit, labs.lab_name, labs.lab_loinc
     from PCORNET_CDM_C2R2.LAB_RESULT_CM labs
     join each_med_obs emo
     on labs.patid=emo.patid
@@ -354,11 +364,17 @@ group by labs.lab_name;
 --select count(*) from PCORNET_CDM_C2R2.PROCEDURES proc;
 --23,731,186
 
---drop table Non_Urgent_Visits
+--drop table Non_Urgent_Visits;
 create table Non_Urgent_Visits as 
 (
-select proc.patid, proc.encounterid, proc.enc_type, proc.admit_date, --proc.admit_date_orderNumber, 
-proc.proceduresid, proc.px, proc.px_type, proc.px_date, diag.diagnosisid, diag.dx, diag.dx_type 
+select proc.patid, proc.encounterid, proc.enc_type,
+    proc.admit_date,
+    substr(proc.admit_date, 4, 6) as admit_date_noday, 
+    (row_number() over (partition by proc.patid, proc.admit_date order by proc.admit_date desc)) as admit_date_orderNumber, --not sure if this is correctly set up
+    proc.proceduresid, proc.px, proc.px_type, 
+    substr(proc.px_date, 4, 6) as px_date,
+    (proc.px_date - emo.meddate) as days_from_first_enc, 
+    diag.diagnosisid, diag.dx, diag.dx_type 
     from PCORNET_CDM_C2R2.PROCEDURES proc
     join PCORNET_CDM_C2R2.DIAGNOSIS diag
     on proc.patid=diag.patid
@@ -382,8 +398,10 @@ proc.proceduresid, proc.px, proc.px_type, proc.px_date, diag.diagnosisid, diag.d
 --drop table Immunizations;
 create table Immunizations as
 (
-select proc.patid, proc.encounterid, proc.proceduresid, proc.px, proc.px_type, proc.px_date, 
-diag.diagnosisid, diag.admit_date, diag.dx, diag.dx_type
+select proc.patid, proc.encounterid, proc.proceduresid, proc.px, proc.px_type, 
+    substr(proc.px_date, 4, 6) as px_date,
+    (proc.px_date - emo.meddate) as days_from_first_enc,
+    diag.diagnosisid, diag.admit_date, diag.dx, diag.dx_type
     from PCORNET_CDM_C2R2.PROCEDURES proc
     join PCORNET_CDM_C2R2.DIAGNOSIS diag
     on proc.patid=diag.patid
@@ -408,10 +426,12 @@ diag.diagnosisid, diag.admit_date, diag.dx, diag.dx_type
 --select count(*) from PCORNET_CDM_C2R2.DIAGNOSIS diag;
 --31,086,853
 
---drop table Diagnoses
+--drop table Diagnoses;
 create table Diagnoses as
 (
-select diag.patid, diag.encounterid, diag.diagnosisid, diag.pdx, diag.dx, diag.enc_type, diag. admit_date 
+select diag.patid, diag.encounterid, diag.diagnosisid, diag.pdx, diag.dx, diag.enc_type, 
+    substr(diag.admit_date, 4, 6) as admit_date,
+    (diag.admit_date - emo.meddate) as days_from_first_enc  
     from PCORNET_CDM_C2R2.DIAGNOSIS diag
     join each_med_obs emo
     on diag.patid=emo.patid
