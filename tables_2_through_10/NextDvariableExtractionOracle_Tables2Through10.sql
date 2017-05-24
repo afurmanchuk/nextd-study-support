@@ -97,28 +97,6 @@ select vital.patid, vital.encounterid, vital.measure_date,
 --select count(*) from Vital_Signs;
 --4,255
 
---TODO: format smoking column
---------------------------------------------------------------------------------------
-
---Grab columns of interest and the first recorded encounter date for each patient
---drop table with_first_date;
-create table with_first_date as
-(
-select vs.patid, vs.measure_date, vs.vitalid, vs.smoking, emo.meddate as firstdate
-from Vital_Signs vs
-join each_med_obs emo
-on vs.patid = emo.patid
-);
-
---Add custom dating and ordering columns
-alter table with_first_date
-add custom_date varchar(10) 
-add days_diff int;
-
---Set custom column values
-update with_first_date
-set days_diff = (measure_date - firstdate), custom_date = substr(measure_date, 4, 6);
-
 /*-- Smoking codes: 
 01 - current everyday smoker
 02 - current some day smoker
@@ -133,78 +111,73 @@ UN - unknown
 OT - other */
 
 --Create a table to find smoking code counts for each patient/month combination
---Begin by selecting all patient/month combinations
---drop table patient_month;
-create table patient_month as
-(select distinct patid, custom_date from with_first_date)
-order by patid;
-
---Add columns for each smoking code
-alter table patient_month
-add code_01 varchar(2)
-add code_02 varchar(2)
-add code_03 varchar(2)
-add code_04 varchar(2)
-add code_05 varchar(2)
-add code_06 varchar(2)
-add code_07 varchar(2)
-add code_08 varchar(2)
-add code_NI varchar(4)
-add code_UN varchar(4)
-add code_OT varchar(4);
-
---Find frequency of smoking codes each month per patient
-update patient_month pm
-set code_01 = (select count(*) from with_first_date wfd where pm.patid = wfd.patid and pm.custom_date = wfd.custom_date and wfd.smoking = '01'),
-    code_02 = (select count(*) from with_first_date wfd where pm.patid = wfd.patid and pm.custom_date = wfd.custom_date and wfd.smoking = '02'),
-    code_03 = (select count(*) from with_first_date wfd where pm.patid = wfd.patid and pm.custom_date = wfd.custom_date and wfd.smoking = '03'),
-    code_04 = (select count(*) from with_first_date wfd where pm.patid = wfd.patid and pm.custom_date = wfd.custom_date and wfd.smoking = '04'),
-    code_05 = (select count(*) from with_first_date wfd where pm.patid = wfd.patid and pm.custom_date = wfd.custom_date and wfd.smoking = '05'),
-    code_06 = (select count(*) from with_first_date wfd where pm.patid = wfd.patid and pm.custom_date = wfd.custom_date and wfd.smoking = '06'),
-    code_07 = (select count(*) from with_first_date wfd where pm.patid = wfd.patid and pm.custom_date = wfd.custom_date and wfd.smoking = '07'),
-    code_08 = (select count(*) from with_first_date wfd where pm.patid = wfd.patid and pm.custom_date = wfd.custom_date and wfd.smoking = '08'),
-    code_NI = (select count(*) from with_first_date wfd where pm.patid = wfd.patid and pm.custom_date = wfd.custom_date and wfd.smoking = 'NI'),
-    code_UN = (select count(*) from with_first_date wfd where pm.patid = wfd.patid and pm.custom_date = wfd.custom_date and wfd.smoking = 'UN'),
-    code_OT = (select count(*) from with_first_date wfd where pm.patid = wfd.patid and pm.custom_date = wfd.custom_date and wfd.smoking = 'OT');
+--drop table patient_month_records;
+create table patient_month_records as
+(
+select * from
+    (
+    --Unique patient/month combinations
+    with patient_month_initial as 
+    (select distinct patid, measure_date_noday from Vital_Signs), 
+    vs as
+    (select * from Vital_Signs)
+    
+    --Smoking code counts
+    select distinct pm.patid, pm.measure_date_noday,
+        (select count(*) from vs where pm.patid = vs.patid and pm.measure_date_noday = vs.measure_date_noday and vs.smoking = '01') as month_01,
+        (select count(*) from vs where pm.patid = vs.patid and pm.measure_date_noday = vs.measure_date_noday and vs.smoking = '02') as month_02,
+        (select count(*) from vs where pm.patid = vs.patid and pm.measure_date_noday = vs.measure_date_noday and vs.smoking = '03') as month_03,
+        (select count(*) from vs where pm.patid = vs.patid and pm.measure_date_noday = vs.measure_date_noday and vs.smoking = '04') as month_04,
+        (select count(*) from vs where pm.patid = vs.patid and pm.measure_date_noday = vs.measure_date_noday and vs.smoking = '05') as month_05,
+        (select count(*) from vs where pm.patid = vs.patid and pm.measure_date_noday = vs.measure_date_noday and vs.smoking = '06') as month_06,
+        (select count(*) from vs where pm.patid = vs.patid and pm.measure_date_noday = vs.measure_date_noday and vs.smoking = '07') as month_07,
+        (select count(*) from vs where pm.patid = vs.patid and pm.measure_date_noday = vs.measure_date_noday and vs.smoking = '08') as month_08,
+        (select count(*) from vs where pm.patid = vs.patid and pm.measure_date_noday = vs.measure_date_noday and vs.smoking = 'NI') as month_NI,
+        (select count(*) from vs where pm.patid = vs.patid and pm.measure_date_noday = vs.measure_date_noday and vs.smoking = 'UN') as month_UN,
+        (select count(*) from vs where pm.patid = vs.patid and pm.measure_date_noday = vs.measure_date_noday and vs.smoking = 'OT') as month_OT
+        from Vital_Signs vs
+        join patient_month_initial pm
+        on vs.patid = pm.patid
+    )
+);
 
 --Create a table to find all recorded smoking codes for each patient
 --drop table patient_all_records;
 create table patient_all_records as
-(select distinct patid from with_first_date);
-
---Add columns for each smoking code
-alter table patient_all_records
-add code_01 varchar(2)
-add code_02 varchar(2)
-add code_03 varchar(2)
-add code_04 varchar(2)
-add code_05 varchar(2)
-add code_06 varchar(2)
-add code_07 varchar(2)
-add code_08 varchar(2)
-add code_NI varchar(4)
-add code_UN varchar(4)
-add code_OT varchar(4);
-
---Find frequency of smoking codes for each patient
-update patient_all_records par
-set code_01 = (select count(*) from with_first_date wfd where par.patid = wfd.patid and wfd.smoking = '01'),
-    code_02 = (select count(*) from with_first_date wfd where par.patid = wfd.patid and wfd.smoking = '02'),
-    code_03 = (select count(*) from with_first_date wfd where par.patid = wfd.patid and wfd.smoking = '03'),
-    code_04 = (select count(*) from with_first_date wfd where par.patid = wfd.patid and wfd.smoking = '04'),
-    code_05 = (select count(*) from with_first_date wfd where par.patid = wfd.patid and wfd.smoking = '05'),
-    code_06 = (select count(*) from with_first_date wfd where par.patid = wfd.patid and wfd.smoking = '06'),
-    code_07 = (select count(*) from with_first_date wfd where par.patid = wfd.patid and wfd.smoking = '07'),
-    code_08 = (select count(*) from with_first_date wfd where par.patid = wfd.patid and wfd.smoking = '08'),
-    code_NI = (select count(*) from with_first_date wfd where par.patid = wfd.patid and wfd.smoking = 'NI'),
-    code_UN = (select count(*) from with_first_date wfd where par.patid = wfd.patid and wfd.smoking = 'UN'),
-    code_OT = (select count(*) from with_first_date wfd where par.patid = wfd.patid and wfd.smoking = 'OT');
+(
+select * from
+    (
+    --Unique patients
+    with patient_all_records_initial as
+    (select distinct patid from Vital_Signs),
+    vs as
+    (select * from Vital_Signs)
+    
+    --Smoking code counts
+    select distinct par.patid,
+        (select count(*) from vs where par.patid = vs.patid and vs.smoking = '01') as all_01,
+        (select count(*) from vs where par.patid = vs.patid and vs.smoking = '02') as all_02,
+        (select count(*) from vs where par.patid = vs.patid and vs.smoking = '03') as all_03,
+        (select count(*) from vs where par.patid = vs.patid and vs.smoking = '04') as all_04,
+        (select count(*) from vs where par.patid = vs.patid and vs.smoking = '05') as all_05,
+        (select count(*) from vs where par.patid = vs.patid and vs.smoking = '06') as all_06,
+        (select count(*) from vs where par.patid = vs.patid and vs.smoking = '07') as all_07,
+        (select count(*) from vs where par.patid = vs.patid and vs.smoking = '08') as all_08,
+        (select count(*) from vs where par.patid = vs.patid and vs.smoking = 'NI') as all_NI,
+        (select count(*) from vs where par.patid = vs.patid and vs.smoking = 'UN') as all_UN,
+        (select count(*) from vs where par.patid = vs.patid and vs.smoking = 'OT') as all_OT
+        from Vital_Signs vs
+        join patient_all_records_initial par
+        on vs.patid = par.patid
+    )
+);
 
 --Make month-long and all-time smoking code counts correspond to each record in Vital_Signs
-drop table smoking_code_records;
+--drop table smoking_code_records;
 create table smoking_code_records as
 (
-select vs.patid, vs.encounterid, vs.measure_date, y.custom_date, y.days_diff, vs.vitalid, vs.smoking, 
+select vs_out.patid, vs_out.encounterid, vs_out.measure_date, 
+    y.measure_date_noday, y.days_from_first_enc, vs_out.vitalid, vs_out.smoking, 
     y.month_01, y.month_02, y.month_03, y.month_04, 
     y.month_05, y.month_06, y.month_07, y.month_08,
     y.month_NI, y.month_UN, y.month_OT,
@@ -213,36 +186,31 @@ select vs.patid, vs.encounterid, vs.measure_date, y.custom_date, y.days_diff, vs
     y.all_NI, y.all_UN, y.all_OT
     from
     (
-    select x.patid, x.custom_date, x.days_diff, x.vitalid,
+    select x.patid, x.measure_date_noday, x.days_from_first_enc, x.vitalid,
         x.month_01, x.month_02, x.month_03, x.month_04, 
         x.month_05, x.month_06, x.month_07, x.month_08,
         x.month_NI, x.month_UN, x.month_OT,
-        par.code_01 as all_01, par.code_02 as all_02, 
-        par.code_03 as all_03, par.code_04 as all_04, 
-        par.code_05 as all_05, par.code_06 as all_06, 
-        par.code_07 as all_07, par.code_08 as all_08,
-        par.code_NI as all_NI, par.code_UN as all_UN, par.code_OT as all_OT
+        par.all_01, par.all_02, par.all_03, par.all_04, 
+        par.all_05, par.all_06, par.all_07, par.all_08,
+        par.all_NI, par.all_UN, par.all_OT
         from 
         (
-        select wfd.patid, wfd.custom_date, wfd.days_diff, wfd.vitalid, 
-            pm.code_01 as month_01, pm.code_02 as month_02, 
-            pm.code_03 as month_03, pm.code_04 as month_04, 
-            pm.code_05 as month_05, pm.code_06 as month_06, 
-            pm.code_07 as month_07, pm.code_08 as month_08,
-            pm.code_NI as month_NI, pm.code_UN as month_UN, pm.code_OT as month_OT
-            from with_first_date wfd
-            join patient_month pm
-            on wfd.custom_date = pm.custom_date and wfd.patid = pm.patid
+        select vs_in.patid, vs_in.measure_date_noday, vs_in.days_from_first_enc, vs_in.vitalid, 
+            pm.month_01, pm.month_02, pm.month_03, pm.month_04, 
+            pm.month_05, pm.month_06, pm.month_07, pm.month_08,
+            pm.month_NI, pm.month_UN, pm.month_OT
+            from Vital_Signs vs_in
+            join patient_month_records pm
+            on vs_in.measure_date_noday = pm.measure_date_noday and vs_in.patid = pm.patid
         ) x
         join patient_all_records par
         on par.patid = x.patid
     ) y
-join Vital_Signs vs
-on vs.vitalid = y.vitalid
+join Vital_Signs vs_out
+on vs_out.vitalid = y.vitalid
 );
 
 --Update smoking column according to logic given in Definitions_Part2.pdf
---TODO: Format updates as case statements?
 --Current Smoker
 update smoking_code_records sc
     set smoking = 1
@@ -264,14 +232,14 @@ update smoking_code_records sc
 select * from smoking_code_records
 where smoking not in ('1', '2', '3', '4') --(smoking = 'NI' or smoking = 'UN' or smoking = 'OT')
 order by measure_date;
---351 rows
+--359 rows
 
 --Handle cases where no codes exist for the month. (use the patient's most recent record's smoking code)
 --A decent number of 'NI' values still occur...
 --drop table final_smoking_codes;
 create table final_smoking_codes as 
 (
-select patid, measure_date, custom_date, days_diff, vitalid, 
+select patid, measure_date, measure_date_noday, days_from_first_enc, vitalid, 
 coalesce
 (
     (
@@ -287,7 +255,7 @@ coalesce
             --4 - 06, NI, UN, OT
             
             --Subquery design from https://stackoverflow.com/a/11128479/1541090
-            select patid, vitalid, smoking, measure_date, custom_date, days_diff, 
+            select patid, vitalid, smoking, measure_date, measure_date_noday, days_from_first_enc, 
             row_number() over (partition by patid order by sc_in.measure_date desc) rn
             from smoking_code_records sc_in
             where sc_in.patid = sc_out.patid 
@@ -302,13 +270,12 @@ coalesce
 from smoking_code_records sc_out
 );
 
-
 --Join tables on matching vital IDs; replace precise measure_date with year/month in custom_date; include re-labelled smoking column and days_diff column
-drop table NEXTD_Vital_Signs;
+--drop table NEXTD_Vital_Signs;
 create table NEXTD_Vital_Signs as
 (
-select vs.patid, vs.encounterid, fsc.custom_date as measure_date, 
-fsc.days_diff as days_from_first_enc, vs.vitalid, vs.ht, vs.wt, 
+select vs.patid, vs.encounterid, fsc.measure_date_noday as measure_date, 
+fsc.days_from_first_enc, vs.vitalid, vs.ht, vs.wt, 
 vs.systolic, vs.diastolic, fsc.smoking
 from Vital_Signs vs
 join final_smoking_codes fsc
@@ -316,17 +283,12 @@ on vs.vitalid = fsc.vitalid
 );
 
 --Review
-select * from with_first_date order by patid;
-select * from patient_month;
-select * from patient_all_records;
+select * from Vital_Signs;
+select * from patient_month_records order by patid;
+select * from patient_all_records order by patid;
 select * from smoking_code_records;
 select * from final_smoking_codes;
-select * from Vital_Signs;
 select * from NEXTD_Vital_Signs;
-
---------------------------------------------------------------------------------------
-
-
 
 ---------- Table 6 - Lab Results ----------
 --select count(*) from PCORNET_CDM_C2R2.LAB_RESULT_CM labs;
