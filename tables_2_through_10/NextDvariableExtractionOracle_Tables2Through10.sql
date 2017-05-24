@@ -1,17 +1,21 @@
 /*
 * Authored by Brennan Connolly from KUMC, with help from Dan Connolly
 * Preliminary designs for tables 2 through 10 in the Next-D study
+* See Definitions_Part2.pdf for design specifications
 * Table 9 not started yet
 */
 
 --alter session set current_schema = PCORNET_CDM_C2R2;
 --TODO: change PCORNET_CDM_C2R2 to "&&PCORNET_CDM" wherever it occurs
+--TODO: change bconnolly to "&&user" wherever it occurs
 
 --select x from big_table sample(1) gets 1% of big_table
 
---Make sure patient info exists (currently using a small subset of 24 patients)
+--Make sure patient info from Table 1 exists (currently using a small subset of 24 patients).
 select * from each_med_obs emo;
---use emo.meddate as first encounter date; I don't expect this to be very accurate until table 1 is done
+--Use emo.meddate as first encounter date for now.
+--I don't expect this or any data depending on this to be very accurate until Table 1 is done.
+--Until then, days_from_first_enc will often return negative numbers.
 
 ---------- Table 2 - Demographic Variables ----------
 --select count(*) from PCORNET_CDM_C2R2.DEMOGRAPHIC demo;
