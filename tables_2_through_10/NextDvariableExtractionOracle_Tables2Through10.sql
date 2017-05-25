@@ -47,7 +47,7 @@ create table Pat_Enc_Date as
 (
 select enc.patid, enc.encounterid, 
     substr(enc.admit_date, 4, 6) as admit_date, 
-    (enc.admit_date - emo.meddate) as days_from_first_enc, 
+    (round(enc.admit_date) - emo.meddate) as days_from_first_enc, 
     enc.enc_type, enc.facilityid
     from PCORNET_CDM_C2R2.ENCOUNTER enc
     join each_med_obs emo
@@ -66,7 +66,7 @@ create table Prescription_Meds as
 (
 select presc.patid, presc.encounterid, presc.prescribingid, presc.rxnorm_cui,
     substr(presc.rx_order_date, 4, 6) as rx_order_date, 
-    (presc.rx_order_date - emo.meddate) as days_from_first_enc,
+    (round(presc.rx_order_date) - emo.meddate) as days_from_first_enc,
     presc.rx_providerid, presc.rx_days_supply, 
     (case when presc.rx_refills is null then 0 else presc.rx_refills end) as rx_refills
     from PCORNET_CDM_C2R2.PRESCRIBING presc
@@ -86,7 +86,7 @@ create table Vital_Signs as
 (
 select vital.patid, vital.encounterid, vital.measure_date,
     substr(measure_date, 4, 6) as measure_date_noday,
-    (measure_date - emo.meddate) as days_from_first_enc,
+    (round(measure_date) - emo.meddate) as days_from_first_enc,
     vital.vitalid, vital.ht, vital.wt, 
     vital.systolic, vital.diastolic, vital.smoking
     from PCORNET_CDM_C2R2.VITAL vital
@@ -299,7 +299,7 @@ create table Lab_Results as
 (
 select labs.patid, labs.encounterid, labs.lab_order_date, labs.lab_result_cm_id, 
     substr(labs.specimen_date, 4, 6) as specimen_date_noday, 
-    round((labs.specimen_date - emo.meddate), 4) as days_from_first_enc, labs.specimen_date, emo.meddate, --why does days_from_first_enc yield fractions of a day?
+    (round(labs.specimen_date) - emo.meddate) as days_from_first_enc, labs.specimen_date, emo.meddate,
     labs.result_num, labs.result_unit, labs.lab_name, labs.lab_loinc
     from PCORNET_CDM_C2R2.LAB_RESULT_CM labs
     join each_med_obs emo
@@ -339,7 +339,7 @@ select proc.patid, proc.encounterid, proc.enc_type,
     (row_number() over (partition by proc.patid, proc.admit_date order by proc.admit_date desc)) as admit_date_orderNumber, --not sure if this is correctly set up
     proc.proceduresid, proc.px, proc.px_type, 
     substr(proc.px_date, 4, 6) as px_date,
-    (proc.px_date - emo.meddate) as days_from_first_enc, 
+    (round(proc.px_date) - emo.meddate) as days_from_first_enc, 
     diag.diagnosisid, diag.dx, diag.dx_type 
     from PCORNET_CDM_C2R2.PROCEDURES proc
     join PCORNET_CDM_C2R2.DIAGNOSIS diag
@@ -366,7 +366,7 @@ create table Immunizations as
 (
 select proc.patid, proc.encounterid, proc.proceduresid, proc.px, proc.px_type, 
     substr(proc.px_date, 4, 6) as px_date,
-    (proc.px_date - emo.meddate) as days_from_first_enc,
+    (round(proc.px_date) - emo.meddate) as days_from_first_enc,
     diag.diagnosisid, diag.admit_date, diag.dx, diag.dx_type
     from PCORNET_CDM_C2R2.PROCEDURES proc
     join PCORNET_CDM_C2R2.DIAGNOSIS diag
@@ -397,7 +397,7 @@ create table Diagnoses as
 (
 select diag.patid, diag.encounterid, diag.diagnosisid, diag.pdx, diag.dx, diag.enc_type, 
     substr(diag.admit_date, 4, 6) as admit_date,
-    (diag.admit_date - emo.meddate) as days_from_first_enc  
+    (round(diag.admit_date) - emo.meddate) as days_from_first_enc  
     from PCORNET_CDM_C2R2.DIAGNOSIS diag
     join each_med_obs emo
     on diag.patid=emo.patid
