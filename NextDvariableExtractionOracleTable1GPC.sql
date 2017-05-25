@@ -223,7 +223,7 @@ select uf.PATID, uf.LAB_ORDER_DATE,row_number() over (partition by un.PATID orde
   and abs(cast(((cast(un.LAB_ORDER_DATE as date)-cast(uf.LAB_ORDER_DATE as date))/365.25 ) as integer))<=2;
 insert into FG_final_FirstPair             
 select x.PATID, x.LAB_ORDER_DATE as EventDate 
-  from temp1 x where x.rn=1; 
+  from temp2 x where x.rn=1; 
 COMMIT;
 /*---------------------------------------------------------------------------------------------------------------
 -----     People with random glucose having two measures on different days within 2 years interval        -----
@@ -265,7 +265,7 @@ select uf.PATID, uf.LAB_ORDER_DATE, row_number() over (partition by un.PATID ord
 COMMIT;
 insert into RG_final_FirstPair
 select x.PATID, x.LAB_ORDER_DATE as EventDate 
-  from temp1 x where x.rn=1; 
+  from temp3 x where x.rn=1; 
 COMMIT;
 /*-------------------------------------------------------------------------------------------------------------
 -----     People with one random glucose & one HbA1c having both measures on different days within        -----
@@ -495,9 +495,9 @@ select x.PATID, x.MedDate
 COMMIT;
 insert into p5
 select x.PATID, x.MedDate
-from #InclusionUnderRestrictionMeds_initial x
-join #A1cFG_final_FirstPair y
-on x.PATID=y.PATID
+from InclusionUnderRestrictionMeds_initial x
+join A1cFG_final_FirstPair y
+on x.PATID=y.PATID;
 COMMIT;
 /* Collect all non-specific to Diabetes Mellitus meds:  */
 insert into InclUnderRestrMeds_final
