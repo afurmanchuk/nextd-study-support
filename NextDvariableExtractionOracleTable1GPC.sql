@@ -389,19 +389,13 @@ COMMIT;
 -------------------------------------------------------------------------------------------------------------*/
 
 create or replace view each_med_obs as
-with med_info_aux as (
-  select distinct dm_drug, drug, rxcui, pattern
-       /* combine but_not patterns using (pat1)|(pat2)|(pat3)... */
-       , listagg(but_not, ')|(') within group (order by dm_drug, drug, rxcui, pattern, but_not) but_not
+with
+med_info as (
+  select distinct dm_drug, drug, rxcui
   from nextd_med_info info
-  group by dm_drug, drug, rxcui, pattern
+  where rxcui is not null
 )
-, med_info as (
-  select dm_drug, drug, rxcui, pattern
-       , case when but_not is null then null else '(' || but_not || ')' end but_not
-  from med_info_aux
-)
-select /*+ leading(a) */ a.PATID, a.encounterid, round(a.RX_ORDER_DATE) as MedDate
+select  a.PATID, a.encounterid, round(a.RX_ORDER_DATE) as MedDate
     , med_info.dm_drug
     , med_info.drug
     , a.RAW_RX_MED_NAME
@@ -411,10 +405,6 @@ select /*+ leading(a) */ a.PATID, a.encounterid, round(a.RX_ORDER_DATE) as MedDa
   "&&PCORNET_CDM".PRESCRIBING a
   join med_info
      on to_char(med_info.rxcui) = a.RXNORM_CUI
-     or (
-     regexp_like(a.RAW_RX_MED_NAME, med_info.pattern, 'i')
-     and (med_info.but_not is null or
-          not regexp_like(a.RAW_RX_MED_NAME, med_info.but_not, 'i')))
 ;
 
 /* Performance note:
