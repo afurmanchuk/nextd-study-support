@@ -245,14 +245,15 @@ COMMIT;
 ---------------------------------------------------------------------------------------------------------------
              Get all labs for each patient sorted by date:           */
 insert into A1c_initial
-select ds.PATID, l.LAB_ORDER_DATE, row_number() over (partition by l.PATID order by l.LAB_ORDER_DATE asc) rn 
-  from DenominatorSummary ds
-  join "&&PCORNET_CDM".LAB_RESULT_CM l 
-  on ds.PATID=l.PATID
+select e.PATID, l.LAB_ORDER_DATE, row_number() over (partition by l.PATID order by l.LAB_ORDER_DATE asc) rn 
+  from "&&PCORNET_CDM".LAB_RESULT_CM l 
   join encounter_exclude_pregnancy e
   on l.ENCOUNTERID=e.ENCOUNTERID 
   where l.LAB_NAME='A1C'  
   and l.RESULT_NUM >=6.5 and l.RESULT_UNIT='PERCENT'
+  and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
+  and (round(l.LAB_ORDER_DATE) - e.BIRTH_DATE)/365 <= 89
+  and (round(l.LAB_ORDER_DATE) - e.BIRTH_DATE)/365 >= 18
   ;
 COMMIT;
 /*    The first date out the first pair of encounters is selected:      */
@@ -341,16 +342,18 @@ join "&&I2B2_STAR".observation_fact obs on obs.concept_cd = gc.concept_cd
 --select * from "&&PCORNET_CDM".lab_result_cm;
 
 insert into FG_initial
--- LAB_ORDER_DATE became start_date, which is more likely result date-time than order date.
-select ds.PATID, l.start_date, row_number() over (partition by l.patient_num order by l.start_date asc) rn  
-  from DenominatorSummary ds
-  join glucose_results l 
-  on ds.PATID=l.patient_num
+select e.PATID, l.LAB_ORDER_DATE, row_number() over (partition by l.PATID order by l.LAB_ORDER_DATE asc) rn  
+  from lab_result_cm_i2b2 l 
   join encounter_exclude_pregnancy e
-  on l.encounter_num=e.ENCOUNTERID
-  where l.fasting = 1
-	and l.nval_num >= 126 and lower(l.units_cd)='mg/dl'
-;
+  on l.ENCOUNTERID=e.ENCOUNTERID
+  where l.RESULT_NUM >= 126 
+    and lower(l.RESULT_UNIT)='mg/dl'
+    and l.LAB_LOINC in (select loinc from nextd_lab_review where label = 'Fasting Glucose') 
+    and l.LAB_NAME in ('GLUF','RUGLUF')
+    and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
+    and (round(l.LAB_ORDER_DATE) - e.BIRTH_DATE)/365 <= 89
+    and (round(l.LAB_ORDER_DATE) - e.BIRTH_DATE)/365 >= 18
+; --0 rows inserted
 COMMIT;
 /*                     The first date out the first pair of encounters is selected:		*/
 insert into temp2
@@ -383,14 +386,17 @@ COMMIT;
 ---------------------------------------------------------------------------------------------------------------
                            Get all labs for each patient sorted by date:            */
 insert into RG_initial
-select ds.PATID, l.start_date, row_number() over (partition by l.patient_num order by l.start_date asc) rn  
-  from DenominatorSummary ds
-  join glucose_results l 
-  on ds.PATID=l.patient_num
+select e.PATID, l.LAB_ORDER_DATE, row_number() over (partition by l.PATID order by l.LAB_ORDER_DATE asc) rn  
+  from lab_result_cm_i2b2 l 
   join encounter_exclude_pregnancy e
-  on l.encounter_num=e.ENCOUNTERID
-  where l.fasting = 0
-	and l.nval_num >= 200 and lower(l.units_cd)='mg/dl'
+  on l.ENCOUNTERID=e.ENCOUNTERID
+  where l.RESULT_NUM >= 200 
+    and lower(l.RESULT_UNIT)='mg/dl'
+    and l.LAB_LOINC in (select loinc from nextd_lab_review where label = 'Random Glucose') 
+    and l.LAB_NAME in ('GLUF','RUGLUF')
+    and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
+    and (round(l.LAB_ORDER_DATE) - e.BIRTH_DATE)/365 <= 89
+    and (round(l.LAB_ORDER_DATE) - e.BIRTH_DATE)/365 >= 18
 ;
 COMMIT;
 /*-- The first date out the first pair of encounters is selected:		*/
@@ -489,13 +495,14 @@ COMMIT;
 ---------------------------------------------------------------------------------------------------------------
                Get all visits of specified types for each patient sorted by date:  */
 insert into Visits_initial 
-select ds.PATID, l.ADMIT_DATE, row_number() over (partition by l.PATID order by l.ADMIT_DATE asc) rn  
-  from DenominatorSummary ds
-  join "&&PCORNET_CDM".DIAGNOSIS l 
-  on ds.PATID=l.PATID
+select e.PATID, l.ADMIT_DATE, row_number() over (partition by l.PATID order by l.ADMIT_DATE asc) rn  
+  from "&&PCORNET_CDM".DIAGNOSIS l 
   join encounter_exclude_pregnancy e
   on l.ENCOUNTERID=e.ENCOUNTERID 
   where ((REGEXP_LIKE (l.DX, '250\..[0|1|2|3]') and l.DX_TYPE = '09') or (REGEXP_LIKE (l.DX, 'E1[0|1]') and l.DX_TYPE = '10'))
+    and e.ENC_TYPE in ('IP', 'EI', 'AV', 'ED')
+    and (round(l.ADMIT_DATE) - e.BIRTH_DATE)/365 <= 89
+    and (round(l.ADMIT_DATE) - e.BIRTH_DATE)/365 >= 18
 ;
 COMMIT;
 /* Select the date for the first visit within the first pair: */
