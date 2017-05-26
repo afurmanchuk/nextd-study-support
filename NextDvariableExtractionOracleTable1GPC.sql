@@ -209,6 +209,24 @@ select *
   ) order by PATID;     
 COMMIT;
 
+--Exclude pregnancy encounters from the encounters of interest and create a new view from the remaining encounters
+create or replace view encounter_exclude_pregnancy as 
+(
+select * from encounter_of_interest
+where encounterid not in
+    (
+    --Find encounters that fall within one year of pregnancy admit dates
+    select /*distinct*/ eoi.encounterid 
+    --eoi.birth_date, eoi.enc_type, eoi.patid, np.patid, 
+    --eoi.admit_date, np.admit_date, (eoi.admit_date - np.admit_date) as date_diff
+    from encounter_of_interest eoi
+    join NumberPregnancy np
+    on eoi.patid = np.patid
+    where abs(eoi.admit_date - np.admit_date) <= 365
+    )
+);
+COMMIT;
+
 /*-------------------------------------------------------------------------------------------------------------
                          Part 3: Defining Diabetes Mellitus sample                                   
 ---------------------------------------------------------------------------------------------------------------
@@ -231,7 +249,7 @@ select ds.PATID, l.LAB_ORDER_DATE, row_number() over (partition by l.PATID order
   from DenominatorSummary ds
   join "&&PCORNET_CDM".LAB_RESULT_CM l 
   on ds.PATID=l.PATID
-  join encounter_of_interest e
+  join encounter_exclude_pregnancy e
   on l.ENCOUNTERID=e.ENCOUNTERID 
   where l.LAB_NAME='A1C'  
   and l.RESULT_NUM >=6.5 and l.RESULT_UNIT='PERCENT'
@@ -318,7 +336,7 @@ select ds.PATID, l.start_date, row_number() over (partition by l.patient_num ord
   from DenominatorSummary ds
   join glucose_results l 
   on ds.PATID=l.patient_num
-  join encounter_of_interest e
+  join encounter_exclude_pregnancy e
   on l.encounter_num=e.ENCOUNTERID
   where l.fasting = 1
 	and l.nval_num >= 126 and lower(l.units_cd)='mg/dl'
@@ -359,7 +377,7 @@ select ds.PATID, l.start_date, row_number() over (partition by l.patient_num ord
   from DenominatorSummary ds
   join glucose_results l 
   on ds.PATID=l.patient_num
-  join encounter_of_interest e
+  join encounter_exclude_pregnancy e
   on l.encounter_num=e.ENCOUNTERID
   where l.fasting = 0
 	and l.nval_num >= 200 and lower(l.units_cd)='mg/dl'
@@ -465,7 +483,7 @@ select ds.PATID, l.ADMIT_DATE, row_number() over (partition by l.PATID order by 
   from DenominatorSummary ds
   join "&&PCORNET_CDM".DIAGNOSIS l 
   on ds.PATID=l.PATID
-  join encounter_of_interest e
+  join encounter_exclude_pregnancy e
   on l.ENCOUNTERID=e.ENCOUNTERID 
   where ((REGEXP_LIKE (l.DX, '250\..[0|1|2|3]') and l.DX_TYPE = '09') or (REGEXP_LIKE (l.DX, 'E1[0|1]') and l.DX_TYPE = '10'))
 ;
