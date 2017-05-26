@@ -300,35 +300,45 @@ order by l.lab_name, l.result_unit
 */
  
 create or replace view glucose_concepts as
-with loinc_concepts as (
-  select concept_path, name_char, concept_cd, substr(concept_cd, length('LOINC:_')) lab_loinc
+with lab_concepts as (
+  select concept_path, name_char, concept_cd
   from "&&I2B2_STAR".concept_dimension cd
   where concept_path like '\i2b2\Laboratory Tests\%'
-  and concept_cd like 'LOINC:%'
 )
 , loinc_fasting_glucose as (
-  select 1 fasting, l.* from loinc_concepts l
-  where l.concept_cd in ( select c_basecode from nextd_lab_review where category = 'Fasting Glucose') 
+  select 1 fasting, lr.loinc lab_loinc, l.* from lab_concepts l
+  join nextd_lab_review lr on l.concept_cd = 'LOINC:' || lr.loinc
+  where lr.label = 'Fasting Glucose'
 )
 , loinc_random_glucose as (
-  select 0 fasting, l.* from loinc_concepts l
-  where l.concept_cd in ( select c_basecode from nextd_lab_review where category = 'Random Glucose')
+  select 0 fasting, lr.loinc lab_loinc, l.* from lab_concepts l
+  join nextd_lab_review lr on l.concept_cd = 'LOINC:' || lr.loinc
+  where lr.label = 'Random Glucose'
 )
-select fasting, lrg.lab_loinc, cd.name_char, cd.concept_cd, cd.concept_path
-from loinc_random_glucose lrg
-join "&&I2B2_STAR".concept_dimension cd
-  on cd.concept_path like (lrg.concept_path || '%')
+select fasting, 'GLUF' lab_name, lg.lab_loinc, cd.name_char, cd.concept_cd, cd.concept_path
+from (
+  select * from loinc_fasting_glucose
+  union all
+  select * from loinc_random_glucose
+  ) lg
+join lab_concepts cd
+  on cd.concept_path like (lg.concept_path || '%')
 ;
 
-
-create or replace view glucose_results as
-select obs.patient_num, obs.start_date, obs.encounter_num
-     , obs.nval_num, obs.units_cd, obs.concept_cd
-     , gc.name_char, gc.fasting
+--drop table lab_result_cm_i2b2;
+create table lab_result_cm_i2b2 as
+select obs.patient_num as patid, obs.start_date LAB_ORDER_DATE
+     , obs.encounter_num encounterid
+     , obs.nval_num RESULT_NUM, obs.units_cd RESULT_UNIT
+     , obs.concept_cd raw_facility_code
+     , gc.LAB_LOINC
+     , gc.lab_name, gc.fasting
 from
   glucose_concepts gc
 join "&&I2B2_STAR".observation_fact obs on obs.concept_cd = gc.concept_cd
 ;
+--select * from lab_result_cm_i2b2;
+--select * from "&&PCORNET_CDM".lab_result_cm;
 
 insert into FG_initial
 -- LAB_ORDER_DATE became start_date, which is more likely result date-time than order date.
