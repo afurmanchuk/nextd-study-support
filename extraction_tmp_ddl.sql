@@ -51,6 +51,7 @@ truncate TABLE p1;
 truncate TABLE p2;
 truncate TABLE p3;
 truncate TABLE p4;
+truncate TABLE p5;
 truncate TABLE InclUnderRestrMeds_final;
 truncate TABLE AllDM;
 truncate TABLE Miscarr_Abort;
@@ -113,6 +114,7 @@ drop TABLE p1;
 drop TABLE p2;
 drop TABLE p3;
 drop TABLE p4;
+drop TABLE p5;
 drop TABLE InclUnderRestrMeds_final;
 drop TABLE AllDM;
 drop TABLE Miscarr_Abort;
@@ -179,8 +181,7 @@ CREATE GLOBAL TEMPORARY TABLE temp2
   on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE FG_final_FirstPair  
   (PATID VARCHAR(128) NOT NULL,
-  LAB_ORDER_DATE date NULL,
-  rn INT)
+  EventDate date NULL)
   on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE RG_initial
   (PATID VARCHAR(128) NOT NULL,
@@ -342,13 +343,17 @@ CREATE GLOBAL TEMPORARY TABLE p4
   (PATID VARCHAR(128) NOT NULL,
   MedDate date NULL)
   on commit preserve rows;
+CREATE GLOBAL TEMPORARY TABLE p5
+  (PATID VARCHAR(128) NOT NULL,
+  MedDate date NULL)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE InclUnderRestrMeds_final
   (PATID VARCHAR(128) NOT NULL,
   EventDate date NULL)
   on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE AllDM
   (PATID VARCHAR(128) NOT NULL,
-  ADMIT_DATE date NULL)
+  EventDate date NULL)
   on commit preserve rows;
  CREATE GLOBAL TEMPORARY TABLE Miscarr_Abort
   (PATID VARCHAR(128) NOT NULL,
