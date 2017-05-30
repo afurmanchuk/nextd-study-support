@@ -641,7 +641,7 @@ select x.PATID, x.MedDate
 COMMIT;
 insert into p5
 select x.PATID, x.MedDate
-from InclusionUnderRestrictionMeds_initial x
+from InclUnderRestrMeds_init x
 join A1cFG_final_FirstPair y
 on x.PATID=y.PATID;
 COMMIT;
@@ -664,10 +664,11 @@ select y.PATID, y.MedDate as EventDate
   from p4 d
   union
   select e.PATID, e.MedDate
-  from p5 as e
-  union
-  select f.PATID, f.MedDate
-  from p6 as f
+  from p5 e
+  --p6 is not a table; is it supposed to be?
+  --union
+  --select f.PATID, f.MedDate
+  --from p6 f
   )x
   )y
   where y.rn=1;
@@ -725,14 +726,14 @@ p.PregnancyDate_16, p.PregnancyDate_17, p.PregnancyDate_18, p.PregnancyDate_19, 
 p.PregnancyDate_21
   from DenominatorSummary ds
   left join AllDM x
-  on a.PATID=x.PATID
+  on ds.PATID=x.PATID
   left join "&&PCORNET_CDM".DEATH d
-  on a.PATID=d.PATID
+  on ds.PATID=d.PATID
   left join FinalPregnancy p
-  on a.PATID=p.PATID;
+  on ds.PATID=p.PATID;
   COMMIT;
 /*-------------------------------------------------------------------------------------------------------------
------                               Table #FinalStatTable is Table 1                                      -----
+-----                               Table FinalStatTable is Table 1                                      -----
 -----                          will be used for post-processing analysis                                  ------
 -----                             
 -------------------------------------------------------------------------------------------------------------*/
