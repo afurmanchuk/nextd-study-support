@@ -1,5 +1,5 @@
 /*
-* Authored by Brennan Connolly from KUMC, with help from Dan Connolly
+* Authored by Brennan Connolly from KUMC, with help from Dan Connolly and Matt Hoag
 * Preliminary designs for tables 2 through 10 in the Next-D study
 * See Definitions_Part2.pdf for design specifications
 * Table 9 not started yet
@@ -109,69 +109,60 @@ UN - unknown
 OT - other */
 
 --Create a table to find smoking code counts for each patient/month combination
---drop table patient_month_records;
+drop table patient_month_records;
 create table patient_month_records as
 (
 select * from
     (
-    --Unique patient/month combinations
     with patient_month_initial as 
-    (select distinct patid, measure_date_noday from Vital_Signs), 
-    vs as
-    (select * from Vital_Signs)
-    
-    --Smoking code counts
-    select distinct pm.patid, pm.measure_date_noday,
-        (select count(*) from vs where pm.patid = vs.patid and pm.measure_date_noday = vs.measure_date_noday and vs.smoking = '01') as month_01,
-        (select count(*) from vs where pm.patid = vs.patid and pm.measure_date_noday = vs.measure_date_noday and vs.smoking = '02') as month_02,
-        (select count(*) from vs where pm.patid = vs.patid and pm.measure_date_noday = vs.measure_date_noday and vs.smoking = '03') as month_03,
-        (select count(*) from vs where pm.patid = vs.patid and pm.measure_date_noday = vs.measure_date_noday and vs.smoking = '04') as month_04,
-        (select count(*) from vs where pm.patid = vs.patid and pm.measure_date_noday = vs.measure_date_noday and vs.smoking = '05') as month_05,
-        (select count(*) from vs where pm.patid = vs.patid and pm.measure_date_noday = vs.measure_date_noday and vs.smoking = '06') as month_06,
-        (select count(*) from vs where pm.patid = vs.patid and pm.measure_date_noday = vs.measure_date_noday and vs.smoking = '07') as month_07,
-        (select count(*) from vs where pm.patid = vs.patid and pm.measure_date_noday = vs.measure_date_noday and vs.smoking = '08') as month_08,
-        (select count(*) from vs where pm.patid = vs.patid and pm.measure_date_noday = vs.measure_date_noday and vs.smoking = 'NI') as month_NI,
-        (select count(*) from vs where pm.patid = vs.patid and pm.measure_date_noday = vs.measure_date_noday and vs.smoking = 'UN') as month_UN,
-        (select count(*) from vs where pm.patid = vs.patid and pm.measure_date_noday = vs.measure_date_noday and vs.smoking = 'OT') as month_OT
+        --Unique patient/month combinations
+        (select distinct patid, measure_date_noday from Vital_Signs)
+    select * from 
+        (
+        select pm.patid, pm.measure_date_noday, vs.smoking
         from Vital_Signs vs
         join patient_month_initial pm
         on vs.patid = pm.patid
-    )
-);
+        and pm.measure_date_noday = vs.measure_date_noday
+        )
+    --Pivot logic by Matt Hoag
+    pivot
+        (
+        --Smoking code counts
+        count(smoking)
+        for smoking in ('01', '02', '03', '04', '05', '06', '07', '08', 'NI', 'UN', 'OT')
+        )
+    )    
+);  --56.773 seconds
 
 --Create a table to find all recorded smoking codes for each patient
---drop table patient_all_records;
+drop table patient_all_records;
 create table patient_all_records as
 (
 select * from
     (
-    --Unique patients
     with patient_all_records_initial as
-    (select distinct patid from Vital_Signs),
-    vs as
-    (select * from Vital_Signs)
-    
-    --Smoking code counts
-    select distinct par.patid,
-        (select count(*) from vs where par.patid = vs.patid and vs.smoking = '01') as all_01,
-        (select count(*) from vs where par.patid = vs.patid and vs.smoking = '02') as all_02,
-        (select count(*) from vs where par.patid = vs.patid and vs.smoking = '03') as all_03,
-        (select count(*) from vs where par.patid = vs.patid and vs.smoking = '04') as all_04,
-        (select count(*) from vs where par.patid = vs.patid and vs.smoking = '05') as all_05,
-        (select count(*) from vs where par.patid = vs.patid and vs.smoking = '06') as all_06,
-        (select count(*) from vs where par.patid = vs.patid and vs.smoking = '07') as all_07,
-        (select count(*) from vs where par.patid = vs.patid and vs.smoking = '08') as all_08,
-        (select count(*) from vs where par.patid = vs.patid and vs.smoking = 'NI') as all_NI,
-        (select count(*) from vs where par.patid = vs.patid and vs.smoking = 'UN') as all_UN,
-        (select count(*) from vs where par.patid = vs.patid and vs.smoking = 'OT') as all_OT
+        --Unique patients
+        (select distinct patid from Vital_Signs)
+    select * from 
+        (
+        select par.patid, vs.smoking
         from Vital_Signs vs
         join patient_all_records_initial par
         on vs.patid = par.patid
-    )
-);
+        )
+    --Pivot logic by Matt Hoag
+    pivot
+        (
+        --Smoking code counts
+        count(smoking)
+        for smoking in ('01', '02', '03', '04', '05', '06', '07', '08', 'NI', 'UN', 'OT')
+        )
+    )    
+);  --30.676 seconds
 
 --Make month-long and all-time smoking code counts correspond to each record in Vital_Signs
---drop table smoking_code_records;
+drop table smoking_code_records;
 create table smoking_code_records as
 (
 select vs_out.patid, vs_out.encounterid, vs_out.measure_date, 
@@ -188,15 +179,15 @@ select vs_out.patid, vs_out.encounterid, vs_out.measure_date,
         x.month_01, x.month_02, x.month_03, x.month_04, 
         x.month_05, x.month_06, x.month_07, x.month_08,
         x.month_NI, x.month_UN, x.month_OT,
-        par.all_01, par.all_02, par.all_03, par.all_04, 
-        par.all_05, par.all_06, par.all_07, par.all_08,
-        par.all_NI, par.all_UN, par.all_OT
+        par."'01'" as all_01, par."'02'" as all_02, par."'03'" as all_03, par."'04'" as all_04, 
+        par."'05'" as all_05, par."'06'" as all_06, par."'07'" as all_07, par."'08'" as all_08,
+        par."'NI'" as all_NI, par."'UN'" as all_UN, par."'OT'" as all_OT
         from 
         (
         select vs_in.patid, vs_in.measure_date_noday, vs_in.days_from_first_enc, vs_in.vitalid, 
-            pm.month_01, pm.month_02, pm.month_03, pm.month_04, 
-            pm.month_05, pm.month_06, pm.month_07, pm.month_08,
-            pm.month_NI, pm.month_UN, pm.month_OT
+            pm."'01'" as month_01, pm."'02'" as month_02, pm."'03'" as month_03, pm."'04'" as month_04, 
+            pm."'05'" as month_05, pm."'06'" as month_06, pm."'07'" as month_07, pm."'08'" as month_08,
+            pm."'NI'" as month_NI, pm."'UN'" as month_UN, pm."'OT'" as month_OT
             from Vital_Signs vs_in
             join patient_month_records pm
             on vs_in.measure_date_noday = pm.measure_date_noday and vs_in.patid = pm.patid
@@ -206,35 +197,63 @@ select vs_out.patid, vs_out.encounterid, vs_out.measure_date,
     ) y
 join Vital_Signs vs_out
 on vs_out.vitalid = y.vitalid
-);
+);  --245.92 seconds, 111.541 seconds
 
 --Update smoking column according to logic given in Definitions_Part2.pdf
 --Current Smoker
-update smoking_code_records sc
+update smoking_code_records
     set smoking = 1
-    where (month_01 > 0 or month_02 > 0 or month_05 > 0 or month_07 > 0 or month_08 > 0); --175 rows updated
+    --where (month_01 > 0 or month_02 > 0 or month_05 > 0 or month_07 > 0 or month_08 > 0);     --3,448,575 rows updated, 93.041 seconds
+    where ((month_01 + month_02 + month_05 + month_07 + month_08) > 0);                         --3,448,575 rows updated, 62.279 seconds
 --Former Smoker
-update smoking_code_records sc
+update smoking_code_records
     set smoking = 2
-    where (month_03 > 0) and not (month_01 > 0 or month_02 > 0 or month_05 > 0 or month_07 > 0 or month_08 > 0); --1,298 rows updated
+    --where (month_03 > 0) and not (month_01 > 0 or month_02 > 0 or month_05 > 0 or month_07 > 0 or month_08 > 0);  --6,537,979 rows updated, 88.582 seconds
+    where (month_03 > 0) and ((month_01 + month_02 + month_05 + month_07 + month_08) = 0);                          --6,537,979 rows updated, 90.975 seconds
 --Never Smoker
-update smoking_code_records sc
+update smoking_code_records
     set smoking = 3
-    where (all_04 > 0) and not (all_01 > 0 or all_02 > 0 or all_03 > 0 or all_05 > 0 or all_07 > 0 or all_08 > 0); --2,355 rows updated
+    --where (all_04 > 0) and not (all_01 > 0 or all_02 > 0 or all_03 > 0 or all_05 > 0 or all_07 > 0 or all_08 > 0);    --9,956,966 rows updated, 184.146 seconds
+    where (all_04 > 0) and ((all_01 + all_02 + all_03 + all_05 + all_07 + all_08) = 0);                                 --9,956,966 rows updated, 137.518 seconds
 --Unknown
-update smoking_code_records sc
+update smoking_code_records
     set smoking = 4
-    where (all_06 > 0 or all_NI > 0 or all_UN > 0 or all_OT > 0) and not (all_01 > 0 or all_02 > 0 or all_03 > 0 or all_04 > 0 or all_05 > 0 or all_07 > 0 or all_08 > 0); --68 rows updated
+    --where (all_06 > 0 or all_NI > 0 or all_UN > 0 or all_OT > 0) and not (all_01 > 0 or all_02 > 0 or all_03 > 0 or all_04 > 0 or all_05 > 0 or all_07 > 0 or all_08 > 0);    --279,377 rows updated, 7.981 seconds
+    where ((all_06 + all_NI + all_UN + all_OT) > 0) and ((all_01 + all_02 + all_03 + all_04 + all_05 + all_07 + all_08) = 0);                                                   --279,377 rows updated, 14.557 seconds
 
---View unhandled cases (such as when there are no records in the relevant month)
-select * from smoking_code_records
-where smoking not in ('1', '2', '3', '4') --(smoking = 'NI' or smoking = 'UN' or smoking = 'OT')
-order by measure_date;
---359 rows
+--Other Cases (see CaseWhereSmokingNotRelabelled.sql)
+update smoking_code_records
+    set smoking = 1
+    where smoking not in ('1', '2', '3', '4')
+    and ((all_01 + all_02 + all_05 + all_07 + all_08) > 0) 
+    and ((month_01 + month_02 + month_05 + month_07 + month_08) = 0); --770,961 rows updated, 29.541 seconds
+    
+update smoking_code_records
+    set smoking = 2
+    where smoking not in ('1', '2', '3', '4')
+    and (all_03 > 0) 
+    and ((month_01 + month_02 + month_05 + month_07 + month_08) = 0)
+    and ((all_01 + all_02 + all_05 + all_07 + all_08) = 0); --996,809 rows updated, 31.81 seconds
+    
+update smoking_code_records
+    set smoking = 3
+    where smoking not in ('1', '2', '3', '4')
+    and (all_04 > 0) 
+    and ((month_01 + month_02 + month_03 + month_05 + month_07 + month_08) = 0)
+    and ((all_01 + all_02 + all_03 + all_05 + all_07 + all_08) = 0); --0 rows updated, 11.334 seconds
+    
+update smoking_code_records
+    set smoking = 4
+    where smoking not in ('1', '2', '3', '4')
+    and ((all_06 + all_NI + all_UN + all_OT) > 0) 
+    and ((month_01 + month_02 + month_03 + month_04 + month_05 + month_07 + month_08) = 0)
+    and ((all_01 + all_02 + all_03 + all_04 + all_05 + all_07 + all_08) = 0); --0 rows updated, 11.99 seconds
 
+/*
 --Handle cases where no codes exist for the month. (use the patient's most recent record's smoking code)
---A decent number of 'NI' values still occur...
---drop table final_smoking_codes;
+--Performance is awful with full patient set
+--These cases are already handled by the above 4 update statements...though I'm not 100% confident they are handled correctly
+drop table final_smoking_codes;
 create table final_smoking_codes as 
 (
 select patid, measure_date, measure_date_noday, days_from_first_enc, vitalid, 
@@ -244,14 +263,13 @@ coalesce
     case when smoking not in ('1', '2', '3', '4')
     then 
         (
-        select decode(smoking, '01', '1', '02', '1', '03', '2', '04', '3', '05', '1', 
-                        '06', '4', '07', '1', '08', '1', 'NI', '4', 'UN', '4', 'OT', '4', 'NI') from 
+        select decode( smoking, '01', '1', '02', '1', '03', '2', '04', '3', '05', '1', 
+                        '06', '4', '07', '1', '08', '1', 'NI', '4', 'UN', '4', 'OT', '4', 'NI') from    
+        --1 - 01, 02, 05, 07, 08
+        --2 - 03
+        --3 - 04
+        --4 - 06, NI, UN, OT
             (
-            --1 - 01, 02, 05, 07, 08
-            --2 - 03
-            --3 - 04
-            --4 - 06, NI, UN, OT
-            
             --Subquery design from https://stackoverflow.com/a/11128479/1541090
             select patid, vitalid, smoking, measure_date, measure_date_noday, days_from_first_enc, 
             row_number() over (partition by patid order by sc_in.measure_date desc) rn
@@ -268,24 +286,30 @@ coalesce
 from smoking_code_records sc_out
 );
 
+--Check for smoking codes that were not relabelled
+select * from final_smoking_codes
+where smoking not in ('1', '2', '3', '4');
+*/
+
 --Join tables on matching vital IDs; replace precise measure_date with year/month in custom_date; include re-labelled smoking column and days_diff column
 --drop table NEXTD_Vital_Signs;
 create table NEXTD_Vital_Signs as
 (
-select vs.patid, vs.encounterid, fsc.measure_date_noday as measure_date, 
-fsc.days_from_first_enc, vs.vitalid, vs.ht, vs.wt, 
-vs.systolic, vs.diastolic, fsc.smoking
+select vs.patid, vs.encounterid, sc.measure_date_noday as measure_date, 
+sc.days_from_first_enc, vs.vitalid, vs.ht, vs.wt, 
+vs.systolic, vs.diastolic, sc.smoking
 from Vital_Signs vs
-join final_smoking_codes fsc
-on vs.vitalid = fsc.vitalid
-);
+join smoking_code_records sc
+--join final_smoking_codes fsc
+on vs.vitalid = sc.vitalid
+);  --39.687 seconds
 
 --Review
 select * from Vital_Signs;
 select * from patient_month_records order by patid;
 select * from patient_all_records order by patid;
 select * from smoking_code_records;
-select * from final_smoking_codes;
+--select * from final_smoking_codes;
 select * from NEXTD_Vital_Signs;
 
 ---------- Table 6 - Lab Results ----------
