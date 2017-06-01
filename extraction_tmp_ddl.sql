@@ -458,13 +458,10 @@ create table nextd_med_info (
 
 drop table nextd_lab_review;
 create table nextd_lab_review (
-   sheet         varchar2(32),
-   site          varchar2(32),
-   c_name        varchar2(128),
-   c_totalnum    integer,
-   c_basecode    varchar2(64),
-   category      varchar2(64),
-   constraint cat_list check (category is null or
-                              category in ('A1c', 'Fasting Glucose', 'Random Glucose'))
+   label        varchar2(64),
+   loinc        varchar2(32),
+   description  varchar2(128),
+   constraint cat_list check (label is null or
+                              label in ('HbA1c', 'Fasting Glucose', 'Random Glucose'))
 );
 
