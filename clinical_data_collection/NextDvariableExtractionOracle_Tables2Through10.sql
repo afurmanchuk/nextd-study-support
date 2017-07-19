@@ -1,6 +1,7 @@
 /*
-* Authored by Brennan Connolly from KUMC, with help from Dan Connolly and Matt Hoag
 * Preliminary designs for tables 2 through 9 in the Next-D study (originally 2 through 10)
+* Copyright (c) 2017 University of Kansas Medical Center
+* Authored by Brennan Connolly from KUMC, with help from Dan Connolly and Matt Hoag
 * See Definitions_Part2-2017-05-25-bb.pdf for design specifications
 */
 
