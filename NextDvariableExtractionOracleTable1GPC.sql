@@ -19,6 +19,7 @@ Using CDM C3R1
 Create them using extraction_tmp_ddl.sql and
 import from med_info.csv, lab_review.csv respectively.
 */
+/*
 select case when labs > 0 and meds > 0 then 1
        else 1 / 0 end curated_data_loaded from (
   select
@@ -26,6 +27,7 @@ select case when labs > 0 and meds > 0 then 1
     (select count(*) from nextd_lab_review) labs
   from dual
 );
+*/
 
 create or replace view encounter_of_interest as
 with age_at_visit as (
