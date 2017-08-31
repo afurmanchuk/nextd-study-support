@@ -1,6 +1,11 @@
 /*
                       Create all temporary tables 
 */
+
+-- All the truncates before drops look weird.
+-- Doing so can help avoid error ORA-14452
+--  "attempt to create, alter or drop an index on temporary table already in use"
+-- when there are indexes on the global temp tables.
 truncate TABLE Denominator_initial;
 truncate TABLE Denomtemp0v;
 truncate TABLE Denomtemp1v;
@@ -26,7 +31,7 @@ truncate TABLE Visits_final_FirstPair;
 truncate TABLE SulfonylureaByNames_initial;
 truncate TABLE SulfonylureaByRXNORM_initial;
 truncate TABLE AlGluInhByNames_init;
-truncate TABLE AlGluInhByByRXNORM_init;
+truncate TABLE AlGluInhByRXNORM_init; -- TODO either remove this or create the table
 truncate TABLE GLP1AByNames_initial;
 truncate TABLE GLP1AByRXNORM_initial;
 truncate TABLE DPIVInhByNames_initial;
@@ -51,6 +56,7 @@ truncate TABLE p1;
 truncate TABLE p2;
 truncate TABLE p3;
 truncate TABLE p4;
+truncate TABLE p5;
 truncate TABLE InclUnderRestrMeds_final;
 truncate TABLE AllDM;
 truncate TABLE Miscarr_Abort;
@@ -113,6 +119,7 @@ drop TABLE p1;
 drop TABLE p2;
 drop TABLE p3;
 drop TABLE p4;
+drop TABLE p5;
 drop TABLE InclUnderRestrMeds_final;
 drop TABLE AllDM;
 drop TABLE Miscarr_Abort;
@@ -144,10 +151,14 @@ CREATE GLOBAL TEMPORARY TABLE Denomtemp2v
   FirstVisit DATE)
   on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE DenominatorSummary
-  (PATID VARCHAR(128),
-  FirstVisit DATE,
-  NumerOfVisits INT)
-  on commit preserve rows;
+   (PATID VARCHAR(128),
+   BIRTH_DATE DATE,
+   FirstVisit DATE,
+   NumberOfVisits INT)
+   on commit preserve rows;
+-- All DDL must preceed DML on a session level Global Temp Table
+CREATE INDEX DenominatorSummary_patid on DenominatorSummary (patid);
+
 CREATE GLOBAL TEMPORARY TABLE DemographicVars
   (PATID VARCHAR(128) NOT NULL,
   SEX VARCHAR(2) NULL,
@@ -179,8 +190,7 @@ CREATE GLOBAL TEMPORARY TABLE temp2
   on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE FG_final_FirstPair  
   (PATID VARCHAR(128) NOT NULL,
-  LAB_ORDER_DATE date NULL,
-  rn INT)
+  EventDate date NULL)
   on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE RG_initial
   (PATID VARCHAR(128) NOT NULL,
@@ -342,13 +352,17 @@ CREATE GLOBAL TEMPORARY TABLE p4
   (PATID VARCHAR(128) NOT NULL,
   MedDate date NULL)
   on commit preserve rows;
+CREATE GLOBAL TEMPORARY TABLE p5
+  (PATID VARCHAR(128) NOT NULL,
+  MedDate date NULL)
+  on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE InclUnderRestrMeds_final
   (PATID VARCHAR(128) NOT NULL,
   EventDate date NULL)
   on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE AllDM
   (PATID VARCHAR(128) NOT NULL,
-  ADMIT_DATE date NULL)
+  EventDate date NULL)
   on commit preserve rows;
  CREATE GLOBAL TEMPORARY TABLE Miscarr_Abort
   (PATID VARCHAR(128) NOT NULL,
@@ -433,3 +447,31 @@ CREATE GLOBAL TEMPORARY TABLE FinalStatTable
   PregnancyDate_21 date NULL)
   on commit preserve rows;
 COMMIT;
+
+
+drop table nextd_med_info;
+create table nextd_med_info (
+  dm_drug integer not null,
+  drug varchar2(128) not null,
+  choose_by varchar2(40) not null,
+  rxcui integer,
+  pattern varchar2(128),
+  but_not varchar2(128),
+  constraint dm_drug_bool check (dm_drug in (0, 1)),
+  constraint code_or_pattern check (
+    (choose_by = 'RXNORM' and rxcui is not null and pattern is null) or
+    (choose_by = 'Names' and pattern is not null and rxcui is null)),
+  constraint but_not_needs_pattern check (but_not is null or pattern is not null)
+);
+
+
+drop table nextd_lab_review;
+create table nextd_lab_review (
+   label        varchar2(64),
+   loinc        varchar2(32),
+   description  varchar2(128),
+   constraint cat_list check (label is null or
+                              label in ('HbA1c', 'Fasting Glucose', 'Random Glucose'))
+);
+
+DROP TABLE SubTable1_for_export; -- start from clean point if re-running 

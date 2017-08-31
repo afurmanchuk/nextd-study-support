@@ -1,0 +1,24 @@
+Label,LOINC,Description
+Random Glucose,2345-7,Glucose [Mass/volume] in Serum or Plasma
+Random Glucose,2339-0,Glucose [Mass/volume] in Blood
+Random Glucose,10450-5,Glucose [Mass/volume] in Serum or Plasma -10 hours fasting
+Random Glucose,17865-7,Glucose [Mass/volume] in Serum or Plasma -8 hours fasting
+Random Glucose,1554-5,Glucose [Mass/volume] in Serum or Plasma -12 hours fasting
+Random Glucose,6777-7,Deprecated Glucose [Mass/volume] in Serum or Plasma - instead use
+Random Glucose,54246-4,Protein and Glucose panel [Mass/volume] - Body fluid
+Random Glucose,2344-0,Glucose [Mass/volume] in Body fluid
+Random Glucose,41652-9,Glucose [Mass/Volume] In Venous Blood
+Fasting Glucose,1558-6 ,Fasting glucose [Mass/volume] in Serum or Plasma
+Fasting Glucose,10450-5 ,Glucose [Mass/Volume] In Serum Or Plasma -10 Hours Fasting
+Fasting Glucose,1554-5 ,Glucose [Mass/volume] in Serum or Plasma -12 hours fasting
+Fasting Glucose,17865-7 ,Glucose [Mass/volume] in Serum or Plasma -8 hours fasting
+Fasting Glucose,35184-1 ,Fasting glucose [Mass or Moles/volume] in Serum or Plasma
+HbA1c,17855-8 ,Hemoglobin A1c/Hemoglobin.total in Blood by calculation
+HbA1c,4548-4 ,Hemoglobin A1c/Hemoglobin.total in Blood
+HbA1c,4549-2 ,Hemoglobin A1c/Hemoglobin.total in Blood by Electrophoresis
+HbA1c,17856-6 ,Hemoglobin A1c/Hemoglobin.total in Blood by HPLC
+HbA1c,41995-2 ,Hemoglobin A1c [Mass/volume] in Blood
+HbA1c,59261-8 ,Hemoglobin A1c/Hemoglobin.total in Blood by IFCC protocol
+HbA1c,62388-4 ,Hemoglobin A1c/Hemoglobin.total in Blood by JDS/JSCC protocol
+HbA1c,71875-9 ,Hemoglobin A1c/Hemoglobin.total [Pure mass fraction] in Blood
+HbA1c,54039-3 ,HEDIS 2009-2011 Codes to identify HbA1c tests (CDC-D)

@@ -1,0 +1,37 @@
+With babel account I was able to find records in following sources: mcw_terms, uiowa_terms, and uthscsa_terms.
+
+The following should be added to earlier posted lists:
+A1C 
+LOINC codes: 'LP100945-7','LP16413-4'
+Names:'Hemoglobin A1c | Bld-Ser-Plas','Hemoglobin A1c'
+
+Random glucose:
+LOINC codes:
+'10449-7','12610-2','12646-6','1504-0','1506-5','1517-2','1521-4','1530-5','20436-2','2339-0','2339-0:N','2339-0:T','2342-4','2345-7','27353-2','6777-7','LP42107-0','LP71758-4','14749-6','55399-0','27353-2','50588-3','LP31895-3','72171-2','50586-7','50608-9','50587-5','50588-3','50589-1','50673-3','50608-9','81637-1','72171-2','26779-9','43151-0','50608-9','50586-7','53553-4','50589-1'
+
+Names:
+'Est. average glucose Bld gHb Est-mCnc','Glucose 1h p meal SerPl-mCnc','Glucose 2h p chal SerPl-mCnc','Glucose 1h p chal SerPl-mCnc' ,
+'Glucose 1h p 50 g Glc PO SerPl-mCnc','Glucose 1h p 50 g Lac PO SerPl-mCnc','Glucose 2h p 50 g Lac PO SerPl-mCnc',
+'GLUCOSE, 2 HR POST PRANDIAL', 'Glucose 2h p meal SerPl-mCnc', 'Glucose 3h p 100 g Glc PO SerPl-mCnc', 
+'Glucose 2h p Glc SerPl-mCnc','Glucose Bld-mCnc', 'Glucose Bld-mCnc (Numeric)', 'Glucose Bld-mCnc (Text)' ,
+'CSF Glucose (Group:CSF-GLU)', 'GLUCOSE-CSF','Glucose SerPl-mCnc','EST AVG GLUCOSE','Est. average glucose Bld gHb Est-mCnc', 'GLUCOSE',
+'Glucose (Group:GLU)','Glucose | Bld-Ser-Plas','Estimated average glucose | Bld-Ser-Plas','CHEMP','GLU CP','KIDP','SGLU','GLU','SBAMET','SCHEM','SRENAL',
+'Glucose 1 Hour','_RUO Glucose 1 HR','BASIC CHEMISTRY PANEL','BASIC METABOLIC PANEL W/ CA (SERUM)','Basic Metabolic Panel, Serum (OP)',
+'Chemistry Panel, Basic','Chemistry Panel, Kidney','Chemistry Panel,Basic','Comprehen Metabolic Panel','Comprehensive Metabolic Panel, Serum',
+'Comprehensive Metabolic Panel, Serum (OP)','Glucose Level, Serum','GLUCOSE TOLERANCE 3 HR','Metabolic Panel, Comprehensive',
+'Renal Profile (Serum)','Glucose 3 Hour','Basic Chem 8 (NMPG)','Basic Metabolic  Panel','Basic Metabolic Panel','BMP',
+'Chem 8','Chemistry Panel, Comp V70.0','CHEMP','COMPREHENSIVE METABOLIC PANEL (SERUM)','GLUCOSE LEVEL 30 MINS POST-STIM',
+'GLUCOSE LEVEL CRITICAL POINT','Glucose Level V77.1','GLUCOSE TOLERANCE 2 HR 75G','GLUCOSE TOLERANCE 2 HR 75G WITH 1 HR',
+'RENAL CHEMISTRY PANEL SERUM','Glucose 2 Hour','Glucose 2 HRS','Chem 14','Chemistry Panel, Comprehensive Metabolic (tag: CMP',
+'COMPREHENSIVE CHEM PANEL','GLUCOSE 1 HR POST PRANDIAL','GLUCOSE 2 HR POST PRANDIAL','Glucose 2HR Tolerance','Glucose Level',
+'Glucose Level - 1Hr PP','GLUCOSE LEVEL 120 MINS POST-STIM','GLUCOSE LEVEL 60 MINS POST-STIM','GLUCOSE LEVEL FASTING OR RANDOM',
+'Glucose Level, 2Hr PP','Kidney Chemistry Panel','Glucose 2 HR','Basic Metabolic Panel, Serum','CCP1 (Comp Chem)',
+'Chemistry Panel Comprehensive, Serum','Chemistry Panel,  Basic','Chemistry Panel, Comprehensive Metabolic','Comprehensive Chemistry Panel',
+'Comprehensive Metabolic Panel','Glucose Level - 2Hr PP','GLUCOSE LEVEL 90 MINS POST-STIM','Glucose Level, Plasma (Outreach order Glucose, Ser','RENAL FUNCTION PANEL'
+
+Units: mg/DL
+
+Notes: For glucose tests LOINC codes alone are not sufficient. Lab names should be second parameter for selection. 
+Exclude tests that are clearly marked as Obstetrics and Gynecology. Such test name most likely will have OB abbreviation in it. 
+Exclude cerebrospinal fluids and urine tests. Urine glucose testing is a screening tool, but it is not sensitive enough for diagnosis or monitoring.
+
