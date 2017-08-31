@@ -244,8 +244,7 @@ COMMIT;
 /*-------------------------------------------------------------------------------------------------------------*/
 /* Data Request for 9/5: Without the DM onset column */
 /*-------------------------------------------------------------------------------------------------------------*/
-DROP TABLE FinalStatTable;
-CREATE GLOBAL TEMPORARY TABLE FinalStatTable
+CREATE TABLE SubTable1_for_export
   (PATID VARCHAR(128) NOT NULL, 
   FirstVisit date NULL, 
   NumberOfVisits INT, 
@@ -270,11 +269,10 @@ CREATE GLOBAL TEMPORARY TABLE FinalStatTable
   PregnancyDate_18 date NULL, 
   PregnancyDate_19 date NULL, 
   PregnancyDate_20 date NULL,
-  PregnancyDate_21 date NULL)
-  on commit preserve rows;
+  PregnancyDate_21 date NULL);
 COMMIT;
 
-insert into FinalStatTable
+insert into SubTable1_for_export 
 select ds.PATID, ds.FirstVisit, ds.NumberOfVisits, d.DEATH_DATE, 
 p.PregnancyDate_1, p.PregnancyDate_2, p.PregnancyDate_3, p.PregnancyDate_4, p.PregnancyDate_5,
 p.PregnancyDate_6, p.PregnancyDate_7, p.PregnancyDate_8, p.PregnancyDate_9, p.PregnancyDate_10,
@@ -287,14 +285,18 @@ p.PregnancyDate_21
   left join FinalPregnancy p
   on ds.PATID=p.PATID;
   COMMIT;
-  
-select count(distinct patid) from FinalStatTable; /* 570512 */
-select * from FinalStatTable;
 
-/* For dates, only show YYYY-MM */
+
+/* Interactive investigational code commented out 
+
+select count(distinct patid) from SubTable1_for_export;
+select * from SubTable1_for_export;
+
+-- For dates, only show YYYY-MM 
 select patid, to_char(firstvisit, 'YYYY-MM') firstvisit, numberofvisits, to_char(death_date, 'YYYY-MM') death_date, 
 to_char(PregnancyDate_1, 'YYYY-MM') PregnancyDate1, to_char(PregnancyDate_2, 'YYYY-MM') PregnancyDate2, to_char(PregnancyDate_3, 'YYYY-MM') PregnancyDate3, to_char(PregnancyDate_4, 'YYYY-MM') PregnancyDate4, to_char(PregnancyDate_5, 'YYYY-MM') PregnancyDate5,
 to_char(PregnancyDate_6, 'YYYY-MM') PregnancyDate6, to_char(PregnancyDate_7, 'YYYY-MM') PregnancyDate7, to_char(PregnancyDate_8, 'YYYY-MM') PregnancyDate8, to_char(PregnancyDate_9, 'YYYY-MM') PregnancyDate9, to_char(PregnancyDate_10, 'YYYY-MM') PregnancyDate10, 
 to_char(PregnancyDate_11, 'YYYY-MM') PregnancyDate11, to_char(PregnancyDate_12, 'YYYY-MM') PregnancyDate12, to_char(PregnancyDate_13, 'YYYY-MM') PregnancyDate13, to_char(PregnancyDate_14, 'YYYY-MM') PregnancyDate14, to_char(PregnancyDate_15, 'YYYY-MM') PregnancyDate15,
 to_char(PregnancyDate_16, 'YYYY-MM') PregnancyDate16, to_char(PregnancyDate_17, 'YYYY-MM') PregnancyDate17, to_char(PregnancyDate_18, 'YYYY-MM') PregnancyDate18, to_char(PregnancyDate_19, 'YYYY-MM') PregnancyDate19, to_char(PregnancyDate_20, 'YYYY-MM') PregnancyDate20,
-to_char(PregnancyDate_21, 'YYYY-MM') PregnancyDate21 from FinalStatTable;
+to_char(PregnancyDate_21, 'YYYY-MM') PregnancyDate21 from SubTable1_for_export;
+*/

@@ -37,10 +37,10 @@ _These data are not required for the "Table1" extract due 2017-09-05_ (see [Tick
 SQLServer code has not been updated yet for this.
 
 Oracle code is in Oracle_impl/NextD_table1.sql. 
-  - First run init_Oracle_temp_tables_ddl.sql 
+  - First run init_Oracle_temp_tables_ddl.sql (errors from TRUNCATE and DROP can be ignored on an initial run) 
   - Either modify NextD_table1.sql to reference your specific CDM schema (replacing all references to "&&PCORNET_CDM""), or rely on SqlPlus variable substition if that is your Oracle client of choice.
   - Run NextD_table1.sql
-  - Extract the final result table and upload to REDCap.
+  - Extract the "SubTable1_for_export" result table and upload to REDCap.
 
 ## Study Info
 

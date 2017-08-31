@@ -474,3 +474,4 @@ create table nextd_lab_review (
                               label in ('HbA1c', 'Fasting Glucose', 'Random Glucose'))
 );
 
+DROP TABLE SubTable1_for_export; -- start from clean point if re-running 
