@@ -12,7 +12,6 @@
 -----                                                                                                     -----
 -----          The date of the first encounter and total number of encounters is collected.               -----
 ---------------------------------------------------------------------------------------------------------------
-Using CDM C3R1
 */
 
 /* Check that the curated lab, med data is loaded.
