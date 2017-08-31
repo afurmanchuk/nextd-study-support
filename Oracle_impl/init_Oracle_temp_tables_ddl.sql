@@ -1,6 +1,11 @@
 /*
                       Create all temporary tables 
 */
+
+-- All the truncates before drops look weird.
+-- Doing so can help avoid error ORA-14452
+--  "attempt to create, alter or drop an index on temporary table already in use"
+-- when there are indexes on the global temp tables.
 truncate TABLE Denominator_initial;
 truncate TABLE Denomtemp0v;
 truncate TABLE Denomtemp1v;
@@ -26,7 +31,7 @@ truncate TABLE Visits_final_FirstPair;
 truncate TABLE SulfonylureaByNames_initial;
 truncate TABLE SulfonylureaByRXNORM_initial;
 truncate TABLE AlGluInhByNames_init;
-truncate TABLE AlGluInhByRXNORM_init;
+truncate TABLE AlGluInhByRXNORM_init; -- TODO either remove this or create the table
 truncate TABLE GLP1AByNames_initial;
 truncate TABLE GLP1AByRXNORM_initial;
 truncate TABLE DPIVInhByNames_initial;
@@ -146,10 +151,14 @@ CREATE GLOBAL TEMPORARY TABLE Denomtemp2v
   FirstVisit DATE)
   on commit preserve rows;
 CREATE GLOBAL TEMPORARY TABLE DenominatorSummary
-  (PATID VARCHAR(128),
-  FirstVisit DATE,
-  NumerOfVisits INT)
-  on commit preserve rows;
+   (PATID VARCHAR(128),
+   BIRTH_DATE DATE,
+   FirstVisit DATE,
+   NumberOfVisits INT)
+   on commit preserve rows;
+-- All DDL must preceed DML on a session level Global Temp Table
+CREATE INDEX DenominatorSummary_patid on DenominatorSummary (patid);
+
 CREATE GLOBAL TEMPORARY TABLE DemographicVars
   (PATID VARCHAR(128) NOT NULL,
   SEX VARCHAR(2) NULL,

@@ -49,8 +49,11 @@ from age_at_visit e
 Collect data to put summary for the study sample. 
 Further data collection will be performed for this population: 
 */
-drop table DenominatorSummary;
-create table DenominatorSummary as
+INSERT INTO DenominatorSummary
+  (PATID,
+   BIRTH_DATE,
+   FirstVisit,
+   NumberOFVisits)
 /*          Get all encounters for each patient sorted by date: */     
 with Denominator_init as(
 select e.PATID, e.BIRTH_DATE, e.ADMIT_DATE
@@ -81,7 +84,6 @@ select x.PATID, b.BIRTH_DATE, b.FirstVisit, x.NumberOfVisits
   from Denomtemp1v x
   left join Denomtemp2v b
   on x.PATID=b.PATID;
-create index DenominatorSummary_patid on DenominatorSummary (patid);
 
 /* Constrain encounters using just DenominatorSummary, not all of DEMOGRAPHIC. */
 create or replace view encounter_type_age_denominator as
