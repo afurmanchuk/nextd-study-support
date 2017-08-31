@@ -119,7 +119,7 @@ select ds.PATID, dia.ADMIT_DATE
 	on dia.ENCOUNTERID=e.ENCOUNTERID 
 	join "&&PCORNET_CDM".DEMOGRAPHIC d
 	on e.PATID=d.PATID
-		where ((regexp_like(dia.DX,'63[0|1|2|3|4|5|6|7|8|9]\..') and dia.DX_TYPE = '09') or (regexp_like(dia.DX, '^O') and dia.DX_TYPE = '10'))
+		where ((regexp_like(dia.DX,'63[0|1|2|3|4|5|6|7|8|9]\..') and dia.DX_TYPE = '09') or ((regexp_like(dia.DX, '^O') or regexp_like(dia.DX, 'A34.*') or regexp_like(dia.DX, 'Z3[3|4|6].*')) and dia.DX_TYPE = '10'))
 		and cast(((cast(dia.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <= 89 
     and cast(((cast(dia.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18;
 COMMIT;
@@ -133,7 +133,7 @@ select ds.PATID,dia.ADMIT_DATE
 	on dia.ENCOUNTERID=e.ENCOUNTERID 
 	join "&&PCORNET_CDM".DEMOGRAPHIC d
 	on e.PATID=d.PATID	
-	where (regexp_like(dia.DX,'6[4|5|6|7][0|1|2|3|4|5|6|7|8|9]\..') and dia.DX_TYPE = '09')
+	where ((regexp_like(dia.DX,'6[4|5|6|7][0|1|2|3|4|5|6|7|8|9]\..') or regexp_like(dia.DX, 'V2[2|3|8].*')) and dia.DX_TYPE = '09')
   and cast(((cast(dia.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) <= 89 
   and cast(((cast(dia.ADMIT_DATE as date)-cast(d.BIRTH_DATE as date))/365.25 ) as integer) >=18;
 COMMIT;
